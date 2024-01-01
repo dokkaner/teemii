@@ -21,6 +21,8 @@ RUN apt-get update && apt-get install -y curl && \
 # Install dependencies
 RUN apt-get update && \
    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+    make \
+    g++ \
     libatomic1 \
     ca-certificates \
     fonts-liberation \
