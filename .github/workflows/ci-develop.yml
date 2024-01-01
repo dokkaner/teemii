@@ -55,8 +55,10 @@ jobs:
         with:
           context: ./server/
         run: npm install
+        working-directory: ./server
 
       - name: Run Lint
         with:
           context: ./server/
         run: npm run lint
+        working-directory: ./server
