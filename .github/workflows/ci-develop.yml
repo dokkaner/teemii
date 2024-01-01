@@ -39,7 +39,7 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: '/language:${{ matrix.language }}'
-  build-and-test:
+  build-and-test-server:
     needs: codeql-analysis
     runs-on: ubuntu-latest
 
@@ -52,7 +52,11 @@ jobs:
           node-version: '20' # Specify your Node.js version
 
       - name: Install Dependencies
+        with:
+          context: ./server/
         run: npm install
 
       - name: Run Lint
+        with:
+          context: ./server/
         run: npm run lint
