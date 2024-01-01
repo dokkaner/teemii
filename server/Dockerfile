@@ -18,9 +18,12 @@ RUN apt-get update && apt-get install -y curl && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install dependencies required by Chromium
+# Install dependencies
 RUN apt-get update && \
    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+    make \
+    g++ \
+    python \
     libatomic1 \
     ca-certificates \
     fonts-liberation \
@@ -71,6 +74,12 @@ RUN DEBIAN_FRONTEND=noninteractive && \
     unzip waifu2x-ncnn-vulkan.zip -d waifu2x-ncnn-vulkan && \
     mv waifu2x-ncnn-vulkan/waifu2x-ncnn-vulkan-20220728-ubuntu /usr/local/bin/ && \
     rm -rf waifu2x-ncnn-vulkan waifu2x-ncnn-vulkan.zip
+
+# Install sqlite3
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install sqlite3=3.* && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    mkdir -p /root/db
 
 # test waifu2x-ncnn-vulkan
 # RUN /usr/local/bin/waifu2x-ncnn-vulkan-20220728-ubuntu/waifu2x-ncnn-vulkan -h
