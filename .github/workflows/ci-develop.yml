@@ -59,7 +59,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Backend Image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ./server
           file: ./server/Dockerfile
@@ -74,7 +74,7 @@ jobs:
             ghcr.io/dokkaner/teemii-backend:${{ github.sha }}
 
       - name: Build and Push Frontend Image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ./app
           file: ./app/Dockerfile

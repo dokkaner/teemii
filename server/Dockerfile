@@ -11,16 +11,18 @@ LABEL maintainer="dokkaner"
 # Set build-time environment variables
 ENV EXPRESS_PORT=3000
 ENV SOCKET_IO_PORT=1555
+ENV NODE_VERSION=node_18.x
+ENV NODE_KEYRING=/usr/share/keyrings/nodesource.gpg
+ENV DISTRIBUTION=bookworm
 
 # Install Node.js
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee "$NODE_KEYRING" >/dev/null && \
+    echo "deb [signed-by=$NODE_KEYRING] https://deb.nodesource.com/$NODE_VERSION $DISTRIBUTION main" | tee /etc/apt/sources.list.d/nodesource.list
 
 # Install dependencies
 RUN apt-get update && \
    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+    nodejs \
     make \
     g++ \
     libatomic1 \
