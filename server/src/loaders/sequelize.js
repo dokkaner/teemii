@@ -118,6 +118,8 @@ const UpAllMigration = async (db) => {
  *
  * @returns {Promise<Array>} An array of results from each reverted migration.
  */
+
+// eslint-disable-next-line no-unused-vars
 const downAllMigration = async (db) => {
   try {
     const { completedMigrations } = await getAllMigrations(db)
@@ -163,6 +165,7 @@ const downAllMigration = async (db) => {
  *
  * @returns {Promise<Array>} An array containing the result of the reverted migration and the database deletion operation.
  */
+// eslint-disable-next-line no-unused-vars
 const downLatestMigration = async (db) => {
   try {
     const { completedMigrations } = await getAllMigrations(db)

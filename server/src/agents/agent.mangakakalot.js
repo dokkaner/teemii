@@ -3,7 +3,7 @@
  * based on https://github.com/LuckyYam/MangaKakalotScrapper
  */
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
 const cheerio = require('cheerio')
@@ -28,7 +28,7 @@ function parseCustomDate (dateStr) {
 
 class Mangakakalot extends Agent {
   // #region private
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 3,
     minTime: 1000
   })

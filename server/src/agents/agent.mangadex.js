@@ -1,5 +1,5 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
 const { configManager } = require('../loaders/configManager')
@@ -9,7 +9,7 @@ class Mangadex extends Agent {
   #jwtSession = ''
   #jwtRefresh = ''
 
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 2,
     minTime: 900
   })

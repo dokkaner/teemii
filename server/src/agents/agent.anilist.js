@@ -1,5 +1,5 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const AnilistNode = require('anilist-node')
 const { logger } = require('../loaders/logger')
@@ -7,7 +7,7 @@ const AniCli = new AnilistNode()
 
 class Anilist extends Agent {
   // #region private
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 1,
     minTime: 1000
   })

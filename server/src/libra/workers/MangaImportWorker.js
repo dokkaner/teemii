@@ -1,15 +1,8 @@
 const Worker = require('./Worker')
 const { logger } = require('../../loaders/logger')
-const { socketIOLoader } = require('../../loaders/socketio')
-const EntityJobService = require('../services/EntityJobService')
 const { importOrCreateManga } = require('./MangaCommon')
 
 class MangaImportWorker extends Worker {
-  static #JobNotification (Job, value, msg, event, payload) {
-    Job.reportProgress({ value, msg })
-    socketIOLoader.emit(event, payload)
-  }
-
   /**
    * Process a manga import job.
    *

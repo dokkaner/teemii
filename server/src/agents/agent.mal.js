@@ -1,12 +1,12 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger.js')
 
 class Mal extends Agent {
   // #region private
 
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 1,
     minTime: 1000
   })
@@ -58,7 +58,7 @@ class Mal extends Agent {
         return titles.map((any) => {
           if (any.type === 'Synonym') {
             return any.title
-          }
+          } else { return null }
         }).filter(n => n)
       } else { return null }
     },
