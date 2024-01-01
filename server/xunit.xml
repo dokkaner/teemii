@@ -1,0 +1,5 @@
+<testExecutions version="1">
+<file path="test\unit\searchMangaByTitleYear.spec.js">
+<testCase name="#searchMangaByTitleYear: should return a unified object when results are found" duration="3038"/>
+</file>
+</testExecutions>

@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  teemii-frontend:
+    #image: dokkaner/teemii:frontend-latest
+    build: ./app
+    ports:
+      - "8080:80"
+    networks:
+      - teemii-network
+    environment:
+      - VITE_APP_TITLE=Teemii
+      - VITE_APP_PORT=80
+
+  teemii-backend:
+    #image: dokkaner/teemii:backend-latest
+    build:
+      context: ./server
+    volumes:
+      - teemii-data:/data
+    networks:
+      - teemii-network
+    environment:
+      - EXPRESS_PORT=3000
+      - SOCKET_IO_PORT=1555
+
+networks:
+  teemii-network:
+    driver: bridge
+volumes:
+  data-volume:
+    name: teemii-data

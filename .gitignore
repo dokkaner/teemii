@@ -1,0 +1,95 @@
+# Custom Server Files
+/server/public/banners/*
+/server/public/covers/*
+/server/public/posters/*
+/server/public/mangas/*
+
+# Node.js Specific
+*.sqlite
+*.log
+*.pid
+*.seed
+*.lcov
+*.tgz
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+coverage/
+.nyc_output/
+/lib-cov/
+/node_modules/
+/jspm_packages/
+/typings/
+.npm/
+.eslintcache
+.stylelintcache
+
+# Build Artifacts
+/build/
+/app/dist/
+.next/
+.nuxt/
+.vuepress/dist
+.out/
+.storybook-out
+.storybook-static
+/.parcel-cache
+/.serverless/
+.fusebox/
+.dynamodb/
+
+# Temporary Files
+/tmp/
+/temp/
+.pids/
+*.pid.lock
+.node_repl_history
+
+# Dependency Directories
+/bower_components/
+.lock-wscript
+
+# Cache Directories
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.cache/
+.grunt/
+
+# IDEs and Editors
+.DS_Store
+.idea/
+.idea/sonarlint
+.vscode/
+.vscode-test
+*.iml
+*.ipr
+*.iws
+
+# Environment Variables
+.env
+.env.test
+
+# Miscellaneous
+*.tgz
+.yarn-integrity
+.tern-port
+.qodana.yaml
+
+# Project Specific Ignores
+node_modules
+config/default.json
+newrelic_agent.log
+._newrelic.js
+._package-lock.json
+/server/data/*
+/server/secret.key
+/server/conf.bak
+/server/tmp/*
+sonar-project.properties
+/server/bin/*
+yatta.wiki/*

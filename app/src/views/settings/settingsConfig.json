@@ -1,0 +1,141 @@
+{
+  "sections": [
+    {
+      "id": "Security",
+      "title": "Security",
+      "desc": "Require Username and Password to access Teemii.",
+      "help": "",
+      "preferencesRoot": "security",
+      "items": [
+        {
+          "name": "login",
+          "label": "Username",
+          "preference": "login",
+          "component": "TBaseInput",
+          "type": "text"
+        },
+        {
+          "name": "password",
+          "label": "Password",
+          "preference": "password",
+          "component": "TBaseInput",
+          "type": "password",
+          "secure": true
+        },
+        {
+          "name": "enable",
+          "label": "Enable authentication to access Teemii",
+          "preference": "enable",
+          "component": "TBaseSwitch",
+          "type": ""
+        }
+      ]
+    },
+    {
+      "id": "advancedFeatures",
+      "title": "Advanced features",
+      "desc": "Advanced features are a set of Teemii features that includes, for ex., the ability to upscale chapter page.",
+      "help": "",
+      "preferencesRoot": "advancedFeatures",
+      "items": [
+        {
+          "name": "waifu2xPath",
+          "label": "Waifu2x Path",
+          "desc": "",
+          "help": "Allow upscale of cover and chapter page.",
+          "preference": "waifu2xPath",
+          "bind": "",
+          "component": "TBaseInput",
+          "type": "text"
+        },
+        {
+          "name": "imageMagickPath",
+          "label": "Image Magick Path (Q16-HDRI version)",
+          "desc": "",
+          "help": "",
+          "preference": "imageMagickPath",
+          "bind": "",
+          "component": "TBaseInput",
+          "type": "text"
+        },
+        {
+          "name": "enhancedPages",
+          "label": "Enable Chapter Page enhancement",
+          "desc": "",
+          "help": "",
+          "preference": "enhancedPages",
+          "bind": "",
+          "component": "TBaseSwitch",
+          "type": ""
+        },
+        {
+          "name": "enhancedAssets",
+          "label": "Enable Assets (cover, banner...) enhancement",
+          "desc": "",
+          "help": "",
+          "preference": "enhancedAssets",
+          "bind": "",
+          "component": "TBaseSwitch",
+          "type": ""
+        }
+      ]
+    },
+    {
+      "id": "agentOptions",
+      "title": "Agents Options",
+      "desc": "Behaviour of Teemii agents. Define how Teemii will behave when looking for metadata, covers, banners, etc.",
+      "help": "",
+      "preferencesRoot": "agentOptions",
+      "items": [
+        {
+          "name": "excludeGenres",
+          "label": "Exclude Genres",
+          "preference": "excludeGenres",
+          "component": "BaseMultiselect",
+          "mode": "tags",
+          "type": "text",
+          "options": "itemGenres"
+        },
+        {
+          "name": "languages",
+          "label": "Languages",
+          "preference": "languages",
+          "component": "BaseMultiselect",
+          "mode": "tags",
+          "type": "text",
+          "options": "langs",
+          "trackBy": "name",
+          "valueProp": "code",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "agentAuth",
+      "title": "Agents Authentication",
+      "desc": "Define authentication parameters for each agent. If you don't have an account for an agent, leave the fields blank.",
+      "help": "",
+      "preferencesRoot": "agentAuth",
+      "items": [
+        {
+          "name": "OpenAI",
+          "label": "OpenAI API Key",
+          "help": "Used to generate personal recommendations.",
+          "preference": "openai_key",
+          "component": "TBaseInput",
+          "type": "password",
+          "secure": true
+        },
+        {
+          "name": "Goodreads",
+          "label": "Goodreads API Key",
+          "help": "Used to complete metadata.",
+          "preference": "goodreads_key",
+          "component": "TBaseInput",
+          "type": "password",
+          "secure": true
+        }
+      ]
+    }
+  ]
+}
