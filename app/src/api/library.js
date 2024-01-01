@@ -434,7 +434,7 @@ export default {
     return await axios.post(endpoint, formData, config)
   },
 
-  async backendRestart() {
+  async backendRestart () {
     const endpoint = '/api/v2/system/restart'
     return await postWithRetry(endpoint, {}, 1)
   },

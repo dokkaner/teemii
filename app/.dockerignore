@@ -1,4 +1,4 @@
-.eslintrc.js
+.eslintrc.cjs
 xunit.xml
 .nyc_output/
 coverage/
