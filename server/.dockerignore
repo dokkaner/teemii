@@ -8,7 +8,7 @@ xunit.xml
 coverage/
 logs/
 node_modules/
-test/
+tests/
 conf.*
 node_modules
 npm-debug.log

@@ -1,11 +1,11 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const utils = require('../utils/agent.utils')
 
 class Anibrain extends Agent {
   // #region private
 
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 3,
     minTime: 1000
   })

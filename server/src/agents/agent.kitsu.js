@@ -1,5 +1,5 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
 const utils = require('../utils/agent.utils')
@@ -8,7 +8,7 @@ const cheerio = require('cheerio')
 class Kitsu extends Agent {
   // #region private
 
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 5,
     minTime: 1000
   })

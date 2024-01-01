@@ -1,5 +1,5 @@
 const { Agent } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const { logger } = require('../loaders/logger')
 const cheerio = require('cheerio')
 const utils = require('../utils/agent.utils')
@@ -7,7 +7,7 @@ const { AgentCapabilities } = require('../core/agent')
 
 class Nautiljon extends Agent {
   // #region private
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 3,
     minTime: 1000
   })

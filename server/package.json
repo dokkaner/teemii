@@ -6,7 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "start": "node --trace-warnings ./server.js | pino-pretty",
-    "app": "pm2 start ./server.js"
+    "app": "pm2 start ./server.js",
+    "lint": "eslint ."
   },
   "author": "Dokkaner",
   "license": "MIT",

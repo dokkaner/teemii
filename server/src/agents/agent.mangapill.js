@@ -1,5 +1,5 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const { logger } = require('../loaders/logger.js')
 const cheerio = require('cheerio')
 const utils = require('../utils/agent.utils')
@@ -7,7 +7,7 @@ const utils = require('../utils/agent.utils')
 // noinspection JSJQueryEfficiency
 class Mangapill extends Agent {
   // #region private
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 2, minTime: 1000
   })
 
@@ -78,7 +78,7 @@ class Mangapill extends Agent {
     const results = []
     const $ = cheerio.load(doc)
 
-    $('body > div.container.py-3 > div.my-3.grid.justify-end.gap-3.grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-5 > div').map(function (i, e) {
+    $('body > div.container.py-3 > div.my-3.grid.justify-end.gap-3.grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-5 > div').each(function (i, e) {
       const result = {}
       result.id = $(this).find('a').attr('href')
       result.cover = $(this).find('a > figure > img').attr('src')
@@ -125,7 +125,7 @@ class Mangapill extends Agent {
     const results = []
     const $ = cheerio.load(doc)
 
-    $('#chapters > div > a').map(function () {
+    $('#chapters > div > a').each(function () {
       const result = {}
       result.uri = host + utils.cleanStr($(this).attr('href'))
       result.title = utils.cleanStr($(this).text())

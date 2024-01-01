@@ -10,7 +10,6 @@ const LibraryUpdateWorker = require('../libra/workers/LibraryUpdateWorker')
 const ComputeReadingWorker = require('../libra/workers/ComputeReadingWorker')
 const ComputeSuggesterWorker = require('../libra/workers/ComputeSuggesterWorker')
 const { QueueMode } = require('../libra/queues/Queue')
-const EntityJobService = require('../libra/services/EntityJobService')
 const { configManager, BACKUP_DIR, LOGS_DIR, CONFIG_DIR, TEMP_DIR } = require('../loaders/configManager')
 const CBxImportWorker = require('../libra/workers/ComicBookArchiveImportWorker')
 

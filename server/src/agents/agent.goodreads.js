@@ -1,11 +1,11 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
 const { configManager } = require('../loaders/configManager.js')
 
 class Goodreads extends Agent {
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 3,
     minTime: 1000
   })

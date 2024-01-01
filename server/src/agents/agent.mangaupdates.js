@@ -1,5 +1,5 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
-const bottleneck = require('bottleneck')
+const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
 const cheerio = require('cheerio')
@@ -9,7 +9,7 @@ class Mangaupdates extends Agent {
   // #region private
   #jwtSession = ''
 
-  #limiter = new bottleneck({
+  #limiter = new Bottleneck({
     maxConcurrent: 3,
     minTime: 1000
   })
@@ -73,7 +73,7 @@ class Mangaupdates extends Agent {
         return tags.map((tag) => {
           if (tag.votes > 1) {
             return tag.category
-          }
+          } else { return null }
         }).filter(n => n)
       } else { return [] }
     },
@@ -112,7 +112,9 @@ class Mangaupdates extends Agent {
       const publishers = iteratee.publishers || []
       if (publishers.length > 0) {
         return publishers.map((any) => {
-          if (any.type === 'Original') { return any.publisher_name }
+          if (any.type === 'Original') {
+            return any.publisher_name
+          } else { return null }
         }).filter(n => n)
       } else { return null }
     },

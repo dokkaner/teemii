@@ -19,42 +19,42 @@ class AgentsManager {
 
   async #loadAgents (list, relFolder, folder) {
     fs.readdirSync(relFolder).forEach(file => {
-      const agent = {}
-      agent.file = folder + file
-      agent.require = require(agent.file)
-      agent.instance = new agent.require()
-      agent.id = agent.instance.id
-      agent.caps = agent.instance.caps
-      agent.limiter = agent.instance.limiter
-      agent.priority = agent.instance.priority || 50
+      const Agent = {}
+      Agent.file = folder + file
+      Agent.Require = require(Agent.file)
+      Agent.instance = new Agent.Require()
+      Agent.id = Agent.instance.id
+      Agent.caps = Agent.instance.caps
+      Agent.limiter = Agent.instance.limiter
+      Agent.priority = Agent.instance.priority || 50
       // --
-      agent.getCanonicalID = agent.instance.getCanonicalID
-      agent.funcGetMangaById = agent.instance.funcGetMangaById
-      agent.mangaSchema = agent.instance.mangaSchema
-      agent.lookupSchema = agent.instance.lookupSchema
-      agent.chapterSchema = agent.instance.chapterSchema
-      agent.characterSchema = agent.instance.characterSchema
-      agent.pageSchema = agent.instance.pageSchema
-      agent.funcPreRecoSchema = agent.instance.funcPreRecoSchema
-      agent.funcPrePageSchema = agent.instance.funcPrePageSchema
-      agent.funcPostMangaSchema = agent.instance.funcPostMangaSchema
-      agent.funcPostLookupSchema = agent.instance.funcPostLookupSchema
-      agent.funcHelperLookupMangas = agent.instance.funcHelperLookupMangas
-      agent.funcHelperLookupChapters = agent.instance.funcHelperLookupChapters
-      agent.funcHelperChapterPagesURLByChapterId = agent.instance.funcHelperChapterPagesURLByChapterId
-      agent.helperLookupRecommendations = agent.instance.helperLookupRecommendations
-      agent.helperLookupCharacters = agent.instance.helperLookupCharacters
-      agent.offsetInc = agent.instance.offsetInc || 100
-      agent.maxPages = agent.instance.maxPages || 3
+      Agent.getCanonicalID = Agent.instance.getCanonicalID
+      Agent.funcGetMangaById = Agent.instance.funcGetMangaById
+      Agent.mangaSchema = Agent.instance.mangaSchema
+      Agent.lookupSchema = Agent.instance.lookupSchema
+      Agent.chapterSchema = Agent.instance.chapterSchema
+      Agent.characterSchema = Agent.instance.characterSchema
+      Agent.pageSchema = Agent.instance.pageSchema
+      Agent.funcPreRecoSchema = Agent.instance.funcPreRecoSchema
+      Agent.funcPrePageSchema = Agent.instance.funcPrePageSchema
+      Agent.funcPostMangaSchema = Agent.instance.funcPostMangaSchema
+      Agent.funcPostLookupSchema = Agent.instance.funcPostLookupSchema
+      Agent.funcHelperLookupMangas = Agent.instance.funcHelperLookupMangas
+      Agent.funcHelperLookupChapters = Agent.instance.funcHelperLookupChapters
+      Agent.funcHelperChapterPagesURLByChapterId = Agent.instance.funcHelperChapterPagesURLByChapterId
+      Agent.helperLookupRecommendations = Agent.instance.helperLookupRecommendations
+      Agent.helperLookupCharacters = Agent.instance.helperLookupCharacters
+      Agent.offsetInc = Agent.instance.offsetInc || 100
+      Agent.maxPages = Agent.instance.maxPages || 3
       logger.trace(file, 'load agent')
 
       // validate schemas
-      validateSchema(refLookupSchema, agent.lookupSchema, agent.id, 'lookupSchema')
-      validateSchema(refMangaSchema, agent.mangaSchema, agent.id, 'mangaSchema')
-      validateSchema(refChapterSchema, agent.chapterSchema, agent.id, 'chapterSchema')
-      validateSchema(refPageSchema, agent.pageSchema, agent.id, 'pageSchema')
+      validateSchema(refLookupSchema, Agent.lookupSchema, Agent.id, 'lookupSchema')
+      validateSchema(refMangaSchema, Agent.mangaSchema, Agent.id, 'mangaSchema')
+      validateSchema(refChapterSchema, Agent.chapterSchema, Agent.id, 'chapterSchema')
+      validateSchema(refPageSchema, Agent.pageSchema, Agent.id, 'pageSchema')
 
-      this.#internalAgents.push(agent)
+      this.#internalAgents.push(Agent)
     })
   }
 
