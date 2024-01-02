@@ -72,6 +72,18 @@ function getContentType (filePath) {
  */
 async function sendImageFile (res, filePath) {
   try {
+    // protect against directory traversal
+    const rStoragePath = path.resolve(configManager.get('storagePath'))
+    const rPublicStorage = path.resolve(configManager.get('publicStorage'))
+    const storagePath = configManager.get('storagePath')
+    const publicStorage = configManager.get('publicStorage')
+
+    const whitelist = [rStoragePath, rPublicStorage, storagePath, publicStorage]
+
+    if (!whitelist.some(p => filePath.startsWith(p))) {
+      return res.status(403).send('Access Denied');
+    }
+
     const contentType = getContentType(filePath)
     const readStream = fs.createReadStream(filePath)
     return readStream.pipe(res.type(contentType))
