@@ -329,8 +329,8 @@ module.exports = class LibraryController {
         res.status(404).send('characters not found')
       }
     } catch (e) {
-      logger.error({ err: e })
-      res.status(500).send(e)
+      logger.error({ err: e }, 'getMangaCharacters failed.')
+      res.status(500).send('An exception occurred.')
     }
   }
 
