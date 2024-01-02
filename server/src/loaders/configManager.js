@@ -226,17 +226,23 @@ class ConfigManager {
       obj = obj[k]
     }
 
+    const lastKey = keys[keys.length - 1]
+    // check for possible pollution
+    const pollution = (key === "__proto__" || key === "constructor")
+    if (pollution) {
+      throw new Error(`Invalid configuration key: ${key}`);
+    }
     if (secret) {
       // check if the value is already encrypted. use regex matching
       const regex = /^[0-9a-f]{32}:[0-9a-f]+:[0-9a-f]+$/i
       if (typeof value === 'string' && regex.exec(value)) {
         // already encrypted, just set it
-        obj[keys[keys.length - 1]] = value
+        obj[lastKey] = value
       } else {
-        obj[keys[keys.length - 1]] = this.encrypt(value)
+        obj[lastKey] = this.encrypt(value)
       }
     } else {
-      obj[keys[keys.length - 1]] = value
+      obj[lastKey] = value
     }
   }
 
