@@ -23,8 +23,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
   build-and-push:
-    name: Build & Publish Docker Images
-    if: !contains(github.event.head_commit.message, '[skip ci]')
     runs-on: ubuntu-latest
     container:
       image: catthehacker/ubuntu:act-latest
