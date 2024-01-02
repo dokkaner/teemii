@@ -1,5 +1,6 @@
 const express = require('express')
 const compression = require('compression')
+const RateLimit = require('express-rate-limit')
 const routes = require('../routes')
 const { logger } = require('./logger.js')
 const cors = require('cors')
@@ -73,7 +74,13 @@ function blockOtherRoutesDuringFirstLaunch (req, res, next) {
 class ExpressLoader {
   constructor () {
     const app = express()
+
     app.enable('trust proxy')
+    const limiter = RateLimit({
+      windowMs: 60 * 1000, // 1 minutes
+      max: 100, // max 100 requests per windowMs
+    });
+    app.use(limiter)
 
     // Set up middleware
     app.use(cors())
