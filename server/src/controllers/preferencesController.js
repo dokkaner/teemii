@@ -1,4 +1,5 @@
 const { preferences } = require('../services/index.js')
+const { logger } = require('../loaders/logger')
 
 module.exports = class PreferencesController {
   /**
@@ -17,8 +18,9 @@ module.exports = class PreferencesController {
         result = await preferences.getAllUserPreferences()
       }
       return res.json(result)
-    } catch (err) {
-      res.status(500).send(err)
+    } catch (e) {
+      logger.error({ err: e }, 'getPreferences failed.')
+      res.status(500).send('An exception occurred.')
     }
   };
 
@@ -33,8 +35,9 @@ module.exports = class PreferencesController {
       const newPreferences = req.body.preferences
       const updatedPreferences = await preferences.upsertUserPreferences(req.params.name, newPreferences)
       return res.json(updatedPreferences)
-    } catch (err) {
-      res.status(500).send(err)
+    } catch (e) {
+      logger.error({ err: e }, 'upsertPreferences failed.')
+      res.status(500).send('An exception occurred.')
     }
   }
 
@@ -46,8 +49,9 @@ module.exports = class PreferencesController {
       const isSecret = (req.query.isSecret === 'true') || false
       const updatedPreferences = await preferences.setUserPreferencesKey(key, value, isSecret)
       return res.json(updatedPreferences)
-    } catch (err) {
-      res.status(500).send(err)
+    } catch (e) {
+      logger.error({ err: e }, 'setPreferences failed.')
+      res.status(500).send('An exception occurred.')
     }
   }
 }

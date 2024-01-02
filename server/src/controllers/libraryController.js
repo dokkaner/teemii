@@ -308,8 +308,8 @@ module.exports = class LibraryController {
         res.status(404).send('chapters not found')
       }
     } catch (e) {
-      logger.error({ err: e })
-      res.status(500).send(e)
+      logger.error({ err: e }, 'getMangaChapters failed.')
+      res.status(500).send('An exception occurred.')
     }
   }
 
@@ -405,7 +405,8 @@ module.exports = class LibraryController {
         res.status(404).send('not found')
       }
     } catch (err) {
-      res.status(500).send(err)
+      logger.error({ err }, 'postReadingStatus failed.')
+      res.status(500).send('An exception occurred.')
     }
   };
 
@@ -679,7 +680,8 @@ module.exports = class LibraryController {
 
       return res.send(Mangas)
     } catch (err) {
-      res.status(500).send(err)
+      logger.error({ err }, 'getAllManga failed.')
+      res.status(500).send('An exception occurred.')
     }
   }
 
@@ -854,7 +856,7 @@ module.exports = class LibraryController {
       return res.status(200).send(searchResults)
     } catch (err) {
       logger.error({ err }, 'mangasLookup failed.')
-      res.status(500).send(err)
+      res.status(500).send('An exception occurred.')
     }
   }
 }
