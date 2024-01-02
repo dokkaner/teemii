@@ -489,6 +489,11 @@ module.exports = class LibraryController {
    */
   async getMangaCover (req, res) {
     const mangaId = req.params.id
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(mangaId)) {
+      return res.status(400).send('Invalid manga ID');
+    }
+
     try {
       const type = req.query.type || 'cover' // default to 'cover' if not specified
 
@@ -501,8 +506,12 @@ module.exports = class LibraryController {
         poster: path.join(storage, 'posters')
       }[type] || path.join(storage, 'posters')
 
-      const filepath = path.join(folder, mangaId + '.webp')
-      const placeholderPath = path.join(publicStorage, 'assets', 'images', '404.png')
+      const filepath = path.resolve(folder, mangaId + '.webp')
+      const placeholderPath = path.resolve(publicStorage, 'assets', 'images', '404.png')
+
+      if (!filepath.startsWith(path.resolve(folder))) {
+        return res.status(403).send('Access Denied');
+      }
 
       if (filepath && fs.existsSync(filepath)) {
         res.status(200) // OK status
