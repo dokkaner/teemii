@@ -79,7 +79,7 @@ class ExpressLoader {
     const limiter = RateLimit({
       windowMs: 1000, // 1 second
       max: 100, // max 100 requests per windowMs
-      validate: {trustProxy: false}
+      validate: { trustProxy: false }
     })
     app.use(limiter)
 
