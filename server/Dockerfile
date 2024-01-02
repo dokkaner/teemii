@@ -31,6 +31,7 @@ RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dear
 RUN apt-get update && \
    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     nodejs \
+    python3 \
     make \
     g++ \
     libatomic1 \
@@ -71,7 +72,6 @@ RUN apt-get update && \
     unzip \
     xdg-utils \
     imagemagick \
-    sqlite3=3.* \
     libvulkan1 && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     mkdir -p /root/db
