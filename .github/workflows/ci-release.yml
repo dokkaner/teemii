@@ -22,6 +22,7 @@ jobs:
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+
   build-and-push:
     runs-on: ubuntu-latest
     container:
