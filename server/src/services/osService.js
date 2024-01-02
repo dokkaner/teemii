@@ -38,43 +38,44 @@ async function readFirstLine (filePath) {
 * Adapted from https://github.com/alexbbt/read-last-lines (MIT licenced)
 */
 
-async function readLastLines (inputFilePath, maxLineCount, encoding = 'utf8') {
-  const NEW_LINE_CHARACTERS = '\n'
+async function readLastLines(inputFilePath, maxLineCount, encoding = 'utf8') {
+  const NEW_LINE_CHARACTERS = '\n';
 
   try {
-    const stat = await fs.stat(inputFilePath)
+    const fileHandle = await fs.open(inputFilePath, 'r');
+    const stat = await fileHandle.stat();
+
     if (stat.size === 0) {
-      return ''
+      await fileHandle.close();
+      return '';
     }
 
-    const fileHandle = await fs.open(inputFilePath, 'r')
-    const bufferSize = Math.min(stat.size, 1024) // Utiliser un buffer plus grand pour réduire le nombre de lectures.
-    const buffer = Buffer.alloc(bufferSize)
-    let lines = ''
-    let lineCount = 0
-    let position = stat.size
+    const bufferSize = Math.min(stat.size, 1024);
+    const buffer = Buffer.alloc(bufferSize);
+    let lines = '';
+    let lineCount = 0;
+    let position = stat.size;
 
     while (position > 0 && lineCount < maxLineCount) {
-      const sizeToRead = Math.min(position, bufferSize)
-      position -= sizeToRead
-      await fileHandle.read(buffer, 0, sizeToRead, position)
-      const chunk = buffer.toString(encoding, 0, sizeToRead)
-      const chunkLines = chunk.split(NEW_LINE_CHARACTERS)
-      lines = chunkLines[chunkLines.length - 1] + lines
+      const sizeToRead = Math.min(position, bufferSize);
+      position -= sizeToRead;
+      await fileHandle.read(buffer, 0, sizeToRead, position);
+      const chunk = buffer.toString(encoding, 0, sizeToRead);
+      const chunkLines = chunk.split(NEW_LINE_CHARACTERS);
+      lines = chunkLines[chunkLines.length - 1] + lines;
       for (let i = chunkLines.length - 2; i >= 0; i--) {
-        lines = chunkLines[i] + NEW_LINE_CHARACTERS + lines
-        lineCount++
+        lines = chunkLines[i] + NEW_LINE_CHARACTERS + lines;
+        lineCount++;
         if (lineCount === maxLineCount) {
-          break
+          break;
         }
       }
     }
 
-    await fileHandle.close()
-
-    return lines
+    await fileHandle.close();
+    return lines;
   } catch (error) {
-    throw new Error(`Error reading file: ${error.message}`)
+    throw new Error(`Error reading file: ${error.message}`);
   }
 }
 
