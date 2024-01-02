@@ -47,8 +47,7 @@
     "socket.io": "^4.7.2",
     "sqlite3": "^5.1.7-rc.0",
     "unrar-js": "^0.2.3",
-    "uuid": "^9.0.1",
-    "xml2js": "^0.6.2"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

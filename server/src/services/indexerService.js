@@ -1,11 +1,8 @@
 const axios = require('axios')
 const fs = require('fs')
 const csv = require('csv-parser')
-const xml2js = require('xml2js')
 const sizeof = require('object-sizeof')
 const { logger } = require('../loaders/logger')
-
-const parser = new xml2js.Parser()
 
 /**
  * @class TrieNode
@@ -147,18 +144,6 @@ function buildIndexFromCSV (filePath) {
   }
 }
 
-async function loadAndParseXML (url) {
-  try {
-    const response = await axios.get(url)
-    const xmlContent = response.data
-    const parsedData = await parser.parseStringPromise(xmlContent)
-    return parsedData.report.item
-  } catch (error) {
-    console.error('Error loading or parsing XML:', error)
-    throw error
-  }
-}
-
 /**
  * Creates the index from the parsed XML file data.
  * @param {Object} data The parsed XML file data.
@@ -191,7 +176,5 @@ function searchInIndex (query, limit = 10) {
 
 module.exports = {
   buildIndexFromCSV,
-  loadAndParseXML,
-  createIndex,
   searchInIndex
 }
