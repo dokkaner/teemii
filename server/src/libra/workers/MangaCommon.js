@@ -92,7 +92,7 @@ async function processImage (manga, url, origin, outputPath, dimensions, getColo
   }
 }
 
-function calculateAverageReleaseInterval (chapters, maxSamples) {
+function calculateAverageReleaseInterval (chapters, maxSamples = 12) {
   const now = new Date()
   const lastDays = new Date(now.getTime() - (365 * 24 * 60 * 60 * 1000))
   chapters = chapters.filter(c => {
@@ -102,7 +102,7 @@ function calculateAverageReleaseInterval (chapters, maxSamples) {
   chapters = chapters.sort((a, b) => {
     return (parseInt(a.chapter) < parseInt(b.chapter)) ? 1 : -1
   })
-  const max = chapters.length > maxSamples ? maxSamples : chapters.length
+  const max = Math.min(chapters.length, maxSamples);
   const dates = chapters.map(c => c.readableAt || c.publishAt).slice(0, max)
 
   let totalDays = 0
@@ -170,7 +170,7 @@ async function fetchMangaChapters (manga) {
     if (manga.chapterCount === null || manga.chapterCount === 0) {
       manga.chapterCount = chapters?.length || 0
     }
-    manga.averageReleaseInterval = calculateAverageReleaseInterval(chapters)
+    manga.averageReleaseInterval = calculateAverageReleaseInterval(chapters, 20)
     manga.lastRelease = chapters[0].readableAt || chapters[0].publishAt
     manga.nextRelease = new Date(manga.lastRelease?.getTime() + (manga.averageReleaseInterval * 24 * 60 * 60 * 1000))
   } catch (error) {
