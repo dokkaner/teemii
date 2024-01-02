@@ -1,6 +1,10 @@
 const { preferences } = require('../services/index.js')
 const { logger } = require('../loaders/logger')
 
+function toBoolean(str) {
+  return str === 'true';
+}
+
 module.exports = class PreferencesController {
   /**
    * Returns one or all preferences for a user.
@@ -12,7 +16,8 @@ module.exports = class PreferencesController {
     try {
       let result
       if (req.params?.name) {
-        const secret = (req.query.secret === 'true') || false
+        // QL: secret is a boolean
+        const secret = toBoolean(req.query.secret)
         result = await preferences.getUserPreferences(req.params.name, secret)
       } else {
         result = await preferences.getAllUserPreferences()
