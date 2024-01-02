@@ -2,6 +2,7 @@ const { logger } = require('../loaders/logger')
 const { listAllBackups, backup, restore } = require('../services/backupService')
 const path = require('path')
 const fs = require('fs')
+const { BACKUP_DIR } = require('../loaders/configManager')
 module.exports = class BackupController {
   async fetchBackups (req, res) {
     try {
@@ -35,11 +36,16 @@ module.exports = class BackupController {
 
   async downloadBackup (req, res) {
     try {
-      const backupPath = req.body.path
+      const backupPathInput = req.body.path
 
-      if (!backupPath?.endsWith('.zip')) {
+      if (!backupPathInput?.endsWith('.zip')) {
         return res.status(400).send('Invalid backup file path')
       }
+
+      const backupFileName = path.basename(backupPathInput);
+
+      // secure directory traversal
+      const backupPath = path.join(BACKUP_DIR, backupFileName);
 
       if (!fs.existsSync(backupPath)) {
         return res.status(404).send('Backup file not found')
