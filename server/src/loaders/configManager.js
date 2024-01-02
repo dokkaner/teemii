@@ -208,6 +208,15 @@ class ConfigManager {
   set (key, value, secret = false) {
     const keys = key.split('.')
     let obj = this.config
+
+    // validate the key format
+    const keyRegex = /^[a-zA-Z0-9_-]+$/;
+    for (const k of keys) {
+      if (!keyRegex.test(k)) {
+        throw new Error(`Invalid configuration key format: ${k}`);
+      }
+    }
+
     for (let i = 0; i < keys.length - 1; i++) {
       const k = keys[i]
 
