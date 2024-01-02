@@ -121,7 +121,7 @@ async function checkAndHandleSystemStatus (to, next) {
     }
   } else {
     console.error('Failed to get system status:', systemStatusResponse.statusText)
-    if (systemStatusResponse.status !== 500) {
+    if (systemStatusResponse.status !== 500 && systemStatusResponse.status !== 429) {
       next('/wizard')
       return false
     }

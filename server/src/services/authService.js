@@ -8,7 +8,7 @@ module.exports = {
    * @param {string} expiresIn - The token expiration time.
    * @returns {string} The generated token.
    */
-  jwtSign (payload, expiresIn = '1h') {
+  jwtSign (payload, expiresIn = '8h') {
     const JWT_SECRET = configManager.getSecretKey().toString()
     return jwt.sign(payload, JWT_SECRET, { expiresIn })
   },

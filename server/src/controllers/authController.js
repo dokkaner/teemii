@@ -61,9 +61,10 @@ module.exports = class AuthController {
       const { refreshToken } = req.body
 
       // Validate request parameter
-      if (!refreshToken) {
-        logger.warn('Refresh token is required.')
-        return res.status(400).json({ message: 'Refresh token is required.' })
+      const jwtRegex = /^[A-Za-z0-9-_=]+\.([A-Za-z0-9-_=]+)\.?[A-Za-z0-9-_.+/=]*$/;
+      if (!refreshToken || typeof refreshToken !== 'string' || !jwtRegex.exec(refreshToken)) {
+        logger.warn('Invalid or missing refresh token.');
+        return res.status(400).json({ message: 'Invalid or missing refresh token.' });
       }
 
       // Verify the refresh token

@@ -77,7 +77,7 @@ class ExpressLoader {
 
     app.enable('trust proxy')
     const limiter = RateLimit({
-      windowMs: 60 * 1000, // 1 minutes
+      windowMs: 1000, // 1 second
       max: 100, // max 100 requests per windowMs
     });
     app.use(limiter)
