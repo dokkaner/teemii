@@ -1,8 +1,8 @@
 const { preferences } = require('../services/index.js')
 const { logger } = require('../loaders/logger')
 
-function toBoolean(str) {
-  return str === 'true';
+function toBoolean (str) {
+  return str === 'true'
 }
 
 module.exports = class PreferencesController {

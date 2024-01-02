@@ -210,10 +210,10 @@ class ConfigManager {
     let obj = this.config
 
     // validate the key format
-    const keyRegex = /^[a-zA-Z0-9_-]+$/;
+    const keyRegex = /^[a-zA-Z0-9_-]+$/
     for (const k of keys) {
       if (!keyRegex.test(k)) {
-        throw new Error(`Invalid configuration key format: ${k}`);
+        throw new Error(`Invalid configuration key format: ${k}`)
       }
     }
 
@@ -228,9 +228,9 @@ class ConfigManager {
 
     const lastKey = keys[keys.length - 1]
     // check for possible pollution
-    const pollution = (key === "__proto__" || key === "constructor")
+    const pollution = (key === '__proto__' || key === 'constructor')
     if (pollution) {
-      throw new Error(`Invalid configuration key: ${key}`);
+      throw new Error(`Invalid configuration key: ${key}`)
     }
     if (secret) {
       // check if the value is already encrypted. use regex matching

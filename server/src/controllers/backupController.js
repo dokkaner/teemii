@@ -42,10 +42,10 @@ module.exports = class BackupController {
         return res.status(400).send('Invalid backup file path')
       }
 
-      const backupFileName = path.basename(backupPathInput);
+      const backupFileName = path.basename(backupPathInput)
 
       // secure directory traversal
-      const backupPath = path.join(BACKUP_DIR, backupFileName);
+      const backupPath = path.join(BACKUP_DIR, backupFileName)
 
       if (!fs.existsSync(backupPath)) {
         return res.status(404).send('Backup file not found')

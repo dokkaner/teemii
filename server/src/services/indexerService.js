@@ -1,4 +1,3 @@
-const axios = require('axios')
 const fs = require('fs')
 const csv = require('csv-parser')
 const sizeof = require('object-sizeof')
@@ -142,25 +141,6 @@ function buildIndexFromCSV (filePath) {
     console.error('Error reading CSV file:', error)
     throw error
   }
-}
-
-/**
- * Creates the index from the parsed XML file data.
- * @param {Object} data The parsed XML file data.
- */
-function createIndex (data) {
-  // Assuming `data` is a list of objects containing manga names.
-  data.forEach(item => {
-    const title = item.name[0].toLowerCase()
-    const words = title.split(/\s+/)
-    words.forEach(word => {
-      trie.insert(word, title) // Insert each word with the associated full title.
-    })
-  })
-  const indexSize = sizeof(trie)
-  // convert to MB
-  const indexSizeMB = indexSize / 1024 / 1024
-  logger.info(`Index size: ${indexSizeMB} MB`)
 }
 
 /**

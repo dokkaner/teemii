@@ -49,8 +49,8 @@ module.exports = class UploadController {
 
       await mkdir(TEMP_DIR)
 
-      const fileName = path.basename(file.name);
-      const filePath = path.join(TEMP_DIR, fileName);
+      const fileName = path.basename(file.name)
+      const filePath = path.join(TEMP_DIR, fileName)
       await file.mv(filePath)
 
       const JobData = {

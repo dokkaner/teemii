@@ -81,7 +81,7 @@ async function sendImageFile (res, filePath) {
     const whitelist = [rStoragePath, rPublicStorage, storagePath, publicStorage]
 
     if (!whitelist.some(p => filePath.startsWith(p))) {
-      return res.status(403).send('Access Denied');
+      return res.status(403).send('Access Denied')
     }
 
     const contentType = getContentType(filePath)
@@ -504,7 +504,7 @@ module.exports = class LibraryController {
     const mangaId = req.params.id
 
     if (!/^[a-zA-Z0-9_-]+$/.test(mangaId)) {
-      return res.status(400).send('Invalid manga ID');
+      return res.status(400).send('Invalid manga ID')
     }
 
     try {
@@ -523,7 +523,7 @@ module.exports = class LibraryController {
       const placeholderPath = path.resolve(publicStorage, 'assets', 'images', '404.png')
 
       if (!filepath.startsWith(path.resolve(folder))) {
-        return res.status(403).send('Access Denied');
+        return res.status(403).send('Access Denied')
       }
 
       if (filepath && fs.existsSync(filepath)) {

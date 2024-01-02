@@ -102,7 +102,7 @@ function calculateAverageReleaseInterval (chapters, maxSamples = 12) {
   chapters = chapters.sort((a, b) => {
     return (parseInt(a.chapter) < parseInt(b.chapter)) ? 1 : -1
   })
-  const max = Math.min(chapters.length, maxSamples);
+  const max = Math.min(chapters.length, maxSamples)
   const dates = chapters.map(c => c.readableAt || c.publishAt).slice(0, max)
 
   let totalDays = 0
