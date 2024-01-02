@@ -98,8 +98,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
-RUN npm ci pm2 -g
+RUN npm install
+RUN npm install pm2 -g
 
 # Copy all files
 COPY . .
