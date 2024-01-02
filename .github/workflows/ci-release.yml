@@ -24,6 +24,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
 
   build-and-push:
+    needs: release
     runs-on: ubuntu-latest
     container:
       image: catthehacker/ubuntu:act-latest
