@@ -235,7 +235,7 @@ export default {
           title: m.canonicalTitle,
           image: storeHelpers.getMangaCover(m.id, 1440, 403, 'banner'),
           content: m.title,
-          description: m.description.fr_fr || m.description.en_us,
+          description: m.description.en_us || m.description.fr_fr,
           route: storeHelpers.getMangaRouterTo(m)
         }
       })

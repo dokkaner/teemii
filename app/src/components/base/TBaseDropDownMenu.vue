@@ -1,5 +1,5 @@
 <template>
-  <Menu as="div" class="relative z-50 inline-block text-left overflow-visible">
+  <Menu as="div" class="relative z-50 inline-block text-left">
     <MenuButton :class="containerClass">
       <p v-if="!iconOnly">{{ caption }}</p>
       <ChevronDownIcon
@@ -21,7 +21,7 @@
       <MenuItems
           class="absolute right-0 z-50 mt-2 w-56 origin-top-right divide-y divide-main-100 border border-main-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
-        <BaseMenuItem
+        <TBaseMenuItem
             v-for="(menu, index) in menus"
             v-slot="{ selected, active }"
             :key="index"
@@ -31,7 +31,8 @@
             :icon="menu.icon"
             as="template"
         >
-        </BaseMenuItem>
+
+        </TBaseMenuItem>
       </MenuItems>
     </transition>
   </Menu>
@@ -40,8 +41,8 @@
 <script setup>
 import { Menu, MenuButton, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon, EllipsisVerticalIcon } from '@heroicons/vue/24/solid'
-import BaseMenuItem from './TBaseMenuItem.vue'
 import { ref, onMounted, computed, useSlots } from 'vue'
+import TBaseMenuItem from '@/components/base/TBaseMenuItem.vue'
 
 const props = defineProps({
   iconOnly: {

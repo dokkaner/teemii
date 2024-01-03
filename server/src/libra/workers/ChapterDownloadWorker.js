@@ -106,10 +106,10 @@ class ChapterDownloadWorker extends Worker {
 
     const metadata = chapter.metadata
 
-    const preferences = configManager.get('preferences')
+    const preferences = configManager.get('preferences.agentOptions')
 
     job.reportProgress({ value: 0, msg: 'Choosing best source...' })
-    const bestChoice = chooseBestSource(metadata, preferences?.langs, chapterSource) || null
+    const bestChoice = chooseBestSource(metadata, preferences?.languages, chapterSource) || null
 
     if (!bestChoice) {
       const msg = `No suitable source found for chapter ${chapter.chapter} of manga ${manga.canonicalTitle}`
