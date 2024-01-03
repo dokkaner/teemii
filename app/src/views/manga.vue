@@ -195,7 +195,7 @@
 
                   <div class="basis-1/3 px-3 text-right">
                     <TBaseDropDownMenu iconOnly>
-                      <TBaseMenuItem @menuClick="() => removeManga()" caption="Delete this manga" icon="TrashIcon"/>
+                      <TBaseMenuItem :menuClick="() => removeManga()" caption="Delete this manga" icon="TrashIcon"/>
                     </TBaseDropDownMenu>
                   </div>
                 </div>
@@ -405,10 +405,14 @@ import Fuse from 'fuse.js'
 import libraryAPI from '@/api/library'
 import TBaseButton from '@/components/base/TBaseButton.vue'
 import { pageTitle } from '@/global.js'
+import TBaseMenuItem from '@/components/base/TBaseMenuItem.vue'
+import TBaseDropDownMenu from '@/components/base/TBaseDropDownMenu.vue'
 
 export default {
   name: 'Manga',
   components: {
+    TBaseDropDownMenu,
+    TBaseMenuItem,
     TBaseButton,
     heroIcons,
     AddManga,
@@ -550,17 +554,32 @@ export default {
       })
     }
 
+    async function userValidationDeleteManga () {
+      const payload = {
+        title: 'Delete manga',
+        message: 'You are about to delete this manga. Do you want to continue?',
+        yesLabel: 'Yes',
+        noLabel: 'No',
+        variant: 'danger',
+        hideNoButton: false
+      }
+      return dialogStore.openDialog(payload)
+    }
+
     async function removeManga () {
-      await storeHelpers.deleteManga(mangaId)
-      notificationsStore.showNotification({
-        title: 'Manga deleted',
-        message: `${manga.value.canonicalTitle} has been deleted from your library`,
-        type: 'success'
-      })
-      router.push({
-        name: 'Mangas',
-        params: {}
-      })
+      const go = await userValidationDeleteManga()
+      if (go) {
+        await storeHelpers.deleteManga(mangaId)
+        notificationsStore.showNotification({
+          title: 'Manga deleted',
+          message: `${manga.value.canonicalTitle} has been deleted from your library`,
+          type: 'success'
+        })
+        router.push({
+          name: 'Mangas',
+          params: {}
+        })
+      }
     }
 
     async function switchMonitor () {
