@@ -156,12 +156,19 @@
               <ul v-if="lastChapters?.length > 0" role="list" class="mt-1 divide-y divide-dashed text-sm text-main-900">
                 <li v-for="chapter in lastChapters?.slice(0,5)" :key="chapter.id" class="flex items-center">
                   <div class="flex h-6 w-6 flex-none items-center justify-start">
-                    <div class="rounded-full bg-main-100 ring-1 ring-main-300 h-1.5 w-1.5"/>
+                    <div class="rounded-full ring-1 h-1.5 w-1.5"  :class="useChapterDotStateClass(chapter.state)"/>
                   </div>
+
                   <p class="flex-auto py-0.5 text-sm leading-5 text-main-900 line-clamp-1">
-                    <span class="font-medium text-accent-900">c{{ chapter.chapter }}</span> -
-                    {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
+                    <router-link v-if="chapter.state === 3" :to="storeHelpers.getChapterRouterTo(chapter)">
+                    <span class="font-medium text-accent-900">c{{ chapter.chapter }} -
+                    {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru}} </span>
+                    </router-link>
+                    <span v-else>
+                      c{{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru}}
+                    </span>
                   </p>
+
                   <time :datetime="chapter.readableAt" class="flex-none py-0.5 text-sm leading-5 text-main-900">
                     {{ formatDateTime(chapter.readableAt) }}
                   </time>
@@ -407,6 +414,7 @@ import TBaseButton from '@/components/base/TBaseButton.vue'
 import { pageTitle } from '@/global.js'
 import TBaseMenuItem from '@/components/base/TBaseMenuItem.vue'
 import TBaseDropDownMenu from '@/components/base/TBaseDropDownMenu.vue'
+import { useChapterDotStateClass } from '@/composables/useUXHelpers';
 
 export default {
   name: 'Manga',
@@ -689,6 +697,7 @@ export default {
     })
     // expose
     return {
+      useChapterDotStateClass,
       onChapterSearch,
       contentRatingClass,
       continueReading,
