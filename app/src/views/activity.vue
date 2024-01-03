@@ -147,10 +147,10 @@ function getSubTitle (job) {
 
 function getJobType (job) {
   if (job.entityType === 'chapter') {
-    return 'dowload'
+    return 'Download'
   }
   if (job.entityType === 'manga') {
-    return 'import'
+    return 'Import'
   }
   return ''
 }
