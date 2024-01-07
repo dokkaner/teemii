@@ -24,8 +24,10 @@ const AgentCapabilities = Object.freeze({
   CHAPTER_FETCH: 2,
   MANGA_BASIC_RECOMMENDATIONS: 3,
   MANGA_ADVANCED_RECOMMENDATIONS: 4,
-  OPT_AUTH: 5
+  OPT_AUTH: 5,
+  SCROBBLER: 6
 })
+
 /**
  * Filters a list of mangas based on a specific year, if provided.
  * If no year is provided, or no manga is found for the given year, defaults to the first manga.
@@ -88,6 +90,7 @@ class Agent {
     this.credits = ''
     this.tags = []
     this.iconURL = ''
+    this.logoURL = ''
     this.options = ''
     this.lang = []
     this.caps = []
@@ -96,6 +99,8 @@ class Agent {
     this.priority = 50
     this.coverPriority = 0
     this.supportPagination = true
+    this.loggedIn = false
+    this.loginRedirectURL = ''
     // ---
     this.limiter = {}
     this.funcGetMangaById = null
@@ -105,6 +110,7 @@ class Agent {
     this.characterSchema = {}
     this.recommendationsSchema = {}
     this.pageSchema = {}
+    this.scrobblerSchema = {}
     this.funcPreRecoSchema = null
     this.funcPrePageSchema = null
     this.funcPostMangaSchema = null
@@ -115,6 +121,9 @@ class Agent {
     this.funcHelperLookupRecommendations = null
     this.helperLookupRecommendations = null
     this.helperLookupCharacters = null
+    this.helperScrobblerPull = null
+    this.helperScrobblerPush = null
+    this.loginRedirectURL = ''
     this.offsetInc = 100
     this.maxPages = 3
     this.cacheEnabled = false
@@ -369,6 +378,60 @@ class Agent {
     } finally {
       const end = performance.now()
       logger.trace(`${this.id} lookupMangaBasedRecommendations time: ${(end - start).toFixed(1)} ms`)
+    }
+  }
+
+  /**
+   * Performs a scrobbler push operation for a given entry.
+   * This method schedules the push operation using a limiter and logs the time taken for the operation.
+   *
+   * @param {Object} entry - The scrobbler entry data to be pushed.
+   * @returns {Promise<Array>} - A promise that resolves to the result of the push operation.
+   */
+  async scrobblerPush (entry) {
+    const start = performance.now()
+    try {
+      if (!entry.mediaId) {
+        logger.warn(`${this.id} scrobblerPush - No mediaId provided`)
+        return []
+      }
+      return await this.limiter.schedule(() => this.helperScrobblerPush(this.host, entry))
+    } catch (e) {
+      logger.error({ err: e }, 'Error during scrobblerPush:')
+      throw e
+    } finally {
+      const end = performance.now()
+      logger.trace(`${this.id} scrobblerPush time: ${(end - start).toFixed(1)} ms`)
+    }
+  }
+
+  /**
+   * Performs a scrobbler pull operation.
+   *
+   * @returns {Promise<Array|*[]>}
+   */
+  async scrobblerPull () {
+    const start = performance.now()
+    let offset = 0
+    let page = 1
+    const unmappedResults = []
+    try {
+      let currentPageResults
+      do {
+        currentPageResults = await this.limiter.schedule(() => this.helperScrobblerPull(this.host, offset, page))
+        unmappedResults.push(...currentPageResults)
+        offset += this.offsetInc
+        page++
+      } while (currentPageResults.length > 0 && page <= this.maxPages)
+
+      return this.noFilterResult(this.scrobblerSchema, unmappedResults)
+    } catch (e) {
+      logger.error({ err: e }, 'Error during scrobblerPull:')
+      this.handleError()
+      return []
+    } finally {
+      const end = performance.now()
+      logger.trace(`${this.id} scrobblerPull time: ${(end - start).toFixed(1)} ms`)
     }
   }
 

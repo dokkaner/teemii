@@ -12,7 +12,6 @@ function parseCustomDate (dateStr) {
   // Extraction des parties de la date
   const parts = dateStr.match(/(\w+)\s(\d+),(\d+)/)
   if (!parts) {
-    logger.warn(dateStr, 'Failed to parse date')
     // possible that the date is "hour ago" or "yesterday"
     return new Date()
   }

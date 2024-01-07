@@ -44,7 +44,7 @@
                 </div>
                 <div v-if="manga.score" class="flex items-center space-x-1 rounded-xl bg-main-900/90 px-4 py-2">
                   <component :is="heroIcons['StarIcon']" v-if="isLoaded" class="h-4 w-4 text-light-400"/>
-                  <span class="text-xs text-light-200">{{ manga.score }}</span>
+                  <span class="text-xs text-light-200">{{ Number(manga.score).toFixed(2)  }}</span>
                 </div>
               </div>
             </div>

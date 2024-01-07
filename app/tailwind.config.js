@@ -1,4 +1,3 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
 const plugin = require('tailwindcss/plugin')
 
 module.exports = {
@@ -7,7 +6,7 @@ module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     fontFamily: {
-      sans: ['Radio Canada', ...defaultTheme.fontFamily.sans]
+      sans: ['Mona Sans', 'sans-serif'],
     },
     extend: {
       textShadow: {

@@ -6,6 +6,7 @@ const UploadController = require('./uploadController')
 const ChapterController = require('./chapterController')
 const AuthController = require('./authController')
 const BackupController = require('./backupController')
+const ServicesController = require('./servicesController')
 
 const libCtl = new LibraryController()
 const preferencesCtl = new PreferencesController()
@@ -15,6 +16,7 @@ const uploadCtl = new UploadController()
 const chapterCtl = new ChapterController()
 const authCtl = new AuthController()
 const backupCtl = new BackupController()
+const servicesCtl = new ServicesController()
 
 module.exports = {
   authCtl,
@@ -24,5 +26,6 @@ module.exports = {
   settingsCtl,
   logCtl,
   uploadCtl,
-  backupCtl
+  backupCtl,
+  servicesCtl
 }

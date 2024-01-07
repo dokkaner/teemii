@@ -1,5 +1,11 @@
 const fs = require('fs')
-const { validateSchema, refLookupSchema, refMangaSchema, refChapterSchema, refPageSchema } = require('../core/schemas.js')
+const {
+  validateSchema,
+  refLookupSchema,
+  refMangaSchema,
+  refChapterSchema,
+  refPageSchema
+} = require('../core/schemas.js')
 const { logger } = require('../loaders/logger.js')
 const { AgentCapabilities } = require('./agent.js')
 const _ = require('lodash')
@@ -304,6 +310,7 @@ class AgentsManager {
    * @returns {Promise<Object|null>} - A promise that resolves to a unified result object or null if no results are found.
    */
   async searchMangaByTitleYearAuthors (title, altTitles, year, authors, agents = []) {
+    if (!title) return null
     const searchPromises = []
     for (const agent of this.#internalAgents) {
       // Check if agents array is specified and contains the current agent's ID
@@ -364,11 +371,29 @@ class AgentsManager {
   }
 
   async agentsLogin () {
+    try {
+      for (const a of this.#internalAgents) {
+        if (a.caps.includes(AgentCapabilities.OPT_AUTH)) {
+          await a.instance.login()
+        }
+      }
+    } catch (e) {
+      logger.error({ err: e }, 'Something went wrong while logging in to agents')
+    }
+  }
+
+  getAgents (caps = []) {
+    if (caps.length === 0) {
+      return this.#internalAgents
+    }
+    const agents = []
     for (const a of this.#internalAgents) {
-      if (a.caps.includes(AgentCapabilities.OPT_AUTH)) {
-        await a.instance.login()
+      // check if agent has all the capabilities
+      if (caps.every((cap) => a.caps.includes(cap))) {
+        agents.push(a)
       }
     }
+    return agents
   }
 
   // #endregion

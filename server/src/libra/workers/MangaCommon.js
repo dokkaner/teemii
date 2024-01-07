@@ -331,7 +331,7 @@ async function upsertManga (slug, year) {
   }
 }
 
-async function importOrCreateManga (jobID, title, year, externalIds) {
+async function importOrCreateManga (jobID, title, year, externalIds, trackingInfo) {
   const lookupAgents = await services.agents.agentsEnabledForCapability('MANGA_METADATA_FETCH')
   const metadataAgents = []
   const extraAgents = []
@@ -361,6 +361,8 @@ async function importOrCreateManga (jobID, title, year, externalIds) {
 
   manga.state = 2
   manga.slug = slug
+  if (trackingInfo) manga.scrobblersKey = trackingInfo
+
   if (meta.insertMode === 0) {
     await orm.manga.upsert(manga, { returning: true, plain: true })
   } else {

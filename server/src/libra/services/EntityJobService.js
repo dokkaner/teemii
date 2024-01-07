@@ -1,12 +1,21 @@
 const { orm } = require('../../loaders/sequelize')
+const { logger } = require('../../loaders/logger')
 
 class EntityJobService {
   async createEntityJob (entityId, entityType, jobId) {
-    await orm.entityJob.upsert({
-      entityId,
-      entityType,
-      jobId
-    })
+    try {
+      await orm.entityJob.create({
+        entityId,
+        entityType,
+        jobId
+      })
+    } catch (e) {
+      if (e.name === 'SequelizeUniqueConstraintError' || e.name === 'SequelizeForeignKeyConstraintError') {
+        logger.warn(`EntityJob already exists for entity ${entityType} ${entityId} and job ${jobId}`)
+        return
+      }
+      throw e
+    }
   }
 
   async getAllJobsWithEntity (limit = 100, offset = 0) {

@@ -12,6 +12,7 @@ const ComputeSuggesterWorker = require('../libra/workers/ComputeSuggesterWorker'
 const { QueueMode } = require('../libra/queues/Queue')
 const { configManager, BACKUP_DIR, LOGS_DIR, CONFIG_DIR, TEMP_DIR } = require('../loaders/configManager')
 const CBxImportWorker = require('../libra/workers/ComicBookArchiveImportWorker')
+const ScrobblersWorker = require('../libra/workers/ScrobblersWorker')
 
 async function createDefaultJobs () {
   try {
@@ -59,6 +60,17 @@ async function createDefaultJobs () {
       entityId: null
     }
 
+    const scrobblerJob = {
+      for: 'scrobblersQueue',
+      options: {
+        maxRetries: 1,
+        retryInterval: 10 * 1000 * 60, // 10 minutes
+        timeout: 1000 * 60 * 60 // 60 minutes
+      },
+      payload: {},
+      entityId: null
+    }
+
     // workers
     const importWorker = new MangaImportWorker('MangaImportWorker')
     const downloadWorker = new ChapterDownloadWorker('ChapterDownloadWorker')
@@ -67,6 +79,7 @@ async function createDefaultJobs () {
     const computeReadingWorker = new ComputeReadingWorker('ComputeReadingWorker')
     const computeSuggesterWorker = new ComputeSuggesterWorker('ComputeSuggesterWorker')
     const importCBXWorker = new CBxImportWorker('CBxImportWorker')
+    const scrobblersWorker = new ScrobblersWorker('ScrobblerWorker')
 
     // queues
     await queueManager.setupQueueWithScheduler('mangaImportQueue', importWorker, 'mangaImportScheduler', '*/10 * * * * *')
@@ -76,6 +89,7 @@ async function createDefaultJobs () {
     await queueManager.setupQueueWithSchedulerWithJob('libraryUpdateQueue', libUpdateWorker, 'libraryUpdateScheduler', '0 * * * *', libUpdateJob, QueueMode.CALLED, true)
     await queueManager.setupQueueWithSchedulerWithJob('computeReadingQueue', computeReadingWorker, 'computeReadingScheduler', '*/2 * * * *', computeReadJob)
     await queueManager.setupQueueWithSchedulerWithJob('computeSuggesterQueue', computeSuggesterWorker, 'computeSuggesterScheduler', '0 1 * * *', computeSuggesterJob, QueueMode.IMMEDIATE, true)
+    await queueManager.setupQueueWithSchedulerWithJob('scrobblersQueue', scrobblersWorker, 'scrobblersScheduler', '10 * * * *', scrobblerJob)
 
     // await queueManager.runImmediateJob('computeSuggesterQueue', computeSuggesterJob)
     // await queueManager.injectJobs('cbxImportQueue', [testImportCBZ])
