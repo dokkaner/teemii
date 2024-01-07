@@ -11,6 +11,44 @@ module.exports = class preferencesService {
     }
   }
 
+  async defaultScrobblersEntries () {
+    // scrobblers kitsu & anilist
+    await this.#checkAndCreatePreference('preferences.integrations.kitsu.scrobbler', {
+      Sync2Way: false,
+      ImportNew: false,
+      enabled: false,
+      status: 0,
+      excludedGenres: [],
+      serviceURL: 'https://kitsu.io/',
+      logo: 'https://kitsu.io/apple-touch-icon-c0052e253a1d5fabba7e20b97b1b8ad6.png'
+    })
+
+    await this.#checkAndCreatePreference('preferences.integrations.anilist.scrobbler', {
+      Sync2Way: false,
+      ImportNew: false,
+      enabled: false,
+      status: 0,
+      excludedGenres: [],
+      serviceURL: 'https://anilist.co/',
+      logo: 'https://anilist.co/img/icons/android-chrome-512x512.png'
+    })
+
+    // then security
+    await this.#checkAndCreatePreference('preferences.integrations.kitsu.security', {
+      username: '',
+      password: '',
+      token: '',
+      loginRedirectURL: ''
+    })
+
+    await this.#checkAndCreatePreference('preferences.integrations.anilist.security', {
+      username: '',
+      password: '',
+      token: '',
+      loginRedirectURL: ''
+    })
+  }
+
   async initializeUserPreferences () {
     try {
       const newPreferences = {}
@@ -53,42 +91,7 @@ module.exports = class preferencesService {
       await this.#checkAndCreatePreference('preferences.agentAuth.openai_key', '')
       await this.#checkAndCreatePreference('preferences.agentAuth.goodreads_key', '')
 
-      // scrobblers kitsu & anilist
-      await this.#checkAndCreatePreference('preferences.integrations.kitsu.scrobbler', {
-        Sync2Way: false,
-        ImportNew: false,
-        enabled: false,
-        status: 0,
-        excludedGenres: [],
-        serviceURL: 'https://kitsu.io/',
-        logo: 'https://kitsu.io/apple-touch-icon-c0052e253a1d5fabba7e20b97b1b8ad6.png'
-      })
-
-      await this.#checkAndCreatePreference('preferences.integrations.anilist.scrobbler', {
-        Sync2Way: false,
-        ImportNew: false,
-        enabled: false,
-        status: 0,
-        excludedGenres: [],
-        serviceURL: 'https://anilist.co/',
-        logo: 'https://anilist.co/img/icons/android-chrome-512x512.png'
-      })
-
-      // then security
-      await this.#checkAndCreatePreference('preferences.integrations.kitsu.security', {
-        username: '',
-        password: '',
-        token: '',
-        loginRedirectURL: ''
-      })
-
-      await this.#checkAndCreatePreference('preferences.integrations.anilist.security', {
-        username: '',
-        password: '',
-        token: '',
-        loginRedirectURL: ''
-      })
-
+      await this.defaultScrobblersEntries()
       return { success: true, code: 200, body: 'OK' }
     } catch (e) {
       logger.error({ err: e }, 'initializeUserPreferences')

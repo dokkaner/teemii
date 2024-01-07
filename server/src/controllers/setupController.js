@@ -135,7 +135,7 @@ async function setupFinalize (req, res) {
     configManager.setSetupCompleted(true)
 
     await createDefaultJobs()
-    scrobblersManager.registerScrobblers()
+    await scrobblersManager.registerScrobblers()
 
     res.status(200).json({ setupCompleted: true })
   } catch (e) {

@@ -35,7 +35,7 @@ async function startServer () {
     buildIndexFromCSV('./index/manga.csv')
     await agents.setCacheMode(true)
     await agents.agentsLogin()
-    scrobblersManager.registerScrobblers()
+    await scrobblersManager.registerScrobblers()
 
     logger.log('-----------------------------------')
     logger.log(`${name} v${version} (c) ${author}`)

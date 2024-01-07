@@ -6,6 +6,7 @@ const queueManager = require('../libra/queues/QueueManager')
 const { Job } = require('../libra/jobs/Job')
 const { v4: uuidv4 } = require('uuid')
 const { configManager } = require('../loaders/configManager')
+const services = require('./index')
 
 const scrobblerEntryStatus = Object.freeze({
   CURRENT: 'current',
@@ -141,7 +142,7 @@ class ScrobblersManager {
       }
       await configManager.saveConfig()
       await agents.agent(name).instance.login()
-      this.registerScrobblers()
+      await this.registerScrobblers()
     } catch (e) {
       logger.error({ e }, 'Error processing updateScrobblers request')
       scrobblers[name].scrobbler.status = 3 // Status indicating a login failure
@@ -169,7 +170,13 @@ class ScrobblersManager {
    * Registers agents with SCROBBLER capability to the scrobblers list.
    * Iterates through each agent and adds them to the scrobblers array if they have SCROBBLER capability.
    */
-  registerScrobblers () {
+  async registerScrobblers () {
+    // be sure that the conf entries are up-to-date
+    const currentsAgents = configManager.get('preferences.integrations')
+    if (!currentsAgents) {
+      await services.preferences.defaultScrobblersEntries()
+    }
+
     const scrobblerAgents = agents.getAgents([AgentCapabilities.SCROBBLER])
     this.scrobblers = []
     for (const agent of scrobblerAgents) {
@@ -311,7 +318,8 @@ class ScrobblersManager {
   async #scrobblerPush () {
     logger.info('Pushing updates to scrobblers...')
     const mangas = await orm.manga.findAll()
-    let updatedEntries = 0; let errors = 0
+    let updatedEntries = 0
+    let errors = 0
 
     for (const agent of this.scrobblers.filter(a => this.scrobblersSettings[a.id].enabled && a.instance.loggedIn)) {
       for (const manga of mangas.filter(m => !this.#genresAreExcluded(agent.id, m.genres))) {
