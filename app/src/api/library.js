@@ -484,4 +484,20 @@ export default {
     const endpoint = '/api/v2/backup/download'
     return await axios.post(endpoint, payload, { responseType: 'blob' })
   },
+
+  // scrobblers API
+  async getScrobblers () {
+    const endpoint = '/api/v2/scrobblers'
+    return await fetchWithRetry(endpoint, false)
+  },
+
+  async postScrobblerSettings (name, payload) {
+    const endpoint = `/api/v2/scrobblers/${name}`
+    return await postWithRetry(endpoint, payload, 1)
+  },
+
+  async getScrobblersStatistics () {
+    const endpoint = '/api/v2/scrobblers/statistics'
+    return await fetchWithRetry(endpoint, false)
+  }
 }

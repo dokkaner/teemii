@@ -31,7 +31,8 @@ const getAllMigrations = async (db) => {
 
     // Convert the list of completed migrations into a Set for efficient lookup
     const dbMigrationsSet = new Set(dbMigrations.map(({ name }) => name))
-    const pendingMigrations = []; const completedMigrations = []
+    const pendingMigrations = []
+    const completedMigrations = []
 
     // Categorize each migration as either completed or pending
     for (const migration of validMigrations) {
@@ -86,23 +87,27 @@ const UpAllMigration = async (db) => {
     const output = []
 
     for (const migrationName of pendingMigrations) {
-      // Dynamically require the migration module
       const migrationPath = path.join(process.cwd(), '/migrations', migrationName)
       const migration = require(migrationPath)
 
-      // Execute the 'up' method of the migration
-      const result = await migration.up(db.queryInterface, Sequelize)
+      try {
+        const result = await migration.up(db.queryInterface, Sequelize)
 
-      // Record the migration in the database
-      await db.query('INSERT INTO `SequelizeMeta` (name) VALUES (:name)', {
-        type: Sequelize.QueryTypes.INSERT,
-        replacements: { name: migrationName }
-      })
+        await db.query('INSERT INTO `SequelizeMeta` (name) VALUES (:name)', {
+          type: Sequelize.QueryTypes.INSERT,
+          replacements: { name: migrationName }
+        })
 
-      output.push(result)
-      logger.info(`- Applied migration ${migrationName} successfully`)
+        output.push(result)
+        logger.info(`- Applied migration ${migrationName} successfully`)
+      } catch (error) {
+        if (error.message?.includes('duplicate column name:')) {
+          logger.warn(`Migration ${migrationName} already applied`)
+        } else {
+          throw new Error(`Error applying migration ${migrationName}: ${error.message}`)
+        }
+      }
     }
-
     return output
   } catch (error) {
     throw new Error(`Error in UpAllMigration: ${error.message}`)
@@ -205,7 +210,7 @@ class ORMService {
   }
 
   async checkApplyMigrations () {
-    await UpAllMigration(this.sequelize)
+    return await UpAllMigration(this.sequelize)
     // await downAllMigration(this.sequelize)
   }
 

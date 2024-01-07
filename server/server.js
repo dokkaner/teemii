@@ -9,6 +9,7 @@ const { buildIndexFromCSV } = require('./src/services/indexerService')
 const { logger } = require('./src/loaders/logger')
 const { backup } = require('./src/services/backupService')
 const { LOGS_DIR } = require('./src/loaders/configManager')
+const { scrobblersManager } = require('./src/services/scrobblerService')
 
 async function startServer () {
   try {
@@ -34,6 +35,7 @@ async function startServer () {
     buildIndexFromCSV('./index/manga.csv')
     await agents.setCacheMode(true)
     await agents.agentsLogin()
+    scrobblersManager.registerScrobblers()
 
     logger.log('-----------------------------------')
     logger.log(`${name} v${version} (c) ${author}`)

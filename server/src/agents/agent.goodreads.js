@@ -90,7 +90,7 @@ class Goodreads extends Agent {
   async #helperLookupMangas (host, query, offset, page) {
     const apikey = configManager.get('preferences.agentAuth.goodreads_key', true)
     if (!apikey) {
-      logger.error('Goodreads API key not set')
+      logger.warn('Goodreads API key not set')
       return []
     }
 

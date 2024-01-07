@@ -8,7 +8,7 @@
       {{ label }}
       <span v-show="required" class="text-sm text-red-500"> *</span>
       <slot v-if="hasRightLabelSlot" name="labelRight"/>
-      <span v-if="tooltip" :data-tip="tooltip" class="tooltip tooltip-top h-4 cursor-pointer text-main-400 hover:text-main-600">
+      <span v-if="tooltip" :data-tip="tooltip" class="tooltip tooltip-left h-4 cursor-pointer text-main-400 hover:text-main-600">
         <TBaseIcon name="InformationCircleIcon"/>
       </span>
     </label>

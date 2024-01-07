@@ -11,7 +11,7 @@
               <router-link :to="item.href"
                            :class="[item.current ? 'border-l-2 border-accent-600 text-white' : 'text-white hover:text-light-600', 'group flex shrink-0 flex-col items-center p-3 text-xs font-medium']"
                            :aria-current="item.current ? 'page' : undefined">
-                <component :is="heroIcons[item.icon]" v-if="isLoaded"
+                <component :is="iconoir[item.icon]" v-if="isLoaded"
                            :class="[item.current ? 'text-light-500' : 'text-light-300 group-hover:text-light-600', 'h-6 w-6']"
                            aria-hidden="true"/>
                 <span class="mt-2">{{ item.name }}</span>
@@ -132,6 +132,7 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
+import * as iconoir from '@iconoir/vue';
 
 export default {
   components: {
@@ -150,11 +151,12 @@ export default {
     const previousRoutePath = ref('')
     const currentRoutePath = ref('')
     const navigation = ref([
-      { name: 'Home', href: '/', primary: true, icon: 'HomeIcon', current: false },
-      { name: 'Search', href: '/search', primary: true, icon: 'MagnifyingGlassIcon', current: false },
-      { name: 'Collection', href: '/mangas', primary: true, icon: 'FolderIcon', current: false },
-      { name: 'Activity', href: '/activity', primary: true, icon: 'BoltIcon', current: false },
-      { name: 'Settings', href: '/settings', primary: false, icon: 'AdjustmentsVerticalIcon', current: false }
+      { name: 'Home', href: '/', primary: true, icon: 'HomeSimple', current: false },
+      { name: 'Search', href: '/search', primary: true, icon: 'Search', current: false },
+      { name: 'Collection', href: '/mangas', primary: true, icon: 'BookStack', current: false },
+      { name: 'Activity', href: '/activity', primary: true, icon: 'Activity', current: false },
+      { name: 'Sync.', href: '/integration', primary: true, icon: 'CloudSync', current: false },
+      { name: 'Settings', href: '/settings', primary: false, icon: 'Settings', current: false }
     ])
 
     const navTitle = ref('Home')
@@ -204,6 +206,7 @@ export default {
       storeHelpers,
       manga,
       statusText,
+      iconoir,
       heroIcons,
       isLoaded,
       navigation,

@@ -4,23 +4,45 @@ const axios = require('axios')
 const { logger } = require('../loaders/logger')
 const utils = require('../utils/agent.utils')
 const cheerio = require('cheerio')
+const { configManager } = require('../loaders/configManager')
 
 class Kitsu extends Agent {
   // #region private
+  #jwtSession = ''
+  #jwtRefresh = ''
+  #userId = ''
 
   #limiter = new Bottleneck({
     maxConcurrent: 5,
     minTime: 1000
   })
 
-  #lookupSchema = {
+  #scrobblerSchema = {
     id: 'id',
-    title: {
-      path: 'attributes.titles',
+    type: 'type',
+    status: 'attributes.status',
+    progress: 'attributes.progress',
+    reconsuming: 'attributes.reconsuming',
+    reconsumeCount: 'attributes.reconsumeCount',
+    startedAt: 'attributes.startedAt',
+    finishedAt: 'attributes.finishedAt',
+    rating: 'attributes.rating',
+    ratingTwenty: 'attributes.ratingTwenty',
+    mangaId: 'relationships.manga.data.id',
+    mangaType: 'relationships.manga.data.type',
+    mangaTitle: 'manga.attributes.canonicalTitle',
+    mangaYear: {
+      path: 'manga.attributes.startDate',
       fn: (propertyValue, source) => {
-        return propertyValue.en || propertyValue.en_jp || propertyValue.en_us
+        if (propertyValue) { return (propertyValue.slice(0, 4)) }
       }
     },
+    mangaAuthors: ''
+  }
+
+  #lookupSchema = {
+    id: 'id',
+    title: 'attributes.canonicalTitle',
     altTitles: '',
     desc: 'attributes.synopsis',
     status: 'attributes.status',
@@ -141,7 +163,7 @@ class Kitsu extends Agent {
   };
 
   #helperLookupMangas (host, query, offset, page) {
-    const url = `${host}/api/edge/manga/?filter[text]=${query}&page[limit]=20&page[offset]=${offset}&filter[subtype]=manga&sort=-userCount`
+    const url = `${host}/api/edge/manga/?filter[text]=${query}&page[limit]=20&page[offset]=${offset}&filter[subtype]=Manhwa,Manga&sort=-userCount`
     return new Promise(function (resolve, reject) {
       axios
         .get(url, {
@@ -212,6 +234,86 @@ class Kitsu extends Agent {
     })
   };
 
+  #helperScrobblerPush (host, entry) {
+    const url = entry.trackingId ? `${host}/api/edge/library-entries/${entry.trackingId}` : `${host}/api/edge/library-entries`
+    const method = entry.trackingId ? 'patch' : 'post'
+    const data = {
+      ...(entry.trackingId && { id: entry.trackingId }),
+      attributes: {
+        status: entry.status,
+        progress: entry.progress,
+        // volumesOwned:
+        rating: entry.rating,
+        ratingTwenty: entry.rating * 4,
+        ...(entry.startedAt && { startedAt: entry.startedAt }),
+        ...(entry.finishedAt && { finishedAt: entry.finishedAt })
+      },
+      relationships: {
+        manga: {
+          data: {
+            type: 'manga',
+            id: entry.mediaId
+          }
+        },
+        user: {
+          data: {
+            type: 'users',
+            id: this.#userId
+          }
+        }
+      },
+      type: 'library-entries'
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${this.#jwtSession}`,
+        'Content-Type': 'application/vnd.api+json',
+        Accept: 'application/vnd.api+json'
+      }
+    }
+    return new Promise((resolve, reject) => {
+      axios[method](encodeURI(url), { data }, config)
+        .then((res) => {
+          const data = res.data.data
+          const result = { agent: 'kitsu', id: data.id, status: 'success' }
+          resolve(result)
+        })
+        .catch((e) => {
+          logger.error({ err: e })
+          reject(e)
+        })
+    })
+  }
+
+  #helperScrobblerPull (host, offset, page) {
+    const url = `${host}/api/edge/library-entries?filter[userId]=${this.#userId}&filter[kind]=manga&include=manga&page[limit]=20&page[offset]=${offset}`
+    const config = {
+      headers: {
+        Authorization: `Bearer ${this.#jwtSession}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/vnd.api+json'
+      }
+    }
+    return new Promise(function (resolve, reject) {
+      axios
+        .get(encodeURI(url), config)
+        .then((res) => {
+          const data = res.data.data
+
+          for (const entry of data) {
+            entry.manga = res.data.included.find((m) => m.id === entry.relationships.manga.data.id)
+          }
+
+          resolve(data)
+        })
+        .catch(function (e) {
+          logger.error({ err: e })
+          reject(e)
+        })
+    })
+  }
+
   // #endregion
 
   // #region public
@@ -223,22 +325,98 @@ class Kitsu extends Agent {
     this.credits = 'kitsu'
     this.tags = []
     this.iconURL = 'https://kitsu.io/favicon-32x32-3e0ecb6fc5a6ae681e65dcbc2bdf1f17.png'
+    this.logoURL = 'https://kitsu.io/apple-touch-icon-c0052e253a1d5fabba7e20b97b1b8ad6.png'
     this.sourceURL = 'https://kitsu.io/manga/[id]'
     this.options = ''
     this.lang = ['en']
-    this.caps = [AgentCapabilities.MANGA_METADATA_FETCH]
+    this.caps = [AgentCapabilities.MANGA_METADATA_FETCH, AgentCapabilities.OPT_AUTH, AgentCapabilities.SCROBBLER]
     this.host = 'https://kitsu.io'
     this.limiter = this.#limiter
     this.offsetInc = 100
     this.maxPages = 3
     this.mangaSchema = this.#mangaSchema
     this.lookupSchema = this.#lookupSchema
+    this.scrobblerSchema = this.#scrobblerSchema
     this.funcGetMangaById = this.#getMangaById
     this.funcHelperLookupMangas = this.#helperLookupMangas
     this.getCanonicalID = this.#getCanonicalID
     this.helperLookupRecommendations = this.#helperLookupRecommendations
+    this.helperScrobblerPull = this.#helperScrobblerPull
+    this.helperScrobblerPush = this.#helperScrobblerPush
+    this.loggedIn = false
     this.coverPriority = 10
   };
+
+  async login () {
+    const username = configManager.get('preferences.integrations.kitsu.security.username')
+    const password = configManager.get('preferences.integrations.kitsu.security.password', true)
+    if (!username || !password) {
+      logger.warn('Kitsu Login failed: No username or password provided')
+      return
+    }
+    const data = {
+      grant_type: 'password',
+      username,
+      password: encodeURIComponent(password) //  RFC3986
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/vnd.api+json'
+      }
+    }
+    await axios.post('https://kitsu.io/api/oauth/token', data, config)
+      .then(res => {
+        logger.info('Kitsu Logged in')
+        this.#jwtSession = res?.data?.access_token
+        this.#jwtRefresh = res?.data?.refresh_token
+        this.getUser()
+        this.loggedIn = true
+      })
+      .catch(e => {
+        this.loggedIn = false
+        logger.warn({ err: e }, 'Kitsu Login failed')
+        throw new Error('Kitsu Login failed')
+      })
+  }
+
+  async refreshTokens () {
+    const data = {
+      grant_type: 'refresh_token',
+      refresh_token: this.#jwtRefresh
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/vnd.api+json'
+      }
+    }
+    await axios.post('https://kitsu.io/api/oauth/token', data, config)
+      .then(res => {
+        logger.info('Kitsu Tokens refreshed')
+        this.#jwtSession = res?.data?.access_token
+        this.#jwtRefresh = res?.data?.refresh_token
+      })
+      .catch(err => {
+        this.loggedIn = false
+        logger.warn('Kitsu Tokens refresh failed', err)
+      })
+  }
+
+  async getUser () {
+    const url = 'https://kitsu.io/api/edge/users?filter[self]=true'
+    const config = {
+      headers: {
+        'Content-Type': 'application/vnd.api+json',
+        Accept: 'application/vnd.api+json',
+        Authorization: `Bearer ${this.#jwtSession}`
+      }
+    }
+    const res = await axios.get(url, config)
+    this.#userId = res?.data?.data[0]?.id
+  }
 
   // #endregion
 }
