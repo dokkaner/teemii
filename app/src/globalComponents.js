@@ -1,7 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import EmptyLayout from './components/EmptyLayout.vue'
 import DefaultLayout from './components/DefaultLayout.vue'
-import VueSlider from 'vue-slider-component'
 
 export const defineGlobalComponents = (app) => {
   const components = import.meta.glob('./components/base/*.vue', { eager: true })
@@ -28,5 +27,4 @@ export const defineGlobalComponents = (app) => {
   app.component('default-layout', DefaultLayout)
   app.component('empty-layout', EmptyLayout)
   app.component('BaseMultiselect', BaseMultiselect)
-  app.component('VueSlider', VueSlider)
 }

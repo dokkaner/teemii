@@ -22,7 +22,7 @@
               placeholder="language"
               :invalid="v$.langs.$error"
               searchable
-              :max="2"
+              :max="4"
               mode="tags"
               class="w-full"
           >

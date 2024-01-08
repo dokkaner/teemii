@@ -28,7 +28,7 @@ class MangaImportWorker extends Worker {
     logger.info(`Processing manga import job for '${payload.title}'.`)
     const { title, year, externalIds } = payload
 
-    await importOrCreateManga(job.id, title, year, externalIds)
+    await importOrCreateManga(job.id, title, year, externalIds, payload.tracking)
 
     return { success: true, code: 200, body: 'OK' }
   }

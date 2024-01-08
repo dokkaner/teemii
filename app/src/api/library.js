@@ -56,9 +56,9 @@ const deleteWithResponse = (url) => {
         resolve({ success: true, data: response.data, status: response.status })
       })
       .catch(error => {
-        // If error.response is available, it's an error response from the server
+      // If error.response is available, it's an error response from the server
         if (error.response) {
-          // Server responded with a status code outside the 2xx rangec
+        // Server responded with a status code outside the 2xx rangec
           const errorObj = {
             success: false,
             message: error.message,
@@ -67,7 +67,7 @@ const deleteWithResponse = (url) => {
           }
           reject(new Error(JSON.stringify(errorObj)))
         } else if (error.request) {
-          // Request was made but no response was received
+        // Request was made but no response was received
           const errorObj = {
             success: false,
             message: 'No response was received',
@@ -75,7 +75,7 @@ const deleteWithResponse = (url) => {
           }
           reject(new Error(JSON.stringify(errorObj)))
         } else {
-          // Something happened in setting up the request that triggered an error
+        // Something happened in setting up the request that triggered an error
           const errorObj = {
             success: false,
             message: error.message,
@@ -226,9 +226,9 @@ export default {
     return await postWithRetry(endpoint, data, 1)
   },
 
-  async publishReadStatus (pageId, pageNumber) {
+  async publishReadStatus (pageId, pageNumber, payload) {
     const endpoint = `/api/v1/reading/${pageId}/${pageNumber}`
-    return await postWithRetry(endpoint, {}, 1)
+    return await postWithRetry(endpoint, payload, 1)
   },
 
   async postCreateDB () {
@@ -484,4 +484,20 @@ export default {
     const endpoint = '/api/v2/backup/download'
     return await axios.post(endpoint, payload, { responseType: 'blob' })
   },
+
+  // scrobblers API
+  async getScrobblers () {
+    const endpoint = '/api/v2/scrobblers'
+    return await fetchWithRetry(endpoint, false)
+  },
+
+  async postScrobblerSettings (name, payload) {
+    const endpoint = `/api/v2/scrobblers/${name}`
+    return await postWithRetry(endpoint, payload, 1)
+  },
+
+  async getScrobblersStatistics () {
+    const endpoint = '/api/v2/scrobblers/statistics'
+    return await fetchWithRetry(endpoint, false)
+  }
 }

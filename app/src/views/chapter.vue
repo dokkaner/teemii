@@ -1,5 +1,5 @@
 <template>
-  <div v-show="!storeIsLoading" class="flex">
+  <div v-if="!storeIsLoading && isLoaded" class="flex">
     <TransitionRoot as="template" :show="mobileSidebarOpen">
       <Dialog as="div" class="relative z-50 lg:hidden" @close="mobileSidebarOpen = false">
         <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0"
@@ -53,18 +53,23 @@
                         </button>
                       </li>
 
-                      <li class="mx-auto inline-flex text-light-900 m-2">
-                          <TBaseRating v-model="chapter.userRating" :disabled="false" colorClass="bg-orange-400" sizeClass="rating-xs"
-                                       @change="onUpdateChapter"/>
+                      <li class="m-2 mx-auto inline-flex text-light-900">
+                        <TBaseRating v-model="chapter.userRating" :disabled="false" colorClass="bg-orange-400"
+                                     sizeClass="rating-xs"
+                                     @change="onUpdateChapter"/>
                       </li>
                     </ul>
                   </nav>
 
-                  <div class="my-auto mx-auto max-w-fit pt-2">
-                    <div id="previewThumbDiv" class="grid grid-cols-2 gap-2 overflow-y-auto max-h-[calc(100vh-4rem)]" ref="gridContainer">
-                      <div v-for="item in pages" :key="item.id" :id="item.pageNumber" class="cursor-pointer rounded-lg overflow-hidden">
-                        <img class="h-auto max-w-full rounded-lg" :src="getPage(item.id)" :alt="item.pageNumber" :id="`tb-${item.pageNumber}`"
-                             :class="previewThumbClass(Number(item.pageNumber))" @click="gotoPage(Number(item.pageNumber), false)">
+                  <div class="m-auto max-w-fit pt-2">
+                    <div id="previewThumbDiv" class="grid max-h-[calc(100vh-4rem)] grid-cols-2 gap-2 overflow-y-auto"
+                         ref="gridContainer">
+                      <div v-for="item in pages" :key="item.id" :id="item.pageNumber"
+                           class="cursor-pointer overflow-hidden rounded-lg">
+                        <img class="h-auto max-w-full rounded-lg" :src="getPage(item.id)" :alt="item.pageNumber"
+                             :id="`tb-${item.pageNumber}`"
+                             :class="previewThumbClass(Number(item.pageNumber))"
+                             @click="gotoPage(Number(item.pageNumber), false)">
                       </div>
                     </div>
                   </div>
@@ -76,12 +81,13 @@
       </Dialog>
     </TransitionRoot>
 
-    <div v-show="desktopSidebarOpen" class="hidden overflow-hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+    <div v-show="desktopSidebarOpen"
+         class="hidden overflow-hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-main-500 p-6 scrollbar-none">
         <div class="mx-auto flex shrink-0 items-center">
-          <router-link :to="{ name: 'Manga', params: {id: manga.id, page: 1} }">
+          <router-link :to="{ name: 'Manga', params: {id: manga?.id, page: 1} }">
             <p class="line-clamp-1 text-xs font-bold uppercase tracking-widest text-light-600 transition duration-100 hover:text-accent-500">
-              {{ manga.canonicalTitle }} </p>
+              {{ manga?.canonicalTitle }} </p>
           </router-link>
         </div>
 
@@ -98,7 +104,7 @@
                 </svg>
               </button>
               <div class="line-clamp-1 flex-auto text-xs font-medium tracking-tighter text-light-100">
-                <div class="flex items-center gap-x-2.5 text-xs leading-5 text-main-400" >
+                <div class="flex items-center gap-x-2.5 text-xs leading-5 text-main-400">
                   <span class="tooltip tooltip-top mx-auto w-36 truncate">{{ chapter.canonicalTitle }}
                   </span>
                 </div>
@@ -118,29 +124,31 @@
             </li>
             <li class="mx-auto inline-flex text-light-900">
               <!-- Toolbar -->
-                <div class="my-auto justify-center align-middle">
-                  <p class="mx-auto whitespace-nowrap text-xs text-white">{{viewer.currentPage}} / {{viewer.totalPages}}</p>
-                </div>
-                <button @click="gotoPage(1)"
-                        class="inline-flex h-8 w-8 items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-white hover:bg-main-100 hover:text-accent-500 disabled:pointer-events-none disabled:opacity-50">
-                  <component :is="ArrowUpCircleIcon" class="mx-auto h-5 w-5" aria-hidden="true"/>
-                </button>
-                <button @click="changePageMode(viewer.pageMode)"
-                        class="inline-flex h-8 w-8 items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-white hover:bg-main-100 hover:text-accent-500 disabled:pointer-events-none disabled:opacity-50">
-                  <component :is="viewer.pageMode.icon" class="mx-auto h-5 w-5" aria-hidden="true"/>
-                </button>
-                <button @click="changeFitMode(viewer.fitMode)"
-                        class="inline-flex h-8 w-8 items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-white hover:bg-main-100 hover:text-accent-500 disabled:pointer-events-none disabled:opacity-50">
-                  <component :is="viewer.fitMode.icon" class="mx-auto h-5 w-5" aria-hidden="true"/>
-                </button>
-                <button @click="toggleFullScreen()"
-                        class="inline-flex h-8 w-8 items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-white hover:bg-main-100 hover:text-accent-500 disabled:pointer-events-none disabled:opacity-50">
-                  <component :is="ComputerDesktopIcon" class="mx-auto h-5 w-5" aria-hidden="true"/>
-                </button>
-                <span class="tooltip tooltip-bottom py-1 before:text-xs before:content-[attr(data-tip)]"
-                      data-tip="your rating">
+              <div class="my-auto justify-center align-middle">
+                <p class="mx-auto whitespace-nowrap text-xs text-white">{{ viewer.currentPage }} /
+                  {{ viewer.totalPages }}</p>
+              </div>
+              <button @click="gotoPage(1)"
+                      class="inline-flex h-8 w-8 items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-white hover:bg-main-100 hover:text-accent-500 disabled:pointer-events-none disabled:opacity-50">
+                <component :is="ArrowUpCircleIcon" class="mx-auto h-5 w-5" aria-hidden="true"/>
+              </button>
+              <button @click="changePageMode(viewer.pageMode)"
+                      class="inline-flex h-8 w-8 items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-white hover:bg-main-100 hover:text-accent-500 disabled:pointer-events-none disabled:opacity-50">
+                <component :is="viewer.pageMode.icon" class="mx-auto h-5 w-5" aria-hidden="true"/>
+              </button>
+              <button @click="changeFitMode(viewer.fitMode)"
+                      class="inline-flex h-8 w-8 items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-white hover:bg-main-100 hover:text-accent-500 disabled:pointer-events-none disabled:opacity-50">
+                <component :is="viewer.fitMode.icon" class="mx-auto h-5 w-5" aria-hidden="true"/>
+              </button>
+              <button @click="toggleFullScreen()"
+                      class="inline-flex h-8 w-8 items-center justify-center gap-x-2 rounded-full border border-transparent text-sm font-semibold text-white hover:bg-main-100 hover:text-accent-500 disabled:pointer-events-none disabled:opacity-50">
+                <component :is="ComputerDesktopIcon" class="mx-auto h-5 w-5" aria-hidden="true"/>
+              </button>
+              <span class="tooltip tooltip-bottom py-1 before:text-xs before:content-[attr(data-tip)]"
+                    data-tip="your rating">
 
-              <TBaseRating v-model="chapter.userRating" :disabled="false" colorClass="bg-orange-400" sizeClass="rating-xs"
+              <TBaseRating v-model="chapter.userRating" :disabled="false" colorClass="bg-orange-400"
+                           sizeClass="rating-xs"
                            @change="onUpdateChapter"/>
 
               </span>
@@ -171,14 +179,16 @@
     </div>
 
     <main :class="{ 'lg:ml-72': desktopSidebarOpen, 'grow': !desktopSidebarOpen }" class="flex-1">
-      <div class="px-4 sm:px-6 lg:px-8 invisible sm:visible">
-        <div class="transition-width relative h-full w-full flex-1 overflow-auto group ">
-          <div class="fixed left-0 top-1/2 z-50 group" :class="{ 'translate-x-[280px]': desktopSidebarOpen }">
+      <div class="invisible px-4 sm:visible sm:px-6 lg:px-8">
+        <div class="transition-width group relative h-full w-full flex-1 overflow-auto ">
+          <div class="group fixed left-0 top-1/2 z-50" :class="{ 'translate-x-[280px]': desktopSidebarOpen }">
             <div @click="toggleSidebar()" class="cursor-pointer">
               <div class="flex w-8 items-center justify-center">
-                <div class="flex h-6 w-6 flex-col items-center transition rotate-0">
-                  <div class="h-3 w-1 rounded-full bg-accent-500 translate-y-2.5 group-hover:-rotate-12 duration-300 ease-in-out"></div>
-                  <div class="h-3 w-1 rounded-full bg-accent-500 -translate-y-2.5 group-hover:rotate-12 duration-300 ease-in-out"></div>
+                <div class="flex h-6 w-6 rotate-0 flex-col items-center transition">
+                  <div
+                      class="h-3 w-1 translate-y-2.5 rounded-full bg-accent-500 duration-300 ease-in-out group-hover:-rotate-12"></div>
+                  <div
+                      class="h-3 w-1 -translate-y-2.5 rounded-full bg-accent-500 duration-300 ease-in-out group-hover:rotate-12"></div>
                 </div>
               </div>
             </div>
@@ -187,20 +197,23 @@
       </div>
 
       <!-- Top menu for mobile -->
-      <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-main-900 p-4 shadow-sm w-full lg:hidden overflow-hidden">
-        <div class="absolute top-0 left-0 mb-1.5 flex h-0.5 w-full rounded-full bg-light-600/80">
-          <div class="bg-accent-600/50" :style="{ width: Number(viewer.currentPage / viewer.totalPages * 100) + '%' }"></div>
+      <div
+          class="sticky top-0 z-40 flex w-full items-center gap-x-6 overflow-hidden bg-main-900 p-4 shadow-sm lg:hidden">
+        <div class="absolute left-0 top-0 mb-1.5 flex h-0.5 w-full rounded-full bg-light-600/80">
+          <div class="bg-accent-600/50"
+               :style="{ width: Number(viewer.currentPage / viewer.totalPages * 100) + '%' }"></div>
         </div>
         <button type="button" class="-m-2.5 p-2.5 text-main-400" @click="mobileSidebarOpen = true">
           <span class="sr-only">Open sidebar</span>
           <Bars3Icon class="h-6 w-6" aria-hidden="true"/>
         </button>
 
-        <router-link :to="{ name: 'Manga', params: { id: manga.id, page: 1 } }" class="line-clamp-1 text-xs font-bold uppercase tracking-widest text-light-600 hover:text-accent-500">
-          {{ manga.canonicalTitle }}
+        <router-link :to="{ name: 'Manga', params: { id: manga?.id, page: 1 } }"
+                     class="line-clamp-1 text-xs font-bold uppercase tracking-widest text-light-600 hover:text-accent-500">
+          {{ manga?.canonicalTitle }}
         </router-link>
 
-        <div class="flex mx-auto gap-x-4 mr-4 text-white">
+        <div class="mx-auto mr-4 flex gap-x-4 text-white">
           <!-- Toolbar -->
           <button @click="gotoPage(1)" class="toolbar-button">
             <component :is="ArrowUpCircleIcon" class="h-5 w-5" aria-hidden="true"/>
@@ -219,13 +232,42 @@
            @keydown.down.prevent="onKeyDown" @keydown.up.prevent="onKeyUp">
         <div class="grid grid-cols-1 overflow-auto">
           <!-- Only render one section based on the page mode -->
-          <div id="divPageView" class="max-h-screen overflow-y-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500">
+          <div id="divPageView"
+               class="max-h-screen overflow-y-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500">
             <section v-show="viewer.pageMode.id === 2">
-              <div v-for="item in pages" :key="item.id" :id="`page-${item.pageNumber}`" class="relative flex flex-col items-center">
-                <Waypoint @change="onChange" :options="{ threshold: [0.30, 0.90] }" class="invisible absolute left-0 z-10 h-96 text-xs -mt-48">
+              <div v-for="item in pages" :key="item.id" :id="`page-${item.pageNumber}`"
+                   class="relative flex flex-col items-center">
+                <Waypoint @change="onChange" :options="{ threshold: [0.30, 0.90] }"
+                          class="invisible absolute left-0 z-10 -mt-48 h-96 text-xs">
                   {{ item.pageNumber }}
                 </Waypoint>
-                <page :index="item.pageNumber" :source="getPage(item.id)" :classDesc="viewer.class" :lazyLoad="true"></page>
+                <page :index="item.pageNumber" :source="getPage(item.id)" :classDesc="viewer.class"
+                      :lazyLoad="true"></page>
+              </div>
+              <div class="bg-white shadow sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                  <h3 class="text-base font-semibold leading-6 text-gray-900">End of {{
+                      chapter.canonicalTitle
+                    }}</h3>
+                  <div class="mt-2 sm:flex sm:items-start sm:justify-between">
+                    <div class="max-w-xl text-sm text-gray-500">
+                      <p>By the way, what did you think of this chapter?</p>
+                    </div>
+                    <span class="tooltip tooltip-bottom py-1 before:text-xs before:content-[attr(data-tip)]"
+                          data-tip="your rating">
+                    <TBaseRating v-model="chapter.userRating" :disabled="false" colorClass="bg-orange-400"
+                                 sizeClass="rating-md"
+                                 @change="onUpdateChapter"/>
+                    </span>
+                    <div v-show="nextChapter?.state === 3" @click="gotoNextChapter"
+                         class="mt-5 sm:ml-6 sm:mt-0 sm:flex sm:shrink-0 sm:items-center">
+                      <button type="button"
+                              class="inline-flex items-center rounded-md bg-accent-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500">
+                        Next Chapter
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
           </div>
@@ -266,7 +308,8 @@
               <div class="absolute left-0 top-0 z-10 h-full w-1/2 cursor-pointer" @click="prevPage(1)"></div>
               <div class="absolute right-0 top-0 z-10 h-full w-1/2 cursor-pointer" @click="nextPage(1)"
                    :id="`page-${viewer.currItem?.pageNumber}`"></div>
-              <page :index="viewer.currItem?.pageNumber" :source="getPage(viewer.currItem?.id)" :classDesc="viewer.class"
+              <page :index="viewer.currItem?.pageNumber" :source="getPage(viewer.currItem?.id)"
+                    :classDesc="viewer.class"
                     loading="lazy"></page>
             </section>
           </div>
@@ -292,7 +335,6 @@
 </template>
 
 <script setup>
-import { createWorker } from 'tesseract.js'
 import libraryAPI from '../api/library'
 import { Waypoint } from 'vue-waypoint'
 import page from '../components/page.vue'
@@ -420,6 +462,7 @@ const computeClass = async () => {
 }
 
 // Data - variables
+const isLoaded = ref(false)
 const chapterId = route.params.id
 const chapterStore = useChapterStore()
 const storeIsLoading = computed(() => chapterStore.getIsLoading)
@@ -429,18 +472,22 @@ const prevChapter = computed(() => chapterStore.getPreviousChapter)
 const manga = computed(() => chapterStore.getManga)
 const pages = computed(() => chapterStore.getPages)
 const pagesCount = computed(() => chapterStore.getPagesCount)
+let lastPageSent = -1
 
 // Data - functions
 const debouncedReadStatus = debounce((pageId, pageNum) => {
-  libraryAPI.publishReadStatus(pageId, pageNum)
-}, 300)
+  if (lastPageSent === pageNum) return
+  const payload = { mangaId: manga.value.id, slug: manga.value.slug, chapterId, chapterNum: chapter.value.chapter }
+
+  libraryAPI.publishReadStatus(pageId, pageNum, payload).then((response) => {
+    if (response.success) lastPageSent = pageNum
+  })
+}, 30)
 
 const updateReadStatus = async () => {
   if (!viewer.currItem) { return }
   const readStatus = { pageId: viewer?.currItem?.id, pageNum: viewer.currentPage }
-  if (readStatus.pageNum >= viewer.progression) {
-    debouncedReadStatus(readStatus.pageId, readStatus.pageNum)
-  }
+  debouncedReadStatus(readStatus.pageId, readStatus.pageNum)
 }
 
 async function onUpdateChapter () {
@@ -473,12 +520,6 @@ const changeFitMode = (current) => {
   focusOnViewer()
 }
 
-const ocr = async (pageId) => {
-  const worker = await createWorker('eng')
-  const { data: { text } } = await worker.recognize(getPage(pageId))
-  console.log(text)
-  await worker.terminate()
-}
 const updateViewerPos = (p) => {
   lazyLoad(p)
   // ocr(pages.value[p - 1].id)
@@ -626,6 +667,7 @@ const focusOnViewer = () => {
   const viewer = document.getElementById('viewer')
   viewer.focus()
 }
+
 function toggleFullScreen () {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen()
@@ -633,11 +675,13 @@ function toggleFullScreen () {
     document.exitFullscreen()
   }
 }
+
 // on mounted
 onMounted(() => {
   chapterStore.fetchChapter(chapterId)
 
   chapterStore.fetchChapterPages(chapterId).then(() => {
+    isLoaded.value = true
     viewer.totalPages = pagesCount.value
     viewer.currItem = pages.value[0]
     viewer.nextcurrItem = pages.value[1]

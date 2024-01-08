@@ -206,6 +206,15 @@ module.exports = (sequelize, DataTypes) => {
       readProgress: {
         type: DataTypes.NUMBER,
         defaultValue: 0
+      },
+      scrobblersKey: {
+        allowNull: true,
+        type: DataTypes.JSON
+      },
+      visibility: {
+        type: DataTypes.ENUM,
+        values: ['Public', 'Restricted', 'Private'],
+        defaultValue: 'Public'
       }
     },
     {

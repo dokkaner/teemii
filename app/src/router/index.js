@@ -7,6 +7,7 @@ import Chapter from '../views/chapter.vue'
 import ActivityView from '../views/activity.vue'
 import settingsView from '../views/settingsView.vue'
 import loginView from '../views/login.vue'
+import IntegrationView from '../views/integration.vue'
 import Wizard from '../views/setup/wizard.vue'
 import NotFound from '@/views/NotFound.vue'
 import { backendSys } from '@/global.js'
@@ -66,6 +67,12 @@ const routes = [
     component: loginView,
     name: 'login',
     meta: { layout: 'empty' },
+    props: true
+  },
+  {
+    path: '/integration',
+    component: IntegrationView,
+    name: 'Sync',
     props: true
   },
   {

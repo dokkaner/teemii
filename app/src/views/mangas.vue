@@ -21,7 +21,8 @@
   </div>
 
   <div class="container mx-auto" v-if="mangaCount>0 && !storeIsLoading && isLoaded">
-    <div class="sticky left-0 top-0 z-20 mx-auto mb-8 h-full w-full bg-white/80 px-8 pb-8 backdrop-blur-xl transition-all duration-100">
+    <div
+        class="sticky left-0 top-0 z-20 mx-auto mb-8 h-full w-full bg-white/80 px-8 pb-8 backdrop-blur-xl transition-all duration-100">
       <div class="grid w-full pt-4 sm:grid-cols-3 ">
         <div class="hidden sm:flex">
           <div class="flex items-center">
@@ -32,7 +33,7 @@
           </div>
         </div>
         <div>
-          <nav class="navbar flex w-full justify-center align-start col-start-2 col-end-3" aria-label="tabs">
+          <nav class="align-start navbar col-start-2 col-end-3 flex w-full justify-center" aria-label="tabs">
             <div class="sm:hidden">
               <label for="tabs" class="sr-only">Select a tab</label>
               <select id="tabs" name="tabs" @change="toggleTabs($event.target.selectedIndex)"
@@ -58,10 +59,12 @@
 
       <div v-if="tabs[1].current" class="container mx-auto ">
         <Popover class="relative">
-          <PopoverButton class="inline-flex items-center rounded-md bg-light-400 px-2 py-1 text-xs font-semibold text-main-600">
+          <PopoverButton
+              class="inline-flex items-center rounded-md bg-light-400 px-2 py-1 text-xs font-semibold text-main-600">
             <span>Filters</span>
-            <div class="shrink-0 ml-2">
-              <TBaseIcon :solid="true" name="AdjustmentsHorizontalIcon" aria-hidden="true" class="h-5 w-5 text-accent-700"/>
+            <div class="ml-2 shrink-0">
+              <TBaseIcon :solid="true" name="AdjustmentsHorizontalIcon" aria-hidden="true"
+                         class="h-5 w-5 text-accent-700"/>
             </div>
           </PopoverButton>
 
@@ -77,7 +80,7 @@
 
               <TBaseFilterWrapper
                   :row-on-xl="true"
-                  class="rounded-b-lg bg-light-400 -top-[6px]"
+                  class="-top-[6px] rounded-b-lg bg-light-400"
                   @clear="clearFilter"
               >
                 <TBaseInputGroup label="Genres">
@@ -101,19 +104,31 @@
                       @click="onSearched"
                   />
                 </TBaseInputGroup>
-                <div class="relative flex gap-x-12 px-8 md:min-w-[512px]">
-                  <TBaseInputGroup label="Publishing years" class="">
+                <div class="relative flex w-full gap-x-8">
+                  <TBaseInputGroup :label="`Published: ${filters.years[0]} - ${filters.years[1]}`">
                     <div class="pb-6">
-                      <vue-slider :data="mangasYears" v-model="filters.years" :value="filters.years" :contained="true"
-                                  :enable-cross="false" :marks="mangasYearsMinMax" @change="onSearched"/>
+                      <TBaseVueSlider
+                          class="w-full"
+                          v-model="filters.years"
+                          :min="mangasYearsMinMax[0]"
+                          :max="mangasYearsMinMax[1]"
+                          :merge="1"
+                          :tooltips="false"
+                      ></TBaseVueSlider>
                     </div>
                   </TBaseInputGroup>
 
-                  <TBaseInputGroup label="Score" class="">
+                  <TBaseInputGroup :label="`Scores: ${filters.scores[0].toFixed(2)} - ${filters.scores[1].toFixed(2)}`">
                     <div class="pb-6">
-                      <vue-slider :data="mangasScores" v-model="filters.scores" :value="filters.scores"
-                                  :contained="true"
-                                  :enable-cross="false" :marks="mangasScoresMinMax" @change="onSearched"/>
+                      <TBaseVueSlider
+                          class="w-full"
+                          v-model="filters.scores"
+                          :min="mangasScoresMinMax[0]"
+                          :max="mangasScoresMinMax[1]"
+                          :step="0.1"
+                          :merge="-1"
+                          :tooltips="false"
+                      ></TBaseVueSlider>
                     </div>
                   </TBaseInputGroup>
                 </div>
@@ -191,7 +206,7 @@
 
     <div v-if="tabs[0].current">
 
-      <section class="px-8 pb-4" v-if="lastMangasRead?.length>0" >
+      <section class="px-8 pb-4" v-if="lastMangasRead?.length>0">
         <TBaseCarousel uID="mbr" title="Continue Reading" :slides="lastMangasRead" :contentLoading="storeIsLoading"/>
       </section>
       <section class="px-8">

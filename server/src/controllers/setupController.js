@@ -5,6 +5,7 @@ const path = require('path')
 const os = require('../services/osService')
 const services = require('../services')
 const { logger } = require('../loaders/logger')
+const { scrobblersManager } = require('../services/scrobblerService')
 
 /**
  * Handle requests to get the initial launch configuration of the system.
@@ -134,6 +135,7 @@ async function setupFinalize (req, res) {
     configManager.setSetupCompleted(true)
 
     await createDefaultJobs()
+    await scrobblersManager.registerScrobblers()
 
     res.status(200).json({ setupCompleted: true })
   } catch (e) {

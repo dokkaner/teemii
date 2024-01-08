@@ -168,6 +168,10 @@ class Queue {
 
     this.assignJobToWorker(job).catch(e => {
       // possible no available worker
+      if (e instanceof NoAvailableWorkerError) {
+        logger.warn(`No available worker found for job '${job.id}'.`)
+        return
+      }
       logger.error({ err: e }, `Error processing job in queue '${this.name}'`)
     })
   }

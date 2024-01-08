@@ -200,7 +200,7 @@
                   </div>
                 </dl>
               </div>
-              <div class="absolute right-0 top-6 xl:relative xl:right-auto xl:top-auto xl:self-center">
+              <div v-show="jobMap[schedule.name]" class="absolute right-0 top-6 xl:relative xl:right-auto xl:top-auto xl:self-center">
                 <span @click="executeJob(schedule)" class="tooltip tooltip-bottom before:text-xs before:content-[attr(data-tip)]" data-tip="run immediately">
                 <label for="drawer" class="btn btn-square btn-ghost drawer-button text-xs hover:bg-accent-100 hover:text-accent-600">
                   <TBaseIcon :solid="true" name="PlayIcon" aria-hidden="true" class="h-2 w-2 "/>
@@ -366,7 +366,13 @@ const userPreferences = reactive({ data: {} })
 const notificationsStore = useNotificationStore()
 const bindings = reactive({})
 const backupData = reactive({ data: [] })
-
+const jobMap = {
+  maintenanceScheduler: 'maintenanceQueue',
+  libraryUpdateScheduler: 'libraryUpdateQueue',
+  computeReadingScheduler: 'computeReadingQueue',
+  computeSuggesterScheduler: 'computeSuggesterQueue',
+  scrobblersScheduler: 'scrobblersQueue'
+}
 
 async function userValidationBackupRestore () {
   const payload = {
@@ -609,15 +615,7 @@ async function downloadLogs () {
 }
 
 const executeJob = async (scheduler) => {
-  const jobMap = {
-    maintenanceScheduler: 'maintenanceQueue',
-    libraryUpdateScheduler: 'libraryUpdateQueue',
-    computeReadingScheduler: 'computeReadingQueue',
-    computeSuggesterScheduler: 'computeSuggesterQueue'
-  }
-
   const forQueue = jobMap[scheduler.name]
-
   if (!forQueue) {
     notificationsStore.showNotification({
       title: 'Job not found',

@@ -1,7 +1,12 @@
 const Worker = require('./Worker')
 const { logger } = require('../../loaders/logger')
 const { orm } = require('../../loaders/sequelize')
-
+const {
+  calculateProgressPercentage,
+  calculateOverallProgress,
+  updateChapterProgress,
+  updateMangaProgress
+} = require('../../services/readingService')
 /**
  * Computes the progress for each manga.
  *
@@ -25,28 +30,6 @@ const computeMangaProgress = async (mangas) => {
       await updateMangaProgress(manga.id, percent)
     }
   }
-}
-
-/**
- * Calculates the overall progress percentage for a manga.
- *
- * @param {number} totalProgress - The sum of progress of all chapters.
- * @param {number} maxProgress - The maximum possible progress.
- * @return {number} The calculated overall percentage.
- */
-const calculateOverallProgress = (totalProgress, maxProgress) => {
-  const percent = ((totalProgress / maxProgress) * 100).toFixed(0)
-  return percent >= 94 ? 100 : percent
-}
-
-/**
- * Updates the progress of a manga in the database.
- *
- * @param {number} mangaId - The ID of the manga to update.
- * @param {number} percent - The progress percentage to set.
- */
-const updateMangaProgress = async (mangaId, percent) => {
-  await orm.manga.update({ readProgress: percent }, { where: { id: mangaId } })
 }
 
 /**
@@ -74,28 +57,6 @@ const computeChapterProgress = async (chapters, mangas, readStatuses) => {
       }
     }
   }
-}
-
-/**
- * Calculates the progress percentage.
- *
- * @param {number} progress - The progress made.
- * @param {number} total - The total pages.
- * @return {number} The calculated percentage.
- */
-const calculateProgressPercentage = (progress, total) => {
-  const percent = ((progress / total) * 100).toFixed(0)
-  return percent >= 94 ? 100 : percent
-}
-
-/**
- * Updates the progress of a chapter in the database.
- *
- * @param {number} chapterId - The ID of the chapter to update.
- * @param {number} percent - The progress percentage to set.
- */
-const updateChapterProgress = async (chapterId, percent) => {
-  await orm.chapter.update({ readProgress: percent }, { where: { id: chapterId } })
 }
 
 /**

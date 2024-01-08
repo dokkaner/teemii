@@ -443,12 +443,12 @@ class Mangadex extends Agent {
       password
     })
       .then(res => {
-        console.info('Mangadex Logged in')
+        logger.info('Mangadex Logged in')
         this.#jwtSession = res.data.token.session
         this.#jwtRefresh = res.data.token.refresh
       })
       .catch(err => {
-        console.warn('Mangadex Login failed', err)
+        logger.warn('Mangadex Login failed', err)
       })
   }
 

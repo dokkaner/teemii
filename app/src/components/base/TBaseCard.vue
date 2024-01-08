@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto flex-col w-fit">
-    <div class="m-1 block overflow-hidden w-[140px] sm:w-[200px]">
+    <div class="mb-2 block overflow-hidden w-[140px] sm:w-[200px]">
       <div v-show="progression > 1" class="mb-1.5 flex h-0.5 w-full rounded-full bg-light-600/80">
         <div class="bg-accent-600/50" :style="{ width: progression + '%' }"></div>
       </div>
@@ -9,14 +9,16 @@
           <TBaseLoadingIcon v-if="contentLoading" :loading="loading" :contentLoading="contentLoading" :error="error"/>
           {{ headerText }}
         </span>
-        <TBaseRating v-if="score > 0 && progression > 1" :disabled="true" v-model="starScore" colorClass="bg-orange-400" sizeClass="rating-xs"/>
+        <TBaseRating v-if="score > 0 && progression > 1" :disabled="true" v-model="starScore" colorClass="bg-orange-400"
+                     sizeClass="rating-xs"/>
       </div>
       <p v-if="title" class="self-start text-xs tracking-tight text-main-400 line-clamp-1">
         {{ title || ' - ' }}
       </p>
     </div>
     <div class="group/item block transition-all duration-1000 ease-in-out">
-      <div class="h-[80px] sm:h-[120px] w-[140px] sm:w-[200px] overflow-hidden rounded-md border border-light-600/60 text-center">
+      <div
+          class="h-[80px] sm:h-[120px] w-[140px] sm:w-[200px] overflow-hidden rounded-md border border-light-600/60 text-center">
         <div class="relative flex">
           <div class="overflow-visible">
             <router-link :to="to">
@@ -25,14 +27,16 @@
               </div>
             </router-link>
           </div>
-          <div v-show="state === 3 && progression < 2" class="absolute -right-8 -top-8 z-10 flex h-12 w-12 rotate-45 bg-yellow-500/90"></div>
+          <div v-show="state === 3 && progression < 2"
+               class="absolute -right-8 -top-8 z-10 flex h-12 w-12 rotate-45 bg-yellow-500/90"></div>
           <span class="absolute -bottom-10 -left-8 min-h-[60px] min-w-[120px] bg-main-900 blur-xl"></span>
         </div>
       </div>
       <div class="relative -top-8 z-10 mx-auto ml-2 ">
         <div class="flex flex-wrap items-baseline justify-start gap-2">
-          <TBaseActionIcon :icon="heroIcons['FolderArrowDownIcon']" tooltip="Automatic Search" @click="handleClick(1)" />
-          <TBaseActionIcon :icon="heroIcons['DocumentMagnifyingGlassIcon']" tooltip="Manual Search" @click="handleClick(2)" />
+          <TBaseActionIcon :icon="heroIcons['FolderArrowDownIcon']" tooltip="Automatic Search" @click="handleClick(1)"/>
+          <TBaseActionIcon :icon="heroIcons['DocumentMagnifyingGlassIcon']" tooltip="Manual Search"
+                           @click="handleClick(2)"/>
         </div>
 
       </div>
