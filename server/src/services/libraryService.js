@@ -1,6 +1,8 @@
 const { orm } = require('../loaders/sequelize.js')
 const { logger } = require('../loaders/logger.js')
 const os = require('./osService.js')
+const { computeMangaProgress } = require('./readingService')
+const { scrobblersManager } = require('./scrobblerService')
 
 function addStatsTo (statArray, items, pagesRead) {
   if (items?.length < 1) return
@@ -261,8 +263,7 @@ module.exports = class libraryService {
 
   async getStatisticalData () {
     try {
-      // start performance measurement
-      const start = process.hrtime()
+      // start performance measurement const start = process.hrtime()
 
       const result = {}
       const mangas = await orm.manga.findAll({
@@ -319,10 +320,7 @@ module.exports = class libraryService {
       result.totalPagesRead = totalPagesRead
       result.getMangaReadStatus = stats
 
-      // end performance measurement
-      const end = process.hrtime(start)
-      logger.info(`Execution time: ${end[0]}s ${end[1]}ns`)
-
+      // end performance measurement const end = process.hrtime(start) logger.info(`Execution time: ${end[0]}s ${end[1]}ns`)
       return result
     } catch (e) {
       logger.error({ err: e }, 'Error retrieving statistical data:')
@@ -388,19 +386,14 @@ module.exports = class libraryService {
    *
    * @param {string} pageId - The ID of the page.
    * @param {number} pageNumber - The page number to set as read.
+   * @param {Object} data - The data to be used to update the read status.
    * @returns {Promise<Object>} The updated read status, if successful.
    * @throws Will throw an error if there is any issue with the database operations.
    */
-  async setReadStatus (pageId, pageNumber) {
+  async setReadStatus (pageId, pageNumber, data) {
     try {
-      const page = await this.getOnePage(pageId)
-      if (!page) {
-        logger.info(`Page with id ${pageId} not found.`)
-        return false // Return false if the page doesn't exist.
-      }
-
-      const chapter = await this.getOneChapter(page.chapterId)
-      const manga = await this.getOneManga(page.mangaId)
+      const chapter = await this.getOneChapter(data.chapterId)
+      const manga = await this.getOneManga(data.mangaId)
 
       if (!chapter || !manga) {
         logger.info(`Chapter or Manga not found for page id ${pageId}.`)
@@ -419,6 +412,8 @@ module.exports = class libraryService {
         logger.info(`Failed to update read status for page id ${pageId}.`)
         return false
       }
+      await computeMangaProgress(manga, chapter, pageNumber)
+      scrobblersManager.queueSync(manga)
       return true
     } catch (e) {
       logger.error({ err: e }, 'Failed to set read status')

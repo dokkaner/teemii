@@ -87,7 +87,7 @@ async function createDefaultJobs () {
     await queueManager.setupQueueWithScheduler('cbxImportQueue', importCBXWorker, 'importCBXScheduler', '*/11 * * * * *')
     await queueManager.setupQueueWithSchedulerWithJob('maintenanceQueue', maintenanceWorker, 'maintenanceScheduler', '*/11 * * * *', maintenanceJob)
     await queueManager.setupQueueWithSchedulerWithJob('libraryUpdateQueue', libUpdateWorker, 'libraryUpdateScheduler', '0 * * * *', libUpdateJob, QueueMode.CALLED, true)
-    await queueManager.setupQueueWithSchedulerWithJob('computeReadingQueue', computeReadingWorker, 'computeReadingScheduler', '*/2 * * * *', computeReadJob)
+    await queueManager.setupQueueWithSchedulerWithJob('computeReadingQueue', computeReadingWorker, 'computeReadingScheduler', '*/9 * * * *', computeReadJob)
     await queueManager.setupQueueWithSchedulerWithJob('computeSuggesterQueue', computeSuggesterWorker, 'computeSuggesterScheduler', '0 1 * * *', computeSuggesterJob, QueueMode.IMMEDIATE, true)
     await queueManager.setupQueueWithSchedulerWithJob('scrobblersQueue', scrobblersWorker, 'scrobblersScheduler', '10 * * * *', scrobblerJob)
 

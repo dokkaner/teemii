@@ -234,7 +234,7 @@ class Kitsu extends Agent {
     })
   };
 
-  #helperScrobblerPush (host, entry) {
+  async #helperScrobblerPush (host, entry) {
     const url = entry.trackingId ? `${host}/api/edge/library-entries/${entry.trackingId}` : `${host}/api/edge/library-entries`
     const method = entry.trackingId ? 'patch' : 'post'
     const data = {
@@ -272,18 +272,14 @@ class Kitsu extends Agent {
         Accept: 'application/vnd.api+json'
       }
     }
-    return new Promise((resolve, reject) => {
-      axios[method](encodeURI(url), { data }, config)
-        .then((res) => {
-          const data = res.data.data
-          const result = { agent: 'kitsu', id: data.id, status: 'success' }
-          resolve(result)
-        })
-        .catch((e) => {
-          logger.error({ err: e })
-          reject(e)
-        })
-    })
+
+    try {
+      const res = await axios[method](encodeURI(url), { data }, config)
+      return { agent: 'kitsu', id: res.data.data.id, status: 'success' }
+    } catch (e) {
+      logger.error({ err: e }, 'Kitsu API error')
+      return { agent: 'kitsu', id: null, status: 'error' }
+    }
   }
 
   #helperScrobblerPull (host, offset, page) {

@@ -7,6 +7,7 @@ const { Job } = require('../libra/jobs/Job')
 const { v4: uuidv4 } = require('uuid')
 const { configManager } = require('../loaders/configManager')
 const services = require('./index')
+const { getLastGreaterChapterProgress, computeMangaProgressFromScrobbler } = require('./readingService')
 
 const scrobblerEntryStatus = Object.freeze({
   CURRENT: 'current',
@@ -25,16 +26,15 @@ const MAX_MANGA_IMPORT_PER_RUN = 10
  * @param {Object} manga - The manga object with chapterCount and readProgress properties.
  * @returns {number} The calculated read progress, or 0 in case of invalid data or errors.
  */
-const getReadProgress = (manga) => {
+async function getReadProgress (manga) {
   try {
     // Validate manga data
     if (!manga || typeof manga.chapterCount !== 'number' || typeof manga.readProgress !== 'number') {
       logger.error('Invalid manga data for calculating read progress')
       return 0
     }
-
-    const chapterCount = manga.chapterCount ?? 0
-    return Math.floor((manga.readProgress * chapterCount) / 100)
+    const progress = await getLastGreaterChapterProgress(manga)
+    return Math.round(Number(progress.chapterNumber))
   } catch (e) {
     logger.error({ err: e }, 'Failed to get read progress')
     return 0
@@ -45,12 +45,18 @@ class ScrobblersManager {
   constructor () {
     this.scrobblers = []
     this.mangasToImport = {}
+    this.mangasToSync = []
     this.scrobblersSettings = {}
     this.scrobblersSecurity = {}
     this.PushTotal = 0
     this.PullTotal = 0
     this.PushErrors = 0
     this.PullErrors = 0
+    this.needInit = true
+  }
+
+  queueSync (manga) {
+    this.mangasToSync.push(manga.id)
   }
 
   async #queueManga (title, year, author, agent, id, trackingId) {
@@ -108,11 +114,11 @@ class ScrobblersManager {
    * @param {Object} agent - The agent object used for tracking.
    * @returns {Object} The scrobbler entry object with tracking details.
    */
-  #scrobblerEntry (manga, agent) {
+  async #scrobblerEntry (manga, agent) {
     const now = new Date()
     return {
       status: manga.readProgress > 0 ? scrobblerEntryStatus.CURRENT : scrobblerEntryStatus.PLAN_TO_READ,
-      progress: getReadProgress(manga),
+      progress: await getReadProgress(manga),
       rating: manga.userRating,
       trackingId: manga.scrobblersKey?.[agent.id] ?? null,
       mediaId: manga.externalIds?.[agent.id] ?? null,
@@ -260,7 +266,7 @@ class ScrobblersManager {
   }
 
   async #processScrobblerResults (results, agent, updatedEntries, importedMangas) {
-    let i = 0
+    let localUpdatedEntries = updatedEntries
     for (const result of results ?? []) {
       const manga = await orm.manga.findOne({ where: { externalIds: { [agent.id]: result.mangaId } } })
       if (!manga) {
@@ -269,16 +275,14 @@ class ScrobblersManager {
         await this.#queueManga(result.mangaTitle, result.mangaYear, result.mangaAuthors, agent, result.mangaId, result.id)
         continue
       }
-      const entry = this.#scrobblerEntry(manga, agent)
-      if (entry.progress !== result.progress && this.scrobblersSettings[agent.id].Sync2Way) {
-        updatedEntries++
-        manga.readProgress = Math.floor((result.progress / manga.chapterCount) * 100)
-        await orm.manga.update({ readProgress: manga.readProgress }, { where: { id: manga.id } })
-        i++
+
+      if (this.scrobblersSettings[agent.id].Sync2Way) {
+        localUpdatedEntries++
+        await this.#updateTrackingId(manga, agent, Number(result.id))
+        await computeMangaProgressFromScrobbler(manga, result.progress)
       }
     }
-
-    this.PullTotal += i
+    return localUpdatedEntries
   }
 
   /**
@@ -288,7 +292,7 @@ class ScrobblersManager {
    */
   async #scrobblerPull () {
     logger.info('Pulling updates from scrobblers...')
-    const updatedEntries = 0
+    let updatedEntries = 0
     let errors = 0
     const importedMangas = 0
 
@@ -298,15 +302,16 @@ class ScrobblersManager {
         if (!this.scrobblersSettings[agent.id].enabled || !agent.instance.loggedIn) continue
 
         const results = await agent.instance.scrobblerPull()
-        await this.#processScrobblerResults(results, agent, updatedEntries, importedMangas)
+        updatedEntries += await this.#processScrobblerResults(results, agent, updatedEntries, importedMangas)
       } catch (error) {
         errors++
         logger.error(`Error pulling from scrobbler for agent ID ${agent.id}: ${error}`)
       }
     }
 
+    this.PullTotal = updatedEntries
     this.PullErrors = errors
-    logger.info(`Processed ${updatedEntries} total entries from scrobblers with ${errors} errors.`)
+    logger.info(`Scrobbler pulled ${updatedEntries} total entries from scrobblers with ${errors} errors.`)
   }
 
   /**
@@ -317,19 +322,28 @@ class ScrobblersManager {
    */
   async #scrobblerPush () {
     logger.info('Pushing updates to scrobblers...')
-    const mangas = await orm.manga.findAll()
+    const mangas = await orm.manga.findAll({})
     let updatedEntries = 0
     let errors = 0
 
-    for (const agent of this.scrobblers.filter(a => this.scrobblersSettings[a.id].enabled && a.instance.loggedIn)) {
-      for (const manga of mangas.filter(m => !this.#genresAreExcluded(agent.id, m.genres))) {
-        const entry = this.#scrobblerEntry(manga, agent)
+    for (const agent of this.scrobblers.filter(a => a.instance.loggedIn)) {
+      const mangasToPush = this.needInit ? mangas : mangas.filter(manga => this.mangasToSync.includes(manga.id))
+
+      for (const manga of mangasToPush) {
+        if (this.#genresAreExcluded(agent.id, manga.genres)) continue
+
         try {
+          const entry = await this.#scrobblerEntry(manga, agent)
           const result = await agent.instance.scrobblerPush(entry)
-          if (!entry.trackingId && result?.status === 'success') {
+
+          if (result?.status === 'success') {
             await this.#updateTrackingId(manga, agent, Number(result.id))
+            updatedEntries++
+          } else if (result?.status === 'error') {
+            errors++
+            await this.#updateTrackingId(manga, agent, null)
+            logger.warn(`Error pushing to scrobbler for manga ID ${manga.id} and agent ID ${agent.id}: ${result.message}`)
           }
-          updatedEntries++
         } catch (error) {
           errors++
           logger.error(`Error pushing to scrobbler for manga ID ${manga.id} and agent ID ${agent.id}: ${error}`)
@@ -337,9 +351,11 @@ class ScrobblersManager {
       }
     }
 
+    this.needInit = false
+    this.mangasToSync = []
     this.PushTotal = updatedEntries
     this.PushErrors = errors
-    logger.info(`Processed ${updatedEntries} total entries to scrobblers with ${errors} errors.`)
+    logger.info(`Scrobbler pushed ${updatedEntries} total entries to scrobblers with ${errors} errors.`)
   }
 
   #setScrobblersStatus (status) {

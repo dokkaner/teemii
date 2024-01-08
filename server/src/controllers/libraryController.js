@@ -399,7 +399,8 @@ module.exports = class LibraryController {
       const pageNumber = req.params.pageNumber
 
       if (pageId) {
-        const result = await services.library.setReadStatus(pageId, pageNumber)
+        const data = req.body
+        const result = await services.library.setReadStatus(pageId, pageNumber, data)
         return res.send(result)
       } else {
         res.status(404).send('not found')

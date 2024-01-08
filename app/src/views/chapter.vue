@@ -477,7 +477,9 @@ let lastPageSent = -1
 // Data - functions
 const debouncedReadStatus = debounce((pageId, pageNum) => {
   if (lastPageSent === pageNum) return
-  libraryAPI.publishReadStatus(pageId, pageNum).then((response) => {
+  const payload = { mangaId: manga.value.id, slug: manga.value.slug, chapterId, chapterNum: chapter.value.chapter }
+
+  libraryAPI.publishReadStatus(pageId, pageNum, payload).then((response) => {
     if (response.success) lastPageSent = pageNum
   })
 }, 30)
