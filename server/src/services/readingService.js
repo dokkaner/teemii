@@ -1,4 +1,3 @@
-const { logger } = require('../loaders/logger')
 const { orm } = require('../loaders/sequelize')
 
 const readingService = {
@@ -52,6 +51,13 @@ const readingService = {
     )
   },
 
+  /**
+   * Updates the progress of a chapter in the database.
+   * @param manga
+   * @param chapter
+   * @param pageNumber
+   * @returns {Promise<void>}
+   */
   computeMangaProgress: async function (manga, chapter, pageNumber) {
     // start performance measurement const start = process.hrtime()
     // Fetch read statuses only for the specified chapter
@@ -86,6 +92,12 @@ const readingService = {
     // end performance measurement const end = process.hrtime(start) logger.info(`computeMangaProgress Execution time: ${end[0]}s ${end[1]}ns`)
   },
 
+  /**
+   * Updates the progress of a chapter in the database (from scrobbler).
+   * @param manga
+   * @param ChapterNumber
+   * @returns {Promise<void>}
+   */
   computeMangaProgressFromScrobbler: async function (manga, ChapterNumber) {
     const chapterNum = parseFloat(ChapterNumber).toString()
     // get total number of pages in the chapter
@@ -97,6 +109,11 @@ const readingService = {
     await readingService.computeMangaProgress(manga, chapter, pages)
   },
 
+  /**
+   * Gets the last read chapter for a manga.
+   * @param manga
+   * @returns {Promise<*|{pageNumber: number, chapterNumber: number}>}
+   */
   async getLastGreaterChapterProgress (manga) {
     const readStatus = await orm.stats.findOne({
       attributes: ['chapterNumber', 'pageNumber'],
