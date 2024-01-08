@@ -1,4 +1,5 @@
 <template>
+
   <div class="fixed bottom-0 right-0 z-50 h-16 w-16">
     <svg v-show="storeIsLoading" class="sticky h-5 w-5 animate-spin text-light-900"
          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -29,25 +30,36 @@
                    :style="{'box-shadow' : classCover}"
               >
               <img data-ambient :src="storeHelpers.getMangaCover(mangaId, 480, 720, 'cover')" alt="cover">
+
               <p class="z-40 -mt-8 line-clamp-1 overflow-hidden text-center text-xs font-medium tracking-tighter text-light-100 shadow-main-900 text-shadow-sm">
                 {{ manga.primaryAltTitle }} - {{ manga.serialization }} published by {{ manga.publishers[0] }}
               </p>
             </div>
+
           </figure>
+
           <!-- Details -->
           <div class="p-8 md:w-3/5 md:basis-auto lg:w-2/4 xl:p-0">
             <div class="flex content-start align-middle">
               <TBaseRating v-model="mangaUserScore" :disabled="false" colorClass="bg-orange-400" sizeClass="rating-md"
                            @change="onUpdateManga"/>
-              <div class="ml-auto flex space-x-4">
-                <div v-if="manga.favoritesCount"
+              <div class="ml-auto flex space-x-2">
+                <div v-if="manga.readProgress > 0"
                      class="flex items-center space-x-1 rounded-xl bg-main-900/90 px-4 py-2">
-                  <component :is="heroIcons['HeartIcon']" v-if="isLoaded" class="h-4 w-4 text-light-400"/>
-                  <span class="text-xs text-light-200">{{ formatNumber(manga.favoritesCount) }}</span>
+                  <component :is="heroIcons['BookOpenIcon']" v-if="isLoaded" class="h-4 w-4 text-light-400"/>
+                  <span class="text-xs text-light-200 shadow-main-900 text-shadow-sm">{{ manga.readProgress }}%</span>
                 </div>
-                <div v-if="manga.score" class="flex items-center space-x-1 rounded-xl bg-main-900/90 px-4 py-2">
+                <div v-if="manga.favoritesCount"
+                     class="flex items-center space-x-1 rounded-xl bg-main-900/90 p-2">
+                  <component :is="heroIcons['HeartIcon']" v-if="isLoaded" class="h-4 w-4 text-light-400"/>
+                  <span class="text-xs text-light-200 shadow-main-900 text-shadow-sm">{{
+                      formatNumber(manga.favoritesCount)
+                    }}</span>
+
                   <component :is="heroIcons['StarIcon']" v-if="isLoaded" class="h-4 w-4 text-light-400"/>
-                  <span class="text-xs text-light-200">{{ Number(manga.score).toFixed(2) }}</span>
+                  <span class="text-xs text-light-200 shadow-main-900 text-shadow-sm">{{
+                      Number(manga.score).toFixed(2)
+                    }}</span>
                 </div>
               </div>
             </div>
