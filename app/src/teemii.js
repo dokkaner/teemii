@@ -10,7 +10,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
 import { faLifeRing, faPaw } from '@fortawesome/free-solid-svg-icons'
-import { faHeart} from '@fortawesome/free-regular-svg-icons'
+import { faHeart } from '@fortawesome/free-regular-svg-icons'
 
 // fontawesome
 library.add(faGithub, faLifeRing, faHeart, faPaw, faXTwitter)
@@ -23,7 +23,7 @@ app.config.errorHandler = (err) => {
 }
 
 app.config.warnHandler = (warn) => {
-  console.warn(`[CUSTOM WARNING] ${warn}`)
+  console.warn(warn)
 }
 
 defineGlobalComponents(app)

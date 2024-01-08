@@ -1,5 +1,5 @@
 <template>
-  <div v-show="!storeIsLoading" class="flex">
+  <div v-if="!storeIsLoading && isLoaded" class="flex">
     <TransitionRoot as="template" :show="mobileSidebarOpen">
       <Dialog as="div" class="relative z-50 lg:hidden" @close="mobileSidebarOpen = false">
         <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0"
@@ -85,9 +85,9 @@
          class="hidden overflow-hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-main-500 p-6 scrollbar-none">
         <div class="mx-auto flex shrink-0 items-center">
-          <router-link :to="{ name: 'Manga', params: {id: manga.id, page: 1} }">
+          <router-link :to="{ name: 'Manga', params: {id: manga?.id, page: 1} }">
             <p class="line-clamp-1 text-xs font-bold uppercase tracking-widest text-light-600 transition duration-100 hover:text-accent-500">
-              {{ manga.canonicalTitle }} </p>
+              {{ manga?.canonicalTitle }} </p>
           </router-link>
         </div>
 
@@ -208,9 +208,9 @@
           <Bars3Icon class="h-6 w-6" aria-hidden="true"/>
         </button>
 
-        <router-link :to="{ name: 'Manga', params: { id: manga.id, page: 1 } }"
+        <router-link :to="{ name: 'Manga', params: { id: manga?.id, page: 1 } }"
                      class="line-clamp-1 text-xs font-bold uppercase tracking-widest text-light-600 hover:text-accent-500">
-          {{ manga.canonicalTitle }}
+          {{ manga?.canonicalTitle }}
         </router-link>
 
         <div class="mx-auto mr-4 flex gap-x-4 text-white">
@@ -462,6 +462,7 @@ const computeClass = async () => {
 }
 
 // Data - variables
+const isLoaded = ref(false)
 const chapterId = route.params.id
 const chapterStore = useChapterStore()
 const storeIsLoading = computed(() => chapterStore.getIsLoading)
@@ -471,18 +472,20 @@ const prevChapter = computed(() => chapterStore.getPreviousChapter)
 const manga = computed(() => chapterStore.getManga)
 const pages = computed(() => chapterStore.getPages)
 const pagesCount = computed(() => chapterStore.getPagesCount)
+let lastPageSent = -1
 
 // Data - functions
 const debouncedReadStatus = debounce((pageId, pageNum) => {
-  libraryAPI.publishReadStatus(pageId, pageNum)
-}, 300)
+  if (lastPageSent === pageNum) return
+  libraryAPI.publishReadStatus(pageId, pageNum).then((response) => {
+    if (response.success) lastPageSent = pageNum
+  })
+}, 30)
 
 const updateReadStatus = async () => {
   if (!viewer.currItem) { return }
   const readStatus = { pageId: viewer?.currItem?.id, pageNum: viewer.currentPage }
-  if (readStatus.pageNum >= viewer.progression) {
-    debouncedReadStatus(readStatus.pageId, readStatus.pageNum)
-  }
+  debouncedReadStatus(readStatus.pageId, readStatus.pageNum)
 }
 
 async function onUpdateChapter () {
@@ -676,6 +679,7 @@ onMounted(() => {
   chapterStore.fetchChapter(chapterId)
 
   chapterStore.fetchChapterPages(chapterId).then(() => {
+    isLoaded.value = true
     viewer.totalPages = pagesCount.value
     viewer.currItem = pages.value[0]
     viewer.nextcurrItem = pages.value[1]

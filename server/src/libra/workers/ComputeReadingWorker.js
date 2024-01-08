@@ -43,10 +43,13 @@ const calculateOverallProgress = (totalProgress, maxProgress) => {
  * Updates the progress of a manga in the database.
  *
  * @param {number} mangaId - The ID of the manga to update.
- * @param {number} percent - The progress percentage to set.
+ * @param {number} newPercent - The progress percentage to set.
  */
-const updateMangaProgress = async (mangaId, percent) => {
-  await orm.manga.update({ readProgress: percent }, { where: { id: mangaId } })
+const updateMangaProgress = async (mangaId, newPercent) => {
+  await orm.manga.update(
+    { readProgress: newPercent },
+    { where: { id: mangaId, readProgress: { [orm.Sequelize.Op.lt]: newPercent } } }
+  )
 }
 
 /**
@@ -92,10 +95,13 @@ const calculateProgressPercentage = (progress, total) => {
  * Updates the progress of a chapter in the database.
  *
  * @param {number} chapterId - The ID of the chapter to update.
- * @param {number} percent - The progress percentage to set.
+ * @param {number} newPercent - The progress percentage to set.
  */
-const updateChapterProgress = async (chapterId, percent) => {
-  await orm.chapter.update({ readProgress: percent }, { where: { id: chapterId } })
+const updateChapterProgress = async (chapterId, newPercent) => {
+  await orm.chapter.update(
+    { readProgress: newPercent },
+    { where: { id: chapterId, readProgress: { [orm.Sequelize.Op.lt]: newPercent } } }
+  )
 }
 
 /**
