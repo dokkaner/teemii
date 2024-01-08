@@ -83,8 +83,8 @@ body:
     id: additional-context
     attributes:
       label: Additional Context
-      description: Please provide any additional information that may be relevant or helpful.
-      Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+      description: Please provide any additional information that may be relevant or helpful. (logs are in ./data/logs)
+
   - type: checkboxes
     id: terms
     attributes:
