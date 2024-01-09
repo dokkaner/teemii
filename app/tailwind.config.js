@@ -6,13 +6,13 @@ module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     fontFamily: {
-      sans: ['Mona Sans', 'sans-serif'],
+      sans: ['Mona Sans', 'sans-serif']
     },
     extend: {
       textShadow: {
         sm: '0 1px 2px var(--tw-shadow-color)',
         DEFAULT: '0 2px 4px var(--tw-shadow-color)',
-        lg: '0 8px 16px var(--tw-shadow-color)',
+        lg: '0 8px 16px var(--tw-shadow-color)'
       },
       colors: {
         red: {
@@ -74,6 +74,42 @@ module.exports = {
           700: '#201a28',
           800: '#191420',
           900: '#15111a'
+        },
+        darkAccent: {
+          50: '#e6e8f4',
+          100: '#d1d5ec',
+          200: '#b3b9e3',
+          300: '#949cda',
+          400: '#756fd1',
+          500: '#685dae',
+          600: '#5a5197',
+          700: '#4b457f',
+          800: '#3d3867',
+          900: '#312c53'
+        },
+        darkMain: {
+          50: '#575258',
+          100: '#4e4b50',
+          200: '#454347',
+          300: '#3d3b3f',
+          400: '#343236',
+          500: '#2d2831',
+          600: '#26222b',
+          700: '#1f1c25',
+          800: '#181620',
+          900: '#11101b'
+        },
+        darkLight: {
+          50: '#707072',
+          100: '#67676a',
+          200: '#5e5d62',
+          300: '#55545a',
+          400: '#4c4b52',
+          500: '#343036',
+          600: '#2d2b30',
+          700: '#26252a',
+          800: '#1f1e24',
+          900: '#18171e'
         }
       }
     }
@@ -86,26 +122,26 @@ module.exports = {
           'background-position': 'center',
           'background-size': 'cover',
           'background-repeat': 'no-repeat'
-        },
+        }
       })
     }),
     plugin(function ({ matchUtilities, theme }) {
       matchUtilities(
         {
           'text-shadow': (value) => ({
-            textShadow: value,
-          }),
+            textShadow: value
+          })
         },
         { values: theme('textShadow') }
       )
     }),
     require('daisyui'),
-    require('tailwind-scrollbar'),
+    require('tailwind-scrollbar')({ nocompatible: true }),
     require('tailwind-filter-utilities'),
     require('@tailwindcss/typography')
   ],
   daisyui: {
     themes: false,
-    darkTheme: "light"
-  },
+    darkTheme: 'light'
+  }
 }

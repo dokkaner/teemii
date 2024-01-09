@@ -1,7 +1,8 @@
 <template>
   <!-- Static sidebar for desktop -->
   <div class="z-40 hidden md:fixed md:inset-y-0 md:flex md:flex-col drop-shadow-lg">
-    <div class="hidden h-full w-full overflow-visible rounded-r-2xl bg-dark-500 text-light-900 md:block">
+    <div
+        class="hidden h-full w-full overflow-visible rounded-r-2xl bg-dark-500 md:block dark:bg-darkMain-800">
       <div class="flex flex-col items-center py-6">
         <img class="h-12 w-auto shrink-0" src="/assets/icons/logo.png" alt="Timy"/>
 
@@ -9,28 +10,33 @@
           <ul role="list">
             <li v-for="item in navigation" :key="item.name">
               <router-link :to="item.href"
-                           :class="[item.current ? 'border-l-2 border-accent-600 text-white' : 'text-white hover:text-light-600', 'group flex shrink-0 flex-col items-center p-3 text-xs font-medium']"
+                           :class="[item.current ? 'border-l-2 border-accent-600 text-white dark:border-darkAccent-600 dark:text-darkAccent-100' : 'hover:text-light-600 dark:text-darkAccent-200', 'text-light-600 group flex shrink-0 flex-col items-center p-3 text-xs font-medium']"
                            :aria-current="item.current ? 'page' : undefined">
                 <component :is="iconoir[item.icon]" v-if="isLoaded"
-                           :class="[item.current ? 'text-light-500' : 'text-light-300 group-hover:text-light-600', 'h-6 w-6']"
+                           :class="[item.current ? 'text-light-500 dark:text-darkAccent-500' : 'text-light-300 group-hover:text-light-600 group-hover:dark:text-darkAccent-600', 'h-6 w-6']"
                            aria-hidden="true"/>
                 <span class="mt-2">{{ item.name }}</span>
               </router-link>
             </li>
             <li v-if="manga">
-              <div class="border-b border-light-500 mx-2 my-2"></div>
-              <a :href="storeHelpers.getMangaHREF(manga)" class="tooltip tooltip-right flex shrink-0 flex-col items-center" :data-tip="manga.canonicalTitle">
+              <div class="border-b border-light-500 dark:border-darkLight-500 mx-2 my-2"></div>
+              <a :href="storeHelpers.getMangaHREF(manga)"
+                 class="tooltip tooltip-right flex shrink-0 flex-col items-center" :data-tip="manga.canonicalTitle">
                 <img :src="storeHelpers.getMangaCover(manga.id, 480, 720, 'cover')" alt="Manga cover"
-                     class="h-18 w-12 rounded-md object-cover hover:border-2 hover:border-accent-500 shadow-md"/>
+                     class="h-18 w-12 rounded-md object-cover hover:border-2 hover:border-accent-500 dark:hover:border-darkAccent-400 shadow-md"/>
               </a>
             </li>
           </ul>
         </nav>
 
         <div class="absolute bottom-12 flex-1">
-        <span :class="[isConnected ? 'tooltip-accent' : 'tooltip-error', 'tooltip tooltip-right relative flex h-2 w-2 cursor-pointer']" :data-tip="statusText">
-          <span v-show="eventReceived" :class="[isConnected ? 'bg-green-400' : 'bg-red-400', 'absolute inline-flex h-full w-full animate-ping rounded-full opacity-75']"></span>
-          <span :class="[isConnected ? 'bg-green-500' : 'bg-red-500', 'relative inline-flex h-2 w-2 rounded-full']"></span>
+        <span
+            :class="[isConnected ? 'tooltip-accent' : 'tooltip-error', 'tooltip tooltip-right relative flex h-2 w-2 cursor-pointer']"
+            :data-tip="statusText">
+          <span v-show="eventReceived"
+                :class="[isConnected ? 'bg-green-400' : 'bg-red-400', 'absolute inline-flex h-full w-full animate-ping rounded-full opacity-75']"></span>
+          <span
+              :class="[isConnected ? 'bg-green-500' : 'bg-red-500', 'relative inline-flex h-2 w-2 rounded-full']"></span>
         </span>
         </div>
       </div>
@@ -72,26 +78,27 @@
           <div class="mt-5 h-0 flex-1 overflow-y-auto px-2">
             <nav class="flex h-full flex-col" aria-label="mobile navigation">
               <ul role="list">
-              <li class="space-y-1">
-                <router-link v-for="item in navigation" :key="item.name" :to="item.href" @click="mobileMenuOpen = false"
-                   :class="[item.current ? 'bg-main-800 text-white' : 'text-main-100 hover:bg-main-800 hover:text-white', 'group flex items-center rounded-md px-3 py-2 text-sm font-medium']"
-                   :aria-current="item.current ? 'page' : undefined">
-                  <component :is="heroIcons[item.icon]"
-                             :class="[item.current ? 'text-white' : 'text-main-300 group-hover:text-white', 'mr-3 h-6 w-6']"
-                             aria-hidden="true"/>
-                  <span>{{ item.name }}</span>
-                </router-link>
-              </li>
-              <li v-if="manga">
-                <div class="border-b border-light-500 mx-2 my-2"></div>
-                <a :href="storeHelpers.getMangaHREF(manga)" @click="mobileMenuOpen = false"
-                   class="text-main-100 group flex items-center rounded-md px-3 py-2 text-sm font-medium">
-                  <img :src="storeHelpers.getMangaCover(manga.id, 480, 720, 'cover')" alt="Manga cover"
-                       class="h-8 w-6 rounded-md object-cover hover:border-2 hover:border-accent-500 shadow-md"/>
-                  <span class="mx-2">{{ manga.canonicalTitle }}</span>
-                </a>
-              </li>
-            </ul>
+                <li class="space-y-1">
+                  <router-link v-for="item in navigation" :key="item.name" :to="item.href"
+                               @click="mobileMenuOpen = false"
+                               :class="[item.current ? 'bg-main-800 text-white' : 'text-main-100 hover:bg-main-800 hover:text-white', 'group flex items-center rounded-md px-3 py-2 text-sm font-medium']"
+                               :aria-current="item.current ? 'page' : undefined">
+                    <component :is="heroIcons[item.icon]"
+                               :class="[item.current ? 'text-white' : 'text-main-300 group-hover:text-white', 'mr-3 h-6 w-6']"
+                               aria-hidden="true"/>
+                    <span>{{ item.name }}</span>
+                  </router-link>
+                </li>
+                <li v-if="manga">
+                  <div class="border-b border-light-500 mx-2 my-2"></div>
+                  <a :href="storeHelpers.getMangaHREF(manga)" @click="mobileMenuOpen = false"
+                     class="text-main-100 group flex items-center rounded-md px-3 py-2 text-sm font-medium">
+                    <img :src="storeHelpers.getMangaCover(manga.id, 480, 720, 'cover')" alt="Manga cover"
+                         class="h-8 w-6 rounded-md object-cover hover:border-2 hover:border-accent-500 shadow-md"/>
+                    <span class="mx-2">{{ manga.canonicalTitle }}</span>
+                  </a>
+                </li>
+              </ul>
             </nav>
           </div>
         </div>
@@ -102,7 +109,8 @@
     </Dialog>
   </TransitionRoot>
 
-  <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-main-800/80 backdrop-blur-xl px-4 py-4 shadow-sm sm:px-6 md:hidden">
+  <div
+      class="sticky top-0 z-40 flex items-center gap-x-6 bg-main-800/80 backdrop-blur-xl px-4 py-4 shadow-sm sm:px-6 md:hidden">
     <button type="button" class="-m-2.5 p-2.5 text-white lg:hidden" @click="mobileMenuOpen = true">
       <span class="sr-only">Open sidebar</span>
       <component :is="heroIcons['Bars3Icon']" class="h-6 w-6 z-10 cursor-pointer text-white shadow-box"/>
@@ -112,7 +120,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed  } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import * as heroIcons from '@heroicons/vue/24/outline'
 import { useSocketStore } from '@/stores/socketsStore'
@@ -132,7 +140,7 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
-import * as iconoir from '@iconoir/vue';
+import * as iconoir from '@iconoir/vue'
 
 export default {
   components: {
@@ -183,7 +191,7 @@ export default {
     function updateNavigation () {
       navigation.value.forEach((item) => {
         item.current = item.href === currentRoutePath.value
-        if(item.current) {
+        if (item.current) {
           navTitle.value = item.name
         }
       })

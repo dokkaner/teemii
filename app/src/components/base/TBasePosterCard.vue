@@ -4,43 +4,48 @@
       <TBaseContentPlaceholdersBox class="h-[150px] w-[100px] sm:h-[300px] sm:w-[200px]" :rounded="true"/>
     </TBaseContentPlaceholders>
 
-    <span v-if="selected" class="absolute left-8 top-4 h-4 w-4 rounded-full bg-accent-500">
+    <span v-if="selected" class="absolute left-8 top-4 h-4 w-4 rounded-full bg-accent-500 dark:bg-darkAccent-500">
       <component :is="heroIcons['CheckIcon']" class="h-4 w-4 text-white"/>
     </span>
 
     <div v-show="!contentLoading" class="rounded-lg p-4 transition-shadow group-hover:shadow-lg">
-      <span v-if="state === 1" class="animate-ping absolute h-4 w-4 rounded-full bg-accent-400 opacity-75"></span>
-      <span v-if="state === 1" class="absolute h-4 w-4 rounded-full bg-accent-500">
+      <span v-if="state === 1"
+            class="animate-ping absolute h-4 w-4 rounded-full bg-accent-400 dark:bg-darkAccent-400 opacity-75"></span>
+      <span v-if="state === 1" class="absolute h-4 w-4 rounded-full bg-accent-500 dark:bg-darkAccent-500">
         <component :is="heroIcons['SearchCircleIcon']" class="h-4 w-4 text-white"/>
       </span>
 
-      <span v-if="score" class="absolute right-0 top-8 flex items-center justify-center w-12 rounded bg-main-500/90 px-3 py-1 text-xs font-bold text-accent-400">
+      <span v-if="score"
+            class="absolute right-0 top-8 flex items-center justify-center w-12 rounded bg-main-500/90 dark:bg-darkMain-500/90 px-3 py-1 text-xs font-bold text-accent-400 dark:text-darkAccent-400">
         <component :is="heroIcons['HeartIcon']" class="h-3 w-3 mr-1"/>
         {{ score }}
       </span>
 
       <template v-if="to">
         <router-link :to="to" class="block">
-          <img :src="image" :alt="title" :class="blurClass" class="h-[150px] w-[100px] sm:h-[300px] sm:w-[200px] rounded-lg object-cover group-hover:border-2 group-hover:border-accent-500 group-hover:filter-none" />
+          <img :src="image" :alt="title" :class="blurClass"
+               class="h-[150px] w-[100px] sm:h-[300px] sm:w-[200px] rounded-lg object-cover group-hover:border-2 group-hover:border-accent-500 dark:group-hover:border-darkAccent-500 group-hover:filter-none"/>
         </router-link>
       </template>
 
-      <img v-else :src="image" :alt="title" :class="blurClass" class="h-[150px] w-[100px] sm:h-[300px] sm:w-[200px] rounded-lg object-cover group-hover:border-2 group-hover:border-accent-500 group-hover:filter-none" />
+      <img v-else :src="image" :alt="title" :class="blurClass"
+           class="h-[150px] w-[100px] sm:h-[300px] sm:w-[200px] rounded-lg object-cover group-hover:border-2 group-hover:border-accent-500 dark:group-hover:border-darkAccent-500 group-hover:filter-none"/>
 
       <div class="w-[100px] sm:w-[200px] whitespace-nowrap flex-inline">
-      <div v-if="progress" class="relative mt-2 h-1 w-full sm:w-[200px] rounded bg-main-50">
-        <div class="h-full bg-accent-600" :style="{ width: progress + '%' }"></div>
-      </div>
+        <div v-if="progress" class="relative mt-2 h-1 w-full sm:w-[200px] rounded bg-main-50 dark:bg-darkMain-300">
+          <div class="h-full bg-accent-600 dark:bg-darkAccent-600" :style="{ width: progress + '%' }"></div>
+        </div>
 
-      <div :class="variantClass">
-        {{ title }}
-      </div>
+        <div :class="variantClass">
+          {{ title }}
+        </div>
 
-      <div v-if="tags" class="mt-2 flex items-center justify-between gap-x-1 text-xs text-main-400">
-        <span v-for="(tag, index) in tags.slice(0, 3)" :key="index" class="line-clamp-1 text-ellipsis">
-          {{ tag }}
-        </span>
-      </div>
+        <div v-if="tags"
+             class="mt-2 flex items-center justify-between gap-x-1 text-xs text-main-400 dark:text-light-400">
+          <span v-for="(tag, index) in tags.slice(0, 3)" :key="index" class="line-clamp-1 text-ellipsis">
+            {{ tag }}
+          </span>
+        </div>
       </div>
     </div>
   </article>
@@ -96,10 +101,10 @@ const props = defineProps({
     default: 'primary',
     validator: function (value) {
       return (
-        [
-          'primary',
-          'secondary'
-        ].indexOf(value) !== -1
+          [
+            'primary',
+            'secondary'
+          ].indexOf(value) !== -1
       )
     }
   },
@@ -138,10 +143,9 @@ const blurClass = computed(() => {
 
 const variantClass = computed(() => {
   return {
-    'text-left uppercase tracking-widest font-medium text-xs text-main-700 mt-4 line-clamp-1 w-[90px] sm:w-[195px]  transition duration-100 group-hover:text-accent-500':
-        props.variant === 'primary',
-    'text-left uppercase tracking-widest font-medium text-xs text-main-100 mt-4 line-clamp-1 w-[90px] sm:w-[195px]  transition duration-100 group-hover:text-accent-500':
-        props.variant === 'secondary'
+    'text-left uppercase tracking-widest font-medium text-xs mt-4 line-clamp-1 w-[90px] sm:w-[195px] transition duration-100 group-hover:text-accent-500 dark:group-hover:text-darkAccent-500': true, // Common
+    'text-main-700 dark:text-light-500': props.variant === 'primary',
+    'text-main-100 dark:text-light-500': props.variant === 'secondary'
   }
 })
 

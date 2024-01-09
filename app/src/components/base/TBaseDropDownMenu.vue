@@ -19,7 +19,8 @@
         leave-to-class="transform scale-95 opacity-0"
     >
       <MenuItems
-          class="absolute right-0 z-50 mt-2 w-56 origin-top-right divide-y divide-main-100 border border-main-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          class="absolute right-0 z-50 mt-2 w-56 origin-top-right divide-y divide-main-100 border border-light-400
+          bg-white dark:bg-darkMain-500 dark:border-none shadow-lg rounded-md ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
         <TBaseMenuItem
             v-for="(menu, index) in menus"
@@ -31,7 +32,6 @@
             :icon="menu.icon"
             as="template"
         >
-
         </TBaseMenuItem>
       </MenuItems>
     </transition>
@@ -64,7 +64,11 @@ const slots = useSlots()
 const menus = computed(() => slots.default().map((menu) => menu.props))
 
 const containerClass = computed(() => {
-  if (!props.iconOnly) { return 'focus:outline-none inline-flex w-full justify-center rounded-md bg-main-900 px-4 py-2 text-sm font-medium text-white hover:bg-accent-900 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75' } else if (props.iconOnly) { return 'inline-flex items-center rounded-md border-light-600 bg-white p-2 text-sm font-medium text-main-400 shadow-sm hover:bg-light-100 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2' }
+  if (!props.iconOnly) {
+    return 'focus:outline-none inline-flex w-full justify-center rounded-md bg-main-900 px-4 py-2 text-sm font-medium text-white hover:bg-accent-900 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 dark:bg-darkMain-800 dark:text-darkLight-50 dark:hover:bg-darkAccent-700 dark:focus-visible:ring-darkAccent-500'
+  } else if (props.iconOnly) {
+    return 'inline-flex items-center rounded-md border-light-600 bg-white p-2 text-sm font-medium text-main-400 shadow-sm hover:bg-light-100 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 dark:bg-darkLight-500 dark:border-darkLight-400 dark:text-darkAccent-400 dark:hover:bg-darkMain-700 dark:focus:ring-darkAccent-500'
+  }
 })
 
 onMounted(() => {

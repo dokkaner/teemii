@@ -1,13 +1,15 @@
 <template>
   <div class="tooltip tooltip-top cursor-pointer" :data-tip="tooltip">
-    <span class="block rounded-full p-1 text-light-50 transition duration-200 ease-in hover:bg-accent-500">
+    <span
+        class="block rounded-full p-1 text-light-50 dark:text-darkAccent-100 transition duration-200 ease-in
+        hover:bg-accent-500 dark:hover:bg-darkAccent-500">
       <component :is="icon" class="h-5 w-5" @click="onClick"/>
     </span>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps } from 'vue'
 
 const props = defineProps({
   icon: {
@@ -22,5 +24,5 @@ const props = defineProps({
     type: Function,
     required: true
   }
-});
+})
 </script>

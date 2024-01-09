@@ -3,8 +3,8 @@
     <MenuItem :disabled="!enabled" v-slot="{ active, disabled }">
       <button @click="handleClick"
               :class="[
-                'group flex w-full items-center gap-2 px-4 py-2 text-sm',
-                active ? 'bg-light-300 text-main-900' : 'text-main-500',
+                'group flex w-full items-center gap-2 px-4 py-2 text-sm rounded-md',
+                active ? 'bg-light-300 text-main-900 dark:bg-darkAccent-500 dark:text-white' : 'text-main-500 dark:text-darkAccent-100',
                 enabled ? 'text-main-500' : 'text-main-200'
               ]">
         <component :is="heroIcons[icon]" v-if="isLoaded && icon" class="h-5 w-5"/>
