@@ -499,5 +499,11 @@ export default {
   async getScrobblersStatistics () {
     const endpoint = '/api/v2/scrobblers/statistics'
     return await fetchWithRetry(endpoint, false)
+  },
+
+  // Releases
+  async getReleasesLatest () {
+    const endpoint = '/api/v2/releases/latest'
+    return await fetchWithRetry(endpoint, false)
   }
 }

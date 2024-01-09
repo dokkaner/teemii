@@ -19,7 +19,7 @@
       </div>
 
       <div class="relative -top-8 h-32 overflow-hidden p-8 text-left text-light-100">
-        <p class="text-2xs" v-html="markdownToHtml()"></p>
+        <p class="text-xs" v-html="markdownToHtml(props.desc)"></p>
       </div>
     </li>
   </ul>
@@ -27,7 +27,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { marked } from 'marked'
+import { markdownToHtml } from '@/composables/useUXHelpers.js'
 
 const isLoaded = ref(false)
 
@@ -69,13 +69,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:isSelected'])
-
-function markdownToHtml () {
-  const text = props.desc// .replace('\n', '<br>');
-  const regex = /~!(.*)!~/ig
-  const noSpoil = text?.replaceAll(regex, '[???]')
-  return marked(noSpoil)
-}
 
 onMounted(() => {
   isLoaded.value = true
