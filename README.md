@@ -27,6 +27,7 @@ https://docs.teemii.io/Quick-Start/
 ## Preview
 
 ![teemii](./public/preview.webp)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdokkaner%2Fteemii.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdokkaner%2Fteemii?ref=badge_shield)
 
 ## Support
 
@@ -47,6 +48,9 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details and the process for s
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
 
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdokkaner%2Fteemii.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdokkaner%2Fteemii?ref=badge_large)
+
 ## Acknowledgments
 
  - Some of the vue components are based on [headlessui](https://github.com/tailwindlabs/headlessui) and [VueForm](https://github.com/vueform)
@@ -63,5 +67,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) f
     - [MangaKakalot](https://mangakakalot.com/) 
     - [MangaPill](https://mangapill.com/)
     - [MangaUpdates](https://www.mangaupdates.com/) 
-    - [Nautiljon](https://www.nautiljon.com/) 
-
+    - [Nautiljon](https://www.nautiljon.com/)
