@@ -111,7 +111,8 @@
                  class="max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300
                  scrollbar-thumb-main-500 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl">
               <article class="pb-8 pr-8 text-main-500 dark:text-light-400">
-                <p v-html="manga.description.en_us || manga.description.en_us"></p>
+                <p v-html="manga.description.en_us || manga.description.en_us"
+                   class="hyphens-auto text-base leading-relaxed"></p>
               </article>
             </div>
 
@@ -129,45 +130,40 @@
               </div>
             </div>
 
-            <div class="flex w-full gap-8 py-4">
-              <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-                <dl>
+            <div class="py-4">
+              <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <dl class="col-span-1">
                   <dt class="text-sm font-medium text-light-800 dark:text-light-500">Authors</dt>
                   <dd v-for="(author, index) in manga.authors?.slice(0,1)" :key="index"
                       class="mt-1 text-sm text-main-900 dark:text-light-400">
                     {{ author }}
                   </dd>
                 </dl>
-                <dl>
-                  <dt class="text-center text-sm font-medium text-light-800 dark:text-light-500">Year</dt>
-                  <dd class="mt-1 text-center text-sm text-main-900 dark:text-light-400">
+                <dl class="col-span-1">
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Year</dt>
+                  <dd class="mt-1 text-sm text-main-500 dark:text-light-400">
                     {{ manga.startYear }} - {{ manga.endYear || manga.status }}
                   </dd>
                 </dl>
-              </div>
-
-              <div class="w-full">
-                <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-                  <dl>
-                    <dt class="text-center text-sm font-medium text-light-800 dark:text-light-500">Chapters</dt>
-                    <dd class="text-center text-sm text-main-900 dark:text-light-400">
+                <dl class="col-span-1">
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Chapters</dt>
+                  <dd class="text-sm text-main-500 dark:text-light-400">
                     <span class="inline-flex items-center gap-x-1.5 rounded-md py-1">
-                      <svg v-if="(ownedChapters < manga.chapterCount)" class="h-1.5 w-1.5 fill-red-500"
-                           viewBox="0 0 6 6" aria-hidden="true">
-                        <circle cx="3" cy="3" r="3"/>
-                      </svg>
-                      <svg v-else class="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
-                        <circle cx="3" cy="3" r="3"/>
-                      </svg>
-                      {{ ownedChapters }} / {{ manga.chapterCount }}
+                    <svg v-if="(ownedChapters < manga.chapterCount)" class="h-1.5 w-1.5 fill-red-500"
+                         viewBox="0 0 6 6" aria-hidden="true">
+                    <circle cx="3" cy="3" r="3"/>
+                    </svg>
+                    <svg v-else class="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
+                    <circle cx="3" cy="3" r="3"/>
+                    </svg>
+                    {{ ownedChapters }} / {{ manga.chapterCount }}
                     </span>
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt class="text-end text-sm font-medium text-light-800 dark:text-light-500">Space Used</dt>
-                    <dd class="mt-1 text-end text-sm text-main-900 dark:text-light-400">{{ formatDiskSize }}</dd>
-                  </dl>
-                </div>
+                  </dd>
+                </dl>
+                <dl class="col-span-1">
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Space Used</dt>
+                  <dd class="mt-1 text-sm text-main-500 dark:text-light-400">{{ formatDiskSize }}</dd>
+                </dl>
               </div>
             </div>
 
@@ -184,31 +180,31 @@
                 </p>
               </div>
 
-              <ul v-if="lastChapters?.length > 0" role="list"
-                  class="mt-1 divide-y divide-dashed divide-main-400 text-sm dark:divide-darkMain-500">
+              <ul v-if="lastChapters?.length > 0" role="list" class="-ml-2 mt-1">
                 <li v-for="chapter in lastChapters?.slice(0,5)" :key="chapter.id"
-                    class="flex text-main-900 dark:text-light-600">
-                  <div class="flex h-6 w-6 flex-none items-center justify-start">
-                    <div class="h-1.5 w-1.5 rounded-full ring-1" :class="useChapterDotStateClass(chapter.state)"/>
+                    class="flex items-center py-2 text-main-500 dark:text-light-400">
+                  <div class="mr-2 flex h-6 w-6 flex-none items-center justify-center">
+                    <div class="h-2 w-2 rounded-full"
+                         :class="useChapterDotStateClass(chapter.state)"/>
                   </div>
 
-                  <p class="line-clamp-1 flex-auto py-0.5 text-sm leading-5">
-                    <router-link v-if="chapter.state === 3" :to="storeHelpers.getChapterRouterTo(chapter)">
-                    <span class="font-medium">c{{ chapter.chapter }} -
-                    {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }} </span>
+                  <p class="mr-2 line-clamp-1 grow text-sm leading-5">
+                    <router-link v-if="chapter.state === 3" :to="storeHelpers.getChapterRouterTo(chapter)"
+                                 class="font-medium hover:text-main-700 dark:hover:text-light-300">
+                      c{{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
                     </router-link>
                     <span v-else>
                       c{{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
                     </span>
                   </p>
 
-                  <time :datetime="chapter.readableAt" class="flex-none py-0.5 text-sm leading-5">
+                  <time :datetime="chapter.readableAt" class="flex-none text-xs text-gray-500">
                     {{ formatDateTime(chapter.readableAt) }}
                   </time>
                 </li>
               </ul>
 
-              <p v-else class="mt-1 text-sm text-main-900 dark:text-light-600">No chapters available.</p>
+              <p v-else class="mt-1 text-sm text-main-500 dark:text-light-600">No chapters available.</p>
             </div>
 
             <!-- Actions -->

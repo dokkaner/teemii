@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto flex w-full flex-col rounded-md p-5 dark:bg-darkMain-800">
+  <div class="container mx-auto">
     <TransitionRoot as="template" :show="selected.open">
       <Dialog
           as="div"
@@ -39,7 +39,7 @@
       </Dialog>
     </TransitionRoot>
     <div
-        class="sticky left-0 top-0 z-20 mx-auto h-full w-full bg-white/80 px-8 backdrop-blur-xl transition-all duration-100 dark:bg-darkMain-800/80">
+        class="sticky left-0 top-0 z-20 mx-auto mb-8 h-full w-full rounded-b-lg bg-white/80 px-8 backdrop-blur-xl transition-all duration-100 dark:bg-darkMain-800/80">
       <div class="w-full">
         <nav class="navbar flex w-full justify-center align-middle" aria-label="tabs">
           <div class="sm:hidden">
@@ -52,11 +52,11 @@
             </select>
           </div>
           <div class="hidden sm:block">
-            <div class="border-b border-main-200 dark:border-darkAccent-700">
+            <div class="border-b border-accent-200 dark:border-darkAccent-700">
               <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                 <a v-for="tab in tabs" :key="tab.name" href="#"
                    :class="[tab.current ? 'border-accent-500 text-accent-600 dark:border-darkAccent-400 dark:text-darkAccent-400' :
-                    'border-transparent text-main-500 hover:border-main-300 hover:text-main-700 dark:text-darkAccent-700 hover:dark:border-darkAccent-300 hover:dark:text-darkAccent-300',
+                    'border-transparent text-main-500 hover:border-accent-300 hover:text-main-700 dark:text-darkAccent-700 hover:dark:border-darkAccent-300 hover:dark:text-darkAccent-300',
                     'whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium']"
                    :aria-current="tab.current ? 'page' : undefined"
                    @click="toggleTabs(tab.index)"

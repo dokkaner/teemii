@@ -5,9 +5,11 @@
     </div>
   </div>
   <div class="mx-4">
-    <p class="line-clamp-1 text-left text-xs font-medium uppercase tracking-widest text-main-700">Author</p>
+    <p class="line-clamp-1 text-left text-xs font-medium uppercase tracking-widest text-main-600 dark:text-light-500">
+      Author</p>
     <h5 class="line-clamp-1 text-left text-xs tracking-tight text-main-400 transition duration-100 hover:text-accent-500">
-      <router-link :to="href">{{name}}</router-link></h5>
+      <router-link :to="href">{{ name }}</router-link>
+    </h5>
   </div>
 </template>
 

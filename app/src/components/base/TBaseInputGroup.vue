@@ -5,7 +5,7 @@
     </TBaseContentPlaceholders>
 
     <label v-else-if="label"
-           :class="['flex items-center justify-between whitespace-nowrap text-sm not-italic text-light-800 dark:text-light-300', labelClasses]">
+           :class="['flex items-center justify-between whitespace-nowrap text-sm not-italic text-light-800 dark:text-main-200', labelClasses]">
       {{ label }}
       <span v-show="required" class="text-sm text-red-500 dark:text-darkRed-500"> *</span>
       <slot v-if="hasRightLabelSlot" name="labelRight"/>

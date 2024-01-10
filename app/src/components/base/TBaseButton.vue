@@ -29,7 +29,7 @@ const props = defineProps({
   defaultClass: {
     type: String,
     default:
-        'inline-flex whitespace-nowrap items-center border focus:outline-none focus:ring-2 focus:ring-offset-2 sm:flex-1 shadow-sm'
+        'inline-flex whitespace-nowrap items-center border focus:outline-none focus:ring-2 focus:ring-offset-2 flex-1 shadow-sm'
   },
   contentLoading: {
     type: Boolean,
@@ -71,9 +71,9 @@ const props = defineProps({
 
 const iconLeftClass = computed(() => {
   return {
-    '-ml-0.5 mr-2 h-4 w-4': props.size === 'sm',
-    '-ml-1 mr-2 h-5 w-5': props.size === 'md',
-    '-ml-1 mr-3 h-5 w-5': props.size === 'lg' || props.size === 'xl'
+    'ml-0.5 mr-2 h-4 w-4': props.size === 'sm',
+    'ml-1 mr-2 h-5 w-5': props.size === 'md',
+    'ml-1 mr-3 h-5 w-5': props.size === 'lg' || props.size === 'xl'
   }
 })
 

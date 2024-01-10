@@ -50,13 +50,13 @@
       <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0"
                        enter-to="opacity-100" leave="transition-opacity ease-linear duration-300"
                        leave-from="opacity-100" leave-to="opacity-0">
-        <DialogOverlay class="fixed inset-0 bg-main-500/75"/>
+        <DialogOverlay class="fixed inset-0 bg-dark-500/75 dark:bg-darkMain-800"/>
       </TransitionChild>
       <TransitionChild as="template" enter="transition ease-in-out duration-300 transform"
                        enter-from="-translate-x-full" enter-to="translate-x-0"
                        leave="transition ease-in-out duration-300 transform" leave-from="translate-x-0"
                        leave-to="-translate-x-full">
-        <div class="relative flex w-full max-w-xs flex-1 flex-col bg-main-500 pb-4 pt-5">
+        <div class="relative flex w-full max-w-xs flex-1 flex-col bg-dark-500 dark:bg-darkMain-800 pb-4 pt-5">
           <TransitionChild as="template" enter="ease-in-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
                            leave="ease-in-out duration-300" leave-from="opacity-100" leave-to="opacity-0">
             <div class="absolute right-0 top-1 -mr-14 p-1">
@@ -110,12 +110,13 @@
   </TransitionRoot>
 
   <div
-      class="sticky top-0 z-40 flex items-center gap-x-6 bg-main-800/80 backdrop-blur-xl px-4 py-4 shadow-sm sm:px-6 md:hidden">
-    <button type="button" class="-m-2.5 p-2.5 text-white lg:hidden" @click="mobileMenuOpen = true">
+      class="sticky top-0 z-40 flex items-center gap-x-6 bg-dark-500/80 dark:bg-darkMain-800/80 backdrop-blur-xl
+        px-4 py-4 shadow-sm sm:px-6 md:hidden">
+    <button type="button" class="-m-2.5 p-2.5 text-white dark:text-light-400 lg:hidden" @click="mobileMenuOpen = true">
       <span class="sr-only">Open sidebar</span>
       <component :is="heroIcons['Bars3Icon']" class="h-6 w-6 z-10 cursor-pointer text-white shadow-box"/>
     </button>
-    <div class="line-clamp-1 text-md uppercase text-white">{{ pageTitle }}</div>
+    <div class="line-clamp-1 text-md uppercase text-white dark:text-light-400">{{ pageTitle }}</div>
   </div>
 </template>
 
