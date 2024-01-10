@@ -8,7 +8,7 @@ const { logger } = require('../loaders/logger.js')
 const uuidv4 = require('uuid').v4
 const Anilist = require('anilist-node')
 const AniCli = new Anilist()
-const { os } = require('../services/osService.js')
+const { rmdir } = require('../services/osService')
 
 const langMap = generateLangMap()
 const minimalArgs = [
@@ -336,10 +336,8 @@ async function getBody (url, clickOn, AdBlock = false, Intercept = true, textOnl
     await page.close()
     await browser.close()
     if (chromeTmpDataDir !== null) {
-      await os.rmdir(chromeTmpDataDir, { recursive: true })
+      await rmdir(chromeTmpDataDir)
     }
-
-    process.exit(0)
   }
 }
 
@@ -414,7 +412,7 @@ async function downloadPage (url, downloadFolder, fileName, referer = '') {
     await page.close()
     await browser.close()
     if (chromeTmpDataDir !== null) {
-      await os.rmdir(chromeTmpDataDir, { recursive: true })
+      await rmdir(chromeTmpDataDir)
     }
   }
 }

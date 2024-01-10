@@ -4,18 +4,18 @@
     <div class="flex flex-1 justify-between sm:hidden">
       <a :href="anchor"
          :class="{
-           'cursor-normal disabled pointer-events-none bg-dark-100 text-dark-400': pagination.currentPage === 1,
+           'cursor-normal disabled pointer-events-none !bg-main-100 !text-main-400': Number(pagination.currentPage) === 1,
            'rounded-md bg-white px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:bg-darkMain-700 dark:text-darkLight-50 dark:hover:bg-darkAccent-500': true
          }"
-         @click="pageClicked(pagination.currentPage - 1)">
+         @click="previousPage()">
         Previous
       </a>
       <a :href="anchor"
          :class="{
-           'disabled pointer-events-none cursor-default bg-dark-100 text-dark-400': pagination.currentPage === pagination.totalPages,
+           'disabled pointer-events-none cursor-default !bg-main-100 !text-main-400': Number(pagination.currentPage) === Number(pagination.totalPages),
            'rounded-md bg-white px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:bg-darkMain-700 dark:text-darkLight-50 dark:hover:bg-darkAccent-500': true
          }"
-         @click="pageClicked(pagination.currentPage + 1)">
+         @click="nextPage()">
         Next
       </a>
     </div>
@@ -188,6 +188,22 @@ export default {
       }
 
       this.$emit('pageChange', page)
+    },
+    previousPage () {
+      const page = Number(this.pagination.currentPage) - 1
+      if (page < 1) {
+        return
+      }
+      this.$emit('pageChange', Number(page))
+    },
+    nextPage () {
+      const page = Number(this.pagination.currentPage) + 1
+
+      if (page > this.pagination.totalPages) {
+        return
+      }
+
+      this.$emit('pageChange', Number(page))
     },
     pageLinks () {
       const pages = []

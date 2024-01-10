@@ -227,15 +227,15 @@ class ComickFun extends Agent {
     super()
     this.id = 'comickfun'
     this.label = 'ComickFun'
-    this.url = 'https://comick.app/'
-    this.credits = 'https://comick.app/'
+    this.url = 'https://comick.cc/'
+    this.credits = 'https://comick.cc/'
     this.tags = []
-    this.iconURL = 'https://comick.app/favicon.ico'
-    this.sourceURL = 'https://comick.app/comic/[id]'
+    this.iconURL = 'https://comick.cc/favicon.ico'
+    this.sourceURL = 'https://comick.cc/comic/[id]'
     this.options = ''
     this.lang = ['*']
     this.caps = [AgentCapabilities.MANGA_METADATA_FETCH, AgentCapabilities.CHAPTER_FETCH]
-    this.host = 'https://api.comick.app'
+    this.host = 'https://api.comick.cc'
     this.priority = 5
     this.coverPriority = 40
     // -------------------------------------------------
