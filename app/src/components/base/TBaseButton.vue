@@ -82,7 +82,7 @@ const variantClass = computed(() => {
   return {
     'dark:text-light-200 dark:bg-darkAccent-500 dark:hover:bg-darkAccent-700 dark:focus:ring-darkAccent-500 text-white border border-transparent bg-accent-500 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2':
         props.variant === 'primary',
-    'dark:text-light-200 dark:bg-darkMain-500 dark:hover:bg-darkMain-300 dark:focus:ring-darkMain-500 text-main-700 dark:border-darkAccent-300 border border-light-600 bg-light-300 hover:bg-light-600 focus:outline-none focus:ring-2 focus:ring-light-500 focus:ring-offset-2':
+    'dark:text-light-200 dark:bg-darkMain-500 dark:hover:bg-darkMain-300 dark:focus:ring-darkMain-500 text-main-700 dark:border-darkMain-300 border border-light-600 bg-light-300 hover:bg-light-600 focus:outline-none focus:ring-2 focus:ring-light-500 focus:ring-offset-2':
         props.variant === 'secondary'
   }
 })

@@ -1,26 +1,31 @@
 <template>
   <div class="overflow-hidden mt-4">
-    <div v-if="title" class="mx-1 flex items-center justify-between border-b border-main-200">
-      <h3 class="sm:text-lg font-medium uppercase w-full tracking-wide">
+    <div v-if="title" class="mx-1 flex items-center justify-between border-b border-main-200 dark:border-darkMain-600">
+      <h3 class="text-lg sm:text-xl font-medium uppercase tracking-wide dark:text-light-600">
         {{ title }}
-        <span class="relative -top-0.5 rounded bg-main-900/90 px-2 py-0.5 text-xs font-medium text-light-200">
+        <span
+            class="relative -top-0.5 rounded bg-main-900/90 px-2 py-0.5 text-xs font-medium text-light-200 dark:bg-darkAccent-700 dark:text-light-500">
           {{ slides.length }}
         </span>
       </h3>
       <div class="hidden ml-4 mt-3 md:flex md:visible">
         <button type="button" @click="slidePrev()"
-                class="rounded-md border border-transparent px-4 py-2 text-sm font-medium text-accent-400 hover:text-accent-600">
+                class="rounded-md border border-transparent px-4 py-2 text-sm font-medium text-accent-400 hover:text-accent-600 dark:text-darkAccent-300 dark:hover:text-darkAccent-400">
           <ChevronLeftIcon class="h-6 w-6" aria-hidden="true"/>
         </button>
         <button type="button" @click="slideNext()"
-                class="rounded-md border border-transparent px-4 py-2 text-sm font-medium text-accent-400 hover:text-accent-600">
+                class="rounded-md border border-transparent px-4 py-2 text-sm font-medium text-accent-400 hover:text-accent-600 dark:text-darkAccent-300 dark:hover:text-darkAccent-400">
           <ChevronRightIcon class="h-6 w-6" aria-hidden="true"/>
         </button>
       </div>
     </div>
-    <div ref="carRef" class="flex overflow-x-auto rounded-box pb-4 sm:gap-x-8 scrollbar-thin scrollbar-track-light-700 scrollbar-thumb-main-500">
+    <div ref="carRef"
+         class="flex overflow-x-auto pb-4 sm:gap-x-8
+         scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl
+         dark:scrollbar-track-darkMain-600 dark:scrollbar-thumb-darkAccent-800">
       <TBasePosterCard @click="selectSlide(index)"
-          v-show="!contentLoading" class="shrink-0" v-for="(slide, index) in slides" :id="`${uID}-${index}`" :key="slide.id"
+                       v-show="!contentLoading" class="shrink-0" v-for="(slide, index) in slides"
+                       :id="`${uID}-${index}`" :key="slide.id"
                        :to="!selectable ? slide.to : null"
                        :title="slide.title"
                        :image="slide.image"
@@ -30,15 +35,13 @@
                        :variant="slide.variant"
                        :score="slide.score"
                        :selected="selectedSlideIdx === index"
-      >
-      </TBasePosterCard>
+      />
 
       <TBasePosterCard v-show="contentLoading" class="shrink-0" v-for="index in 10" :key="index"
                        :contentLoading="contentLoading"
                        state=0
                        variant="primary"
-      >
-      </TBasePosterCard>
+      />
     </div>
   </div>
 </template>
@@ -48,6 +51,7 @@ import {
   ChevronLeftIcon
 } from '@heroicons/vue/24/solid'
 import { onMounted, ref, nextTick, watch } from 'vue'
+
 const emit = defineEmits(['select'])
 let slideIdx = 0
 const selectedSlideIdx = ref(-1)
@@ -79,7 +83,7 @@ const props = defineProps({
 function isInViewport (element) {
   const rect = element.getBoundingClientRect()
   return (
-    rect.top >= 0 &&
+      rect.top >= 0 &&
       rect.left >= 0 &&
       rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
       rect.right <= (window.innerWidth || document.documentElement.clientWidth)

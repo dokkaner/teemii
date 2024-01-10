@@ -18,10 +18,10 @@
                        :class="notificationColor"/>
           </div>
           <div class="w-full">
-            <p class="text-sm font-bold text-main-900 dark:text-darkLight-50">{{
+            <p class="text-sm font-bold text-main-900 dark:text-light-400">{{
                 notification.title || defaultTitle
               }}</p>
-            <p class="mt-1 text-sm text-main-500 dark:text-darkLight-300">{{ notification.message }}</p>
+            <p class="mt-1 text-sm text-main-500 dark:text-darkLight-100">{{ notification.message }}</p>
           </div>
           <div v-if="!notification.actionLabel" class="ml-4 flex shrink-0">
             <button type="button" @click="hideNotificationAction"

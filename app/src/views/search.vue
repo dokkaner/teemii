@@ -39,8 +39,7 @@
       </Dialog>
     </TransitionRoot>
     <div
-        class="sticky left-0 top-0 z-20 mx-auto h-full w-full bg-white/80 px-8 backdrop-blur-xl transition-all
-        duration-100 dark:bg-darkMain-800/80">
+        class="sticky left-0 top-0 z-20 mx-auto h-full w-full bg-white/80 px-8 backdrop-blur-xl transition-all duration-100 dark:bg-darkMain-800/80">
       <div class="w-full">
         <nav class="navbar flex w-full justify-center align-middle" aria-label="tabs">
           <div class="sm:hidden">
