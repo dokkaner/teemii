@@ -2,13 +2,13 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
 const puppeteer = require('puppeteer-extra')
 const fs = require('fs')
-const fsPromises = require('fs').promises
 const path = require('path')
 const axios = require('axios').default
 const { logger } = require('../loaders/logger.js')
 const uuidv4 = require('uuid').v4
 const Anilist = require('anilist-node')
 const AniCli = new Anilist()
+const { os } = require('../services/osService.js')
 
 const langMap = generateLangMap()
 const minimalArgs = [
@@ -336,8 +336,7 @@ async function getBody (url, clickOn, AdBlock = false, Intercept = true, textOnl
     await page.close()
     await browser.close()
     if (chromeTmpDataDir !== null) {
-      // delete chromeTmpDataDir
-      await fsPromises.rm(chromeTmpDataDir, { recursive: true })
+      await os.rmdir(chromeTmpDataDir, { recursive: true })
     }
 
     process.exit(0)
@@ -415,8 +414,7 @@ async function downloadPage (url, downloadFolder, fileName, referer = '') {
     await page.close()
     await browser.close()
     if (chromeTmpDataDir !== null) {
-      // delete chromeTmpDataDir
-      await fsPromises.rm(chromeTmpDataDir, { recursive: true })
+      await os.rmdir(chromeTmpDataDir, { recursive: true })
     }
   }
 }
