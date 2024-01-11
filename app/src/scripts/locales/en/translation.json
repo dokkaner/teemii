@@ -1,0 +1,12 @@
+{
+  "navigation": {
+    "home": "Home",
+    "search": "Search",
+    "collection": "Collection",
+    "activity": "Activity",
+    "sync": "Sync.",
+    "settings": "Settings"
+  },
+  "general": {
+  }
+}

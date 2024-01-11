@@ -1,0 +1,12 @@
+{
+  "navigation": {
+    "home": "Acceuil",
+    "search": "Recherche",
+    "collection": "Collection",
+    "activity": "Activité",
+    "sync": "Synchro.",
+    "settings": "Paramètres"
+  },
+  "general": {
+  }
+}

@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import * as heroIcons from '@heroicons/vue/24/outline'
 import { useSocketStore } from '@/stores/socketsStore'
@@ -142,6 +142,7 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 import * as iconoir from '@iconoir/vue'
+import { useTranslation } from 'i18next-vue'
 
 export default {
   components: {
@@ -155,18 +156,23 @@ export default {
     TransitionRoot
   },
   setup () {
-
+    const { i18next, t } = useTranslation()
     const router = useRouter()
     const previousRoutePath = ref('')
     const currentRoutePath = ref('')
-    const navigation = ref([
-      { name: 'Home', href: '/', primary: true, icon: 'HomeSimple', current: false },
-      { name: 'Search', href: '/search', primary: true, icon: 'Search', current: false },
-      { name: 'Collection', href: '/mangas', primary: true, icon: 'BookStack', current: false },
-      { name: 'Activity', href: '/activity', primary: true, icon: 'Activity', current: false },
-      { name: 'Sync.', href: '/integration', primary: true, icon: 'CloudSync', current: false },
-      { name: 'Settings', href: '/settings', primary: false, icon: 'Settings', current: false }
-    ])
+    i18next.changeLanguage('en')
+    const navigation = ref([])
+
+    watchEffect(() => {
+      navigation.value = [
+        { name: t('navigation.home'), href: '/', primary: true, icon: 'HomeSimple', current: false },
+        { name: t('navigation.search'), href: '/search', primary: true, icon: 'Search', current: false },
+        { name: t('navigation.collection'), href: '/mangas', primary: true, icon: 'BookStack', current: false },
+        { name: t('navigation.activity'), href: '/activity', primary: true, icon: 'Activity', current: false },
+        { name: t('navigation.sync'), href: '/integration', primary: true, icon: 'CloudSync', current: false },
+        { name: t('navigation.settings'), href: '/settings', primary: false, icon: 'Settings', current: false }
+      ]
+    })
 
     const navTitle = ref('Home')
     const isLoaded = ref(false)
@@ -209,6 +215,7 @@ export default {
       isLoaded.value = true
     })
     return {
+      t,
       pageTitle,
       navTitle,
       XMarkIcon,

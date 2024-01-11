@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
+import i18next from 'i18next'
+import I18NextVue from 'i18next-vue'
 import App from './App.vue'
 import './index.css'
 import logger from './loaders/logger.js'
@@ -6,6 +8,7 @@ import router from './router'
 import veProgress from 'vue-ellipse-progress'
 import { defineGlobalComponents } from './globalComponents'
 import { createPinia } from 'pinia'
+import i18n from './scripts/i18n.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
@@ -29,6 +32,7 @@ app.config.warnHandler = (warn) => {
 defineGlobalComponents(app)
 const pinia = createPinia()
 
+app.use(I18NextVue, { i18next })
 app.use(logger)
 app.use(router)
 app.use(veProgress)
