@@ -327,11 +327,11 @@
         <div class="mt-3 flex sm:ml-4 sm:mt-0">
           <div class="mx-auto mr-4 flex gap-x-4 text-white">
             <div class="flex flex-wrap items-baseline justify-start gap-2">
-              <TBaseActionIcon :icon="heroIcons['ArrowPathIcon']" tooltip="Refresh"
+              <TBaseActionIcon :icon="heroIcons['ArrowPathIcon']" tooltip="Refresh" :background="true"
                                @click="fetchLogs()"/>
             </div>
             <div class="flex flex-wrap items-baseline justify-start gap-2">
-              <TBaseActionIcon :icon="heroIcons['DocumentArrowDownIcon']" tooltip="Download"
+              <TBaseActionIcon :icon="heroIcons['DocumentArrowDownIcon']" tooltip="Download" :background="true"
                                @click="downloadLogs()"/>
             </div>
           </div>

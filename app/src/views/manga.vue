@@ -123,7 +123,7 @@
                   <button v-for="(source, index) in manga.sources" :key="index" type="button" :data-tip="source.name"
                           class="tooltip tooltip-top relative h-6 w-6 cursor-pointer rounded-full grayscale hover:grayscale-0">
                     <a :href="source.url" target="_blank">
-                      <img :src="source.favicon" class="mx-auto h-4 w-4" :alt="source.name">
+                      <img :src="source.favicon" class="mx-auto h-4 w-4" :alt="source.name" @error="imgPlaceholder">
                     </a>
                   </button>
                 </div>
@@ -518,6 +518,10 @@ export default {
     const lastChapters = computed(() => mangasStore.getMangaLastPublishedChapters)
     const ownedChapters = computed(() => mangasStore.getOwnedChapters)
 
+    function imgPlaceholder (e) {
+      e.target.src = 'https://via.placeholder.com/24x24'
+    }
+
     function continueReading () {
       const lastChapter = mangaChapters.value.find((chapter) => chapter.chapter === manga.value.readStatus.lastChapter)
       if (lastChapter.id) {
@@ -759,6 +763,7 @@ export default {
     })
     // expose
     return {
+      imgPlaceholder,
       useChapterDotStateClass,
       onChapterSearch,
       contentRatingClass,

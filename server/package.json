@@ -12,6 +12,8 @@
   "author": "Dokkaner",
   "license": "MIT",
   "dependencies": {
+    "@sentry/cli": "^2.25.0",
+    "@sentry/node": "^7.93.0",
     "adm-zip": "^0.5.10",
     "anilist-node": "^1.14.0",
     "await-semaphore": "^0.1.3",

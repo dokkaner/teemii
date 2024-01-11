@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const sharp = require('sharp')
 const { logger } = require('../loaders/logger')
 const EventEmitter = require('events')
@@ -6,32 +7,46 @@ const os = require('./osService')
 const { configManager } = require('../loaders/configManager')
 
 async function autoEnhance (input) {
-  const directory = input.substring(0, input.lastIndexOf('\\'))
+  const directory = path.dirname(input)
+
+  // get full path to directory
+  const fullPath = path.resolve(directory)
+  // get image full path
+  const imageFullPath = path.resolve(input)
+
   const execPath = configManager.get('preferences.advancedFeatures.imageMagickPath')
   if (!execPath) {
     logger.warn('autoEnhance: ImageMagick path is not set.')
     return
   }
-  const command = `${execPath} "${input}" "-auto-gamma"  "-auto-level" "-normalize" "${input}"`
+  const command = `${execPath} "${imageFullPath}" "-auto-gamma"  "-auto-level" "-normalize" "${imageFullPath}"`
 
   const OS = new os.OSFunc()
-  await OS.execCommand(command, directory)
+  await OS.execCommand(command, fullPath)
 }
+
 async function fuzzTrim (input) {
-  const directory = input.substring(0, input.lastIndexOf('\\'))
+  const directory = path.dirname(input)
+
+  // get full path to directory
+  const fullPath = path.resolve(directory)
+  // get image full path
+  const imageFullPath = path.resolve(input)
+
   const execPath = configManager.get('preferences.advancedFeatures.imageMagickPath')
   if (!execPath) {
     logger.warn('autoEnhance: ImageMagick path is not set.')
     return
   }
-  const command = `${execPath} "${input}" "-fuzz" "30%" "-trim" "${input}"`
+  const command = `${execPath} "${imageFullPath}" "-fuzz" "30%" "-trim" "${imageFullPath}"`
 
   const OS = new os.OSFunc()
-  await OS.execCommand(command, directory)
+  await OS.execCommand(command, fullPath)
 }
+
 async function waifu2x (input) {
-  const directory = input.substring(0, input.lastIndexOf('\\'))
-  const fileName = input.substring(input.lastIndexOf('\\') + 1)
+  const directory = path.dirname(input)
+  const fileName = path.basename(input)
 
   // https://github.com/nihui/waifu2x-ncnn-vulkan
   const execPath = configManager.get('preferences.advancedFeatures.waifu2xPath')
@@ -60,6 +75,7 @@ async function downscale2x (input) {
     logger.error({ input, e }, 'Failed to downscale image')
   }
 }
+
 async function toWebp (input) {
   const ext = '.' + os.extractFileExtension(input)
   const output = input.replace(ext, '.webp')
@@ -81,6 +97,7 @@ async function toWebp (input) {
     return input
   }
 }
+
 //
 class ImageProcessingService extends EventEmitter {
   /**
@@ -108,22 +125,26 @@ class ImageProcessingService extends EventEmitter {
       logger.error('autoEnhance: File does not exist.')
     }
 
-    // process commands
-    for (const command of commands) {
-      switch (command) {
-        case 'cl_trim':
-          await fuzzTrim(fileInput)
-          break
-        case 'eh_waifu2x':
-          await waifu2x(fileInput)
-          break
-        case 'eh_auto':
-          await autoEnhance(fileInput)
-          break
-        case 'ex_downscale2x':
-          await downscale2x(fileInput)
-          break
+    try {
+      // process commands
+      for (const command of commands) {
+        switch (command) {
+          case 'cl_trim':
+            await fuzzTrim(fileInput)
+            break
+          case 'eh_waifu2x':
+            await waifu2x(fileInput)
+            break
+          case 'eh_auto':
+            await autoEnhance(fileInput)
+            break
+          case 'ex_downscale2x':
+            await downscale2x(fileInput)
+            break
+        }
       }
+    } catch (e) {
+      logger.error({ e }, 'Failed to process image')
     }
 
     let outputFilename = fileInput

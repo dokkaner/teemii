@@ -13,98 +13,98 @@
         </div>
       </div>
     </div>
-
-    <table class="h-full w-full table-auto" aria-describedby="jobs list">
-      <thead class="border-main/10 text-main border-b text-sm dark:border-darkMain-500/10 dark:text-light-300">
-      <tr>
-        <th scope="col" class=""></th>
-        <th scope="col" class="hidden md:table-cell">Job</th>
-        <th scope="col" class="hidden lg:table-cell">Status</th>
-        <th scope="col" class="hidden lg:table-cell">Duration</th>
-        <th scope="col" class="hidden lg:table-cell">Last update</th>
-        <th scope="col" class=""></th>
-      </tr>
-      </thead>
-      <tbody class="divide-y divide-light-600/20 dark:divide-darkMain-700/20">
-      <tr v-for="job in activities" :key="job.id">
-        <td class="max-w-sm py-4 pl-0">
-          <div class="flex items-center gap-x-4">
-            <img v-show="job.entityType === 'chapter'" :src="helpers.getMangaCover(job.data?.payload?.parentId)"
-                 alt="cover" class="h-11 w-8 rounded-sm bg-main-800"/>
-            <img v-show="job.entityType === 'manga'" :src="helpers.getMangaCover(job.manga?.id)" alt="cover"
-                 class="h-11 w-8 rounded-sm bg-main-800"/>
-            <div>
+    <div class="px-4 sm:px-0">
+      <table class="h-full w-full table-auto" aria-describedby="jobs list">
+        <thead class="border-main/10 text-main border-b text-sm dark:border-darkMain-500/10 dark:text-light-300">
+        <tr>
+          <th scope="col" class=""></th>
+          <th scope="col" class="hidden md:table-cell">Job</th>
+          <th scope="col" class="hidden lg:table-cell">Status</th>
+          <th scope="col" class="hidden lg:table-cell">Duration</th>
+          <th scope="col" class="hidden lg:table-cell">Last update</th>
+          <th scope="col" class=""></th>
+        </tr>
+        </thead>
+        <tbody class="divide-y divide-light-600/20 dark:divide-darkMain-700/20">
+        <tr v-for="job in activities" :key="job.id">
+          <td class="max-w-sm py-4 pl-0">
+            <div class="flex items-center gap-x-4">
+              <img v-show="job.entityType === 'chapter'" :src="helpers.getMangaCover(job.data?.payload?.parentId)"
+                   alt="cover" class="h-11 w-8 rounded-sm bg-main-800"/>
+              <img v-show="job.entityType === 'manga'" :src="helpers.getMangaCover(job.manga?.id)" alt="cover"
+                   class="h-11 w-8 rounded-sm bg-main-800"/>
+              <div>
+                <div
+                    class="line-clamp-1 text-left text-xs font-medium uppercase tracking-tight text-main-700 dark:text-light-500">
+                  {{ getTitle(job) }}
+                </div>
+                <p class="line-clamp-1 text-left text-xs font-medium  tracking-tight text-main-400">
+                  {{ getSubTitle(job) }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="hidden py-4 pl-0 sm:table-cell">
+            <div class="flex justify-center">
               <div
-                  class="line-clamp-1 text-left text-xs font-medium uppercase tracking-tight text-main-700 dark:text-light-500">
-                {{ getTitle(job) }}
-              </div>
-              <p class="line-clamp-1 text-left text-xs font-medium  tracking-tight text-main-400">
-                {{ getSubTitle(job) }}</p>
-            </div>
-          </div>
-        </td>
-        <td class="hidden py-4 pl-0 sm:table-cell">
-          <div class="flex justify-center">
-            <div
-                class="line-clamp-1 rounded-md bg-main-50 px-2 py-1 text-xs tracking-tight text-main-400 ring-1 ring-inset ring-main-500/10">
-              {{ getJobType(job) }}
-            </div>
-          </div>
-        </td>
-        <td class="hidden p-4 sm:table-cell">
-          <div class="mx-auto flex items-center gap-x-2">
-            <time class="text-main-400 sm:hidden" :datetime="job.updatedAt">{{ job.updatedAt }}</time>
-            <div v-show="(job.status !== 'processing')"
-                 :class="[statuses[job.status], 'flex-none rounded-full p-1']">
-              <div class="h-1.5 w-1.5 rounded-full bg-current"/>
-            </div>
-            <svg v-show="(job.status === 'processing')" class="h-5 w-5 animate-spin text-blue-400"
-                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <div>
-              <div class="line-clamp-1 hidden self-start text-xs tracking-tight text-main-400 sm:block">
-                {{ job.status }}
+                  class="line-clamp-1 rounded-md bg-main-50 px-2 py-1 text-xs tracking-tight text-main-400 ring-1 ring-inset ring-main-500/10">
+                {{ getJobType(job) }}
               </div>
             </div>
+          </td>
+          <td class="hidden p-4 sm:table-cell">
+            <div class="mx-auto flex items-center gap-x-2">
+              <time class="text-main-400 sm:hidden" :datetime="job.updatedAt">{{ job.updatedAt }}</time>
+              <div v-show="(job.status !== 'processing')"
+                   :class="[statuses[job.status], 'flex-none rounded-full p-1']">
+                <div class="h-1.5 w-1.5 rounded-full bg-current"/>
+              </div>
+              <svg v-show="(job.status === 'processing')" class="h-5 w-5 animate-spin text-blue-400"
+                   xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <div>
+                <div class="line-clamp-1 hidden self-start text-xs tracking-tight text-main-400 sm:block">
+                  {{ job.status }}
+                </div>
+              </div>
 
-            <div v-show="(job.retryCount > 0)" class=" hidden text-xs leading-5 text-blue-700 lg:block">
+              <div v-show="(job.retryCount > 0)" class=" hidden text-xs leading-5 text-blue-700 lg:block">
                   <span class="inset-0 object-right-top">
                   <div
                       class="inline-flex items-center rounded-full border border-white bg-red-500 px-1.5 py-0.5 text-xs leading-4 text-white">
                   {{ job.retryCount }} retry
                    </div>
                   </span>
+              </div>
+              <div v-show="(job.status === 'processing')" class="hidden text-xs leading-5  text-blue-700 lg:block">
+                {{ job.progress?.value }}%
+              </div>
             </div>
-            <div v-show="(job.status === 'processing')" class="hidden text-xs leading-5  text-blue-700 lg:block">
-              {{ job.progress?.value }}%
+            <div v-show="(job.status === 'failed')" class="mt-1 hidden text-xs leading-5 text-red-700 lg:block">
+              {{ job.error?.message }}
             </div>
-          </div>
-          <div v-show="(job.status === 'failed')" class="mt-1 hidden text-xs leading-5 text-red-700 lg:block">
-            {{ job.error?.message }}
-          </div>
-          <div v-show="(job.status === 'processing')" class="mt-1 hidden text-xs leading-5 text-main-700 lg:block">
-            {{ job.progress?.msg }}
-          </div>
-        </td>
-        <td class="hidden py-4 pl-0 text-xs tracking-tight text-main-400 sm:table-cell ">
-          {{ getDuration(job) }}
-        </td>
-        <td class="hidden py-4 pl-0 text-xs tracking-tight text-main-400 sm:table-cell ">
-          <time :datetime="job.updatedAt">{{ formatDate(job.updatedAt) }}</time>
-        </td>
-        <td class="max-w-sm py-2 pl-2">
-          <router-link :to="getRouterLink(job)" class="text-main-400 hover:text-main-600">
-            <span class="sr-only">View</span>
-            <TBaseIcon name="ChevronRightIcon" class="h-12"/>
-          </router-link>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-
+            <div v-show="(job.status === 'processing')" class="mt-1 hidden text-xs leading-5 text-main-700 lg:block">
+              {{ job.progress?.msg }}
+            </div>
+          </td>
+          <td class="hidden py-4 pl-0 text-xs tracking-tight text-main-400 sm:table-cell ">
+            {{ getDuration(job) }}
+          </td>
+          <td class="hidden py-4 pl-0 text-xs tracking-tight text-main-400 sm:table-cell ">
+            <time :datetime="job.updatedAt">{{ formatDate(job.updatedAt) }}</time>
+          </td>
+          <td class="max-w-sm py-2 pl-2">
+            <router-link :to="getRouterLink(job)" class="text-main-400 hover:text-main-600">
+              <span class="sr-only">View</span>
+              <TBaseIcon name="ChevronRightIcon" class="h-12"/>
+            </router-link>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 <script setup>

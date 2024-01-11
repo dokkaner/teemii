@@ -10,6 +10,7 @@ const { logger } = require('./src/loaders/logger')
 const { backup } = require('./src/services/backupService')
 const { LOGS_DIR } = require('./src/loaders/configManager')
 const { scrobblersManager } = require('./src/services/scrobblerService')
+const { reporter } = require('./src/loaders/sentry')
 
 async function startServer () {
   try {
@@ -43,14 +44,17 @@ async function startServer () {
     logger.log('server started successfully')
     logger.log('-----------------------------------')
   } catch (e) {
+    // reporter.captureException(e)
     logger.error({ err: e }, 'Failed to start the server:')
   }
 }
 
 process.on('unhandledRejection', (reason, promise) => {
+  // reporter.captureException(reason)
   console.error('Unhandled Rejection at:', promise, 'reason:', reason)
 })
 
 startServer().catch(error => {
+  // reporter.captureException(error)
   console.error('Unhandled error occurred during server start:', error)
 })
