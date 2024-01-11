@@ -1,5 +1,4 @@
 <template>
-
   <div class="fixed bottom-0 right-0 z-50 h-16 w-16">
     <svg v-show="storeIsLoading" class="sticky h-5 w-5 animate-spin text-light-900"
          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -9,11 +8,13 @@
     </svg>
   </div>
 
-  <div v-if="manga" class="relative mx-auto w-full overflow-visible">
+  <div v-if="manga" :class="[modalActive ? 'blur-md' : 'blur-0']"
+       class="relative mx-auto w-full overflow-visible">
     <template v-if="manga.bannerImage?.anilist || manga.bannerImage?.kitsu">
       <div class="relative w-full bg-contain bg-fixed bg-top bg-no-repeat md:py-12 lg:py-52"
            :style="{'backgroundImage': `url(${storeHelpers.getMangaCover(mangaId, 1440, 403, 'banner')})`}">
-        <div class="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-white to-transparent"></div>
+        <div
+            class="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-white to-transparent dark:from-darkMain-800"></div>
       </div>
     </template>
 
@@ -22,8 +23,9 @@
     <section class="relative -mt-16 overflow-hidden md:-mt-24 lg:-mt-52">
       <div class="container mx-auto">
         <div
-            class="from-white-300/50 to-white-100/10 z-10 rounded-t-xl border-t bg-gradient-to-b backdrop-blur-xl md:flex md:flex-wrap md:p-8">
-          <figure class="relative  md:w-2/5 md:shrink-0 md:grow-0 md:basis-auto lg:w-1/2">
+            class="z-10 rounded-t-xl border-t bg-gradient-to-b from-white/50
+            to-white/10 backdrop-blur-xl dark:border-0 dark:from-darkMain-800/50 dark:to-darkMain-800/10 md:flex md:flex-wrap md:p-8">
+          <figure class="relative md:w-2/5 md:shrink-0 md:grow-0 md:basis-auto lg:w-1/2">
             <div class="relative flex flex-col items-center ">
               <img :src="storeHelpers.getMangaCover(mangaId, 480,720, 'cover')" alt="cover"
                    class="z-50 hidden rounded-xl md:visible"
@@ -31,7 +33,8 @@
               >
               <img data-ambient :src="storeHelpers.getMangaCover(mangaId, 480, 720, 'cover')" alt="cover">
 
-              <p class="z-40 -mt-8 line-clamp-1 overflow-hidden text-center text-xs font-medium tracking-tighter text-light-100 shadow-main-900 text-shadow-sm">
+              <p class="z-40 -mt-8 line-clamp-1 overflow-hidden text-center text-xs font-medium tracking-tighter
+               text-light-100 shadow-main-900 text-shadow-sm dark:text-light-400">
                 {{ manga.primaryAltTitle }} - {{ manga.serialization }} published by {{ manga.publishers[0] }}
               </p>
             </div>
@@ -43,20 +46,22 @@
             <div class="flex content-start align-middle">
               <TBaseRating v-model="mangaUserScore" :disabled="false" colorClass="bg-orange-400" sizeClass="rating-md"
                            @change="onUpdateManga"/>
-              <div class="ml-auto flex space-x-2">
+              <div class="ml-auto flex space-x-2 text-light-400 dark:text-light-500">
                 <div v-if="manga.readProgress > 0"
                      class="flex items-center space-x-1 rounded-xl bg-main-900/90 px-4 py-2">
-                  <component :is="heroIcons['BookOpenIcon']" v-if="isLoaded" class="h-4 w-4 text-light-400"/>
-                  <span class="text-xs text-light-200 shadow-main-900 text-shadow-sm">{{ manga.readProgress }}%</span>
+                  <component :is="heroIcons['BookOpenIcon']" v-if="isLoaded" class="h-4 w-4"/>
+                  <span class="text-xs text-light-200 shadow-main-900 text-shadow-sm">
+                    {{ manga.readProgress }}%
+                  </span>
                 </div>
                 <div v-if="manga.favoritesCount"
                      class="flex items-center space-x-1 rounded-xl bg-main-900/90 p-2">
-                  <component :is="heroIcons['HeartIcon']" v-if="isLoaded" class="h-4 w-4 text-light-400"/>
+                  <component :is="heroIcons['HeartIcon']" v-if="isLoaded" class="h-4 w-4"/>
                   <span class="text-xs text-light-200 shadow-main-900 text-shadow-sm">{{
                       formatNumber(manga.favoritesCount)
                     }}</span>
 
-                  <component :is="heroIcons['StarIcon']" v-if="isLoaded" class="h-4 w-4 text-light-400"/>
+                  <component :is="heroIcons['StarIcon']" v-if="isLoaded" class="h-4 w-4"/>
                   <span class="text-xs text-light-200 shadow-main-900 text-shadow-sm">{{
                       Number(manga.score).toFixed(2)
                     }}</span>
@@ -64,7 +69,7 @@
               </div>
             </div>
 
-            <h1 class="line-clamp-1 h-0 pt-2 text-3xl font-bold uppercase tracking-wide text-main-500 sm:h-12">
+            <h1 class="line-clamp-1 h-0 pt-2 text-3xl font-bold uppercase tracking-wide text-main-500 dark:text-light-400 sm:h-12">
               {{ manga.canonicalTitle }}
             </h1>
 
@@ -72,7 +77,9 @@
               <div class="flex gap-x-2 overflow-y-auto whitespace-nowrap">
                 <template v-if="manga.publicationDemographics">
                   <span
-                      class="inline-flex items-center rounded-md bg-main-50/50 px-2 py-1 text-xs font-medium tracking-tight text-main-700 ring-1 ring-inset ring-main-600/20">
+                      class="inline-flex items-center rounded-md bg-main-50/50 px-2 py-1
+                      text-xs font-medium tracking-tight text-main-700 ring-1 ring-inset ring-main-600/20
+                      dark:bg-darkLight-500/50 dark:text-light-400">
                     {{ manga.publicationDemographics }}
                   </span>
                 </template>
@@ -85,85 +92,84 @@
 
                 <template v-if="manga.isLicensed">
                   <span
-                      class="inline-flex items-center rounded-md bg-green-50/50 px-2 py-1 text-xs font-medium tracking-tight text-green-700 ring-1 ring-inset ring-green-600/20">
+                      class="dart:text-accent-200 inline-flex items-center rounded-md bg-green-50/50 px-2 py-1 text-xs
+                      font-medium tracking-tight text-green-700
+                      ring-1 ring-inset ring-green-600/20 dark:bg-darkMain-500/50 dark:ring-0">
                     Licensed
                   </span>
                 </template>
 
                 <span v-for="(genre, index) in manga.genres.slice(0,4)" :key="index"
-                      class="inline-flex items-center rounded-full bg-main-100/50 px-2 py-1 text-xs lowercase tracking-tight text-main-800">
+                      class="inline-flex items-center rounded-full bg-main-100/50 px-2 py-1 text-xs lowercase
+                       tracking-tight text-main-800 dark:bg-darkMain-500/50 dark:text-light-400 dark:ring-0">
                     {{ genre }}
                 </span>
               </div>
             </div>
 
             <div v-if="manga.description.fr_fr || manga.description.en_us"
-                 class="max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500">
-              <article class="pb-8 pr-8 text-base text-main-500">
-                <p v-html="manga.description.en_us || manga.description.en_us"></p>
+                 class="max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300
+                 scrollbar-thumb-main-500 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl">
+              <article class="pb-8 pr-8 text-main-500 dark:text-light-400">
+                <p v-html="manga.description.en_us || manga.description.en_us"
+                   class="hyphens-auto text-base leading-relaxed"></p>
               </article>
             </div>
 
             <div v-if="isLoaded" class="my-4 mr-4 sm:col-span-1">
               <div class="flex w-full gap-x-1 align-middle">
-                <p class="text-sm font-medium text-light-800">Sources</p>
+                <p class="text-sm font-medium text-light-800 dark:text-light-500">Sources</p>
                 <div class="flex gap-x-2 rounded-md">
                   <button v-for="(source, index) in manga.sources" :key="index" type="button" :data-tip="source.name"
                           class="tooltip tooltip-top relative h-6 w-6 cursor-pointer rounded-full grayscale hover:grayscale-0">
                     <a :href="source.url" target="_blank">
-                      <img :src="source.favicon" class="mx-auto h-4 w-4" :alt="source.name">
+                      <img :src="source.favicon" class="mx-auto h-4 w-4" :alt="source.name" @error="imgPlaceholder">
                     </a>
                   </button>
                 </div>
               </div>
             </div>
 
-            <div class="flex w-full gap-8 py-4">
-              <div class="w-full">
-                <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-                  <dl>
-                    <dt class="text-sm font-medium text-light-800">Authors</dt>
-                    <dd v-for="(author, index) in manga.authors?.slice(0,1)" :key="index"
-                        class="mt-1 text-sm text-main-900">
-                      {{ author }}
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt class="text-center text-sm font-medium text-light-800">Year</dt>
-                    <dd class="mt-1 text-center text-sm text-main-900">
-                      {{ manga.startYear }} - {{ manga.endYear || manga.status }}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-              <div class="w-full">
-                <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-                  <dl>
-                    <dt class="text-center text-sm font-medium text-light-800">Chapters</dt>
-                    <dd class="text-center text-sm text-main-900">
+            <div class="py-4">
+              <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <dl class="col-span-1">
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Authors</dt>
+                  <dd v-for="(author, index) in manga.authors?.slice(0,1)" :key="index"
+                      class="mt-1 text-sm text-main-900 dark:text-light-400">
+                    {{ author }}
+                  </dd>
+                </dl>
+                <dl class="col-span-1">
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Year</dt>
+                  <dd class="mt-1 text-sm text-main-500 dark:text-light-400">
+                    {{ manga.startYear }} - {{ manga.endYear || manga.status }}
+                  </dd>
+                </dl>
+                <dl class="col-span-1">
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Chapters</dt>
+                  <dd class="text-sm text-main-500 dark:text-light-400">
                     <span class="inline-flex items-center gap-x-1.5 rounded-md py-1">
-                      <svg v-if="(ownedChapters < manga.chapterCount)" class="h-1.5 w-1.5 fill-red-500"
-                           viewBox="0 0 6 6" aria-hidden="true">
-                        <circle cx="3" cy="3" r="3"/>
-                      </svg>
-                      <svg v-else class="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
-                        <circle cx="3" cy="3" r="3"/>
-                      </svg>
-                      {{ ownedChapters }} / {{ manga.chapterCount }}
+                    <svg v-if="(ownedChapters < manga.chapterCount)" class="h-1.5 w-1.5 fill-red-500"
+                         viewBox="0 0 6 6" aria-hidden="true">
+                    <circle cx="3" cy="3" r="3"/>
+                    </svg>
+                    <svg v-else class="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
+                    <circle cx="3" cy="3" r="3"/>
+                    </svg>
+                    {{ ownedChapters }} / {{ manga.chapterCount }}
                     </span>
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt class="text-end text-sm font-medium text-light-800">Space Used</dt>
-                    <dd class="mt-1 text-end text-sm text-main-900">{{ formatDiskSize }}</dd>
-                  </dl>
-                </div>
+                  </dd>
+                </dl>
+                <dl class="col-span-1">
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Space Used</dt>
+                  <dd class="mt-1 text-sm text-main-500 dark:text-light-400">{{ formatDiskSize }}</dd>
+                </dl>
               </div>
             </div>
 
             <div v-if="isLoaded" class="my-4 sm:col-span-1">
-              <div class="flex w-full gap-x-1">
-                <p class="flex text-sm font-medium text-light-800">
+              <div class=" w-full gap-x-1">
+                <p class="flex text-sm font-medium text-light-800 dark:text-light-500">
                   <template v-if="lastChapters?.length > 0">
                     Latest releases
                     <span class="tooltip tooltip-top ml-1 h-6 w-6" :data-tip="averageReleaseIntervalTip(manga)">
@@ -174,40 +180,41 @@
                 </p>
               </div>
 
-              <ul v-if="lastChapters?.length > 0" role="list" class="mt-1 divide-y divide-dashed text-sm text-main-900">
-                <li v-for="chapter in lastChapters?.slice(0,5)" :key="chapter.id" class="flex items-center">
-                  <div class="flex h-6 w-6 flex-none items-center justify-start">
-                    <div class="h-1.5 w-1.5 rounded-full ring-1" :class="useChapterDotStateClass(chapter.state)"/>
+              <ul v-if="lastChapters?.length > 0" role="list" class="-ml-2 mt-1">
+                <li v-for="chapter in lastChapters?.slice(0,5)" :key="chapter.id"
+                    class="flex items-center py-2 text-main-500 dark:text-light-400">
+                  <div class="mr-2 flex h-6 w-6 flex-none items-center justify-center">
+                    <div class="h-2 w-2 rounded-full"
+                         :class="useChapterDotStateClass(chapter.state)"/>
                   </div>
 
-                  <p class="line-clamp-1 flex-auto py-0.5 text-sm leading-5 text-main-900">
-                    <router-link v-if="chapter.state === 3" :to="storeHelpers.getChapterRouterTo(chapter)">
-                    <span class="font-medium text-accent-900">c{{ chapter.chapter }} -
-                    {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }} </span>
+                  <p class="mr-2 line-clamp-1 grow text-sm leading-5">
+                    <router-link v-if="chapter.state === 3" :to="storeHelpers.getChapterRouterTo(chapter)"
+                                 class="font-medium hover:text-main-700 dark:hover:text-light-300">
+                      c{{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
                     </router-link>
                     <span v-else>
                       c{{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
                     </span>
                   </p>
 
-                  <time :datetime="chapter.readableAt" class="flex-none py-0.5 text-sm leading-5 text-main-900">
+                  <time :datetime="chapter.readableAt" class="flex-none text-xs text-gray-500">
                     {{ formatDateTime(chapter.readableAt) }}
                   </time>
                 </li>
               </ul>
 
-              <p v-else class="mt-1 text-sm text-main-900">No chapters available.</p>
+              <p v-else class="mt-1 text-sm text-main-500 dark:text-light-600">No chapters available.</p>
             </div>
 
             <!-- Actions -->
             <div class="mx-auto my-6 flex overflow-y-visible">
               <div class="relative w-full min-w-0 flex-col break-words rounded-2xl bg-clip-border">
                 <div class="-mx-3 flex items-center">
-                  <div class="px-3">
-                    <TBaseButton :rounded="true" size="sm" variant="primary" @click="continueReading()">
-                      Continue Reading
-                    </TBaseButton>
-                  </div>
+
+                  <TBaseButton :rounded="true" size="sm" variant="primary" @click="continueReading()">
+                    Continue Reading
+                  </TBaseButton>
 
                   <div class="flex w-4/5 justify-start px-3">
                     <span class="flex gap-x-2 rounded-md">
@@ -215,8 +222,14 @@
                           v-for="(action, index) in [{ tip: 'Bookmark', click: switchBookmark, condition: manga.bookmark, icon: 'BookmarkIcon' }, { tip: 'Mark as read', click: switchReaded, condition: manga.readed, icon: 'EyeIcon' }, { tip: 'Monitor this manga', click: switchMonitor, condition: manga.monitor, icon: 'CheckBadgeIcon' }]"
                           :key="index">
                         <button type="button" :data-tip="action.tip" @click="action.click"
-                                class="tooltip tooltip-top relative inline-flex cursor-pointer items-center rounded-md p-1 shadow-sm hover:bg-accent-700 hover:text-accent-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600"
-                                :class="{'text-accent-500': action.condition, 'text-main-300': !action.condition}">
+                                class="tooltip tooltip-top relative inline-flex cursor-pointer items-center rounded-md
+                                p-1 shadow-sm hover:bg-accent-700 hover:text-accent-100
+                                focus-visible:outline focus-visible:outline-2
+                                focus-visible:outline-offset-2 focus-visible:outline-accent-600
+                                dark:bg-darkLight-500 dark:text-darkAccent-400
+                                dark:hover:bg-darkAccent-700 dark:hover:text-darkLight-50
+                                dark:focus-visible:outline-darkAccent-500"
+                                :class="{'text-accent-500 dark:text-darkAccent-400': action.condition, 'text-main-300 dark:text-light-600 ': !action.condition}">
                           <component class="h-5 w-5" :is="heroIcons[action.icon]"/>
                         </button>
                       </template>
@@ -238,13 +251,13 @@
         </div>
       </div>
     </section>
-    <div class="relative flex justify-center border-b border-light-400 pt-12 sm:pt-1">
+    <div class="relative flex justify-center border-b border-light-400 pt-12 dark:border-none sm:pt-1">
     </div>
 
     <section class="relative overflow-visible">
       <div class="mx-auto">
         <!-- Tabs -->
-        <div class="scrollbar-custom w-full overflow-x-auto rounded-xl bg-white p-8">
+        <div class="scrollbar-custom w-full overflow-x-auto rounded-xl bg-white p-8 dark:bg-darkMain-700">
           <TBaseTabGroup class="min-h-[300px]" vAlign="center" @change="onTabChange">
             <TBaseTab title="Chapters" icon="BookOpenIcon" :count="pagination.totalItems">
               <div v-if="chaptersCount < 1">
@@ -267,7 +280,6 @@
                   <div class="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
                     <TBaseInput placeholder="Filter chapters" iconLeft="MagnifyingGlassIcon"
                                 @change="onChapterSearch()" v-model="pagination.searchTerm">
-
                     </TBaseInput>
                   </div>
                 </div>
@@ -332,49 +344,73 @@
       <template>
         <TBaseModal :show="modalActive" size="lg">
           <template #header>
-            <div class="flex w-full overflow-y-auto">
+            <div class="flex w-full overflow-y-auto whitespace-nowrap">
               <div class="flex flex-wrap items-center justify-between sm:flex-nowrap">
-                <h3 class="mr-2 text-xs font-medium uppercase leading-6 tracking-widest text-main-700">
-                  {{ manga.canonicalTitle }} c. {{ selectedChapter.chapter }} {{ selectedChapter.titles.en_us }}
+                <h3
+                    class="mr-2 text-xs font-medium uppercase leading-6 tracking-widest text-main-400 dark:text-darkLight-50"
+                >
+                  {{ manga.canonicalTitle }} c. {{ selectedChapter.chapter }}
+                  {{ selectedChapter.titles.en_us }}
                 </h3>
 
-                <div v-if="selectedChapter.state !== 3"
-                     class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-600">
+                <div
+                    v-if="selectedChapter.state !== 3"
+                    class="dark:bg-darkRed-100 dark:text-darkRed-600 inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-600"
+                >
                   Missing
                 </div>
                 <div v-else class="inline-flex gap-x-2">
+        <span
+            class="dark:bg-darkGreen-100 dark:text-darkGreen-700 inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700"
+        >
+          downloaded
+        </span>
                   <span
-                      class="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
-                    downloaded
-                  </span>
-                  <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700">
-                    <component :is="heroIcons['BookOpenIcon']" class="m-1 h-3 w-3 cursor-pointer text-main-500"/>
-                    {{ selectedChapter.pages }} Pages
-                  </span>
-                  <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700">
-                    <component :is="heroIcons['LanguageIcon']" class="m-1 h-3 w-3 cursor-pointer text-main-500"/>
-                    {{ selectedChapter.dlSource?.lang?.toUpperCase() }}
-                  </span>
-                  <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700">
-                      <component :is="heroIcons['FolderIcon']" class="m-1 h-3 w-3 cursor-pointer text-main-500"/>
-                    {{ selectedChapter.dlSource?.local }}
-                  </span>
+                      class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700 dark:text-darkLight-300"
+                  >
+          <component
+              :is="heroIcons['BookOpenIcon']"
+              class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
+          />
+          {{ selectedChapter.pages }} Pages
+        </span>
+                  <span
+                      class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700 dark:text-darkLight-300"
+                  >
+          <component
+              :is="heroIcons['LanguageIcon']"
+              class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
+          />
+          {{ selectedChapter.dlSource?.lang?.toUpperCase() }}
+        </span>
+                  <span
+                      class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700 dark:text-darkLight-300"
+                  >
+          <component
+              :is="heroIcons['FolderIcon']"
+              class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
+          />
+          {{ selectedChapter.dlSource?.local }}
+        </span>
                 </div>
               </div>
             </div>
             <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-              <component :is="heroIcons['XMarkIcon']" class="h-6 w-6 cursor-pointer text-main-500"
-                         @click="closeChapterModal()"/>
+              <component
+                  :is="heroIcons['XMarkIcon']"
+                  class="h-6 w-6 cursor-pointer text-main-500 dark:text-darkAccent-400"
+                  @click="closeChapterModal()"
+              />
             </div>
           </template>
 
-          <div class="mx-6 mb-6 flow-root">
-            <div class="max-h-96 overflow-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500">
-              <table class="table table-pin-rows table-pin-cols table-xs min-w-full divide-y divide-main-300"
-                     aria-describedby="sources list">
-                <thead class="text-xs">
+          <div class="mx-6 mb-6 flow-root dark:bg-darkMain-800">
+            <div
+                class="max-h-96 overflow-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500">
+              <table class="min-w-full divide-y divide-darkMain-300" aria-describedby="sources list">
+                <thead class="text-xs dark:bg-darkMain-800 dark:text-light-500">
                 <tr class="h-[48px]">
-                  <th scope="col" class="">Source</th>
+                  <th scope="col" class="border-main-300 dark:border-none">Source</th>
                   <th scope="col" class="hidden sm:table-cell">Group Scan</th>
                   <th scope="col" class="">Lang</th>
                   <th scope="col" class="hidden sm:table-cell">Votes</th>
@@ -386,26 +422,25 @@
                   <th scope="col" class=""></th>
                 </tr>
                 </thead>
-                <tbody class="text-xs">
-                <tr v-for="(data, index) in selectedChapter.metadata" :key="index" class="group h-[32px]">
-                  <td class="group-hover:bg-main-50">
-                    {{ data.source }}
-                  </td>
-                  <td class="hidden group-hover:bg-main-50 sm:table-cell">{{ data.groupScan }}</td>
-                  <td class="group-hover:bg-main-50">{{ data.lang?.slice(0, 2) }}</td>
-                  <td class="hidden group-hover:bg-main-50 sm:table-cell">{{ data.votes }}</td>
-                  <td class="hidden group-hover:bg-main-50 sm:table-cell">{{ data.pages }}</td>
-                  <td class="group-hover:bg-main-50">{{ data.title }}</td>
-                  <td class="hidden group-hover:bg-main-50 sm:table-cell">{{ data.version }}</td>
-                  <td class="hidden group-hover:bg-main-50 sm:table-cell">{{ formatDateTime(data.lastUpdated) }}</td>
-                  <td class="group-hover:bg-main-50">
+                <tbody class="mx-3 text-xs dark:text-light-400">
+                <tr v-for="(data, index) in selectedChapter.metadata" :key="index"
+                    class="group h-[32px] hover:rounded-lg hover:bg-main-50 dark:hover:bg-darkAccent-700">
+                  <td class="">{{ data.source }}</td>
+                  <td class="hidden sm:table-cell">{{ data.groupScan }}</td>
+                  <td>{{ data.lang?.slice(0, 2) }}</td>
+                  <td class="hidden sm:table-cell">{{ data.votes }}</td>
+                  <td class="hidden sm:table-cell">{{ data.pages }}</td>
+                  <td>{{ data.title }}</td>
+                  <td class="hidden sm:table-cell">{{ data.version }}</td>
+                  <td class="hidden sm:table-cell">{{ formatDateTime(data.lastUpdated) }}</td>
+                  <td>
                     <component v-if="data.id === selectedChapter.dlSource?.id" :is="heroIcons['CheckIcon']"
-                               class="h-4 w-4 cursor-pointer text-main-500"/>
+                               class="h-4 w-4 cursor-pointer text-main-500 dark:text-darkAccent-400"/>
                   </td>
-                  <td class="group-hover:bg-main-50">
-                    <component :is="heroIcons['ArrowDownTrayIcon']" class="h-4 w-4 cursor-pointer text-accent-500"
-                               @click="userDownloadChapter(selectedChapter, data.id)"
-                    />
+                  <td>
+                    <component :is="heroIcons['ArrowDownTrayIcon']"
+                               class="h-4 w-4 cursor-pointer text-accent-500 dark:text-darkAccent-400"
+                               @click="userDownloadChapter(selectedChapter, data.id)"/>
                   </td>
                 </tr>
                 </tbody>
@@ -482,6 +517,10 @@ export default {
     const chaptersCount = computed(() => mangasStore.getMangaChapterCount)
     const lastChapters = computed(() => mangasStore.getMangaLastPublishedChapters)
     const ownedChapters = computed(() => mangasStore.getOwnedChapters)
+
+    function imgPlaceholder (e) {
+      e.target.src = 'https://via.placeholder.com/24x24'
+    }
 
     function continueReading () {
       const lastChapter = mangaChapters.value.find((chapter) => chapter.chapter === manga.value.readStatus.lastChapter)
@@ -631,9 +670,9 @@ export default {
 
     function contentRatingClass (rating) {
       if (rating === 'safe') {
-        return 'inline-flex items-center rounded-md bg-green-50/50 px-2 py-1 text-xs font-medium tracking-tight text-green-700 ring-1 ring-inset ring-green-600/20'
+        return 'inline-flex items-center rounded-md dark:bg-darkLight-500/50 dart:text-accent-200 dark:ring-0 bg-green-50/50 px-2 py-1 text-xs font-medium tracking-tight text-green-700 ring-1 ring-inset ring-green-600/20'
       } else {
-        return 'inline-flex items-center rounded-md bg-red-50/50 px-2 py-1 text-xs font-medium tracking-tight text-red-700 ring-1 ring-inset ring-red-600/20'
+        return 'inline-flex items-center rounded-md dark:bg-darkLight-500/50 dart:text-red-200 dark:ring-0 bg-red-50/50 px-2 py-1 text-xs font-medium tracking-tight text-red-700 ring-1 ring-inset ring-red-600/20'
       }
     }
 
@@ -724,6 +763,7 @@ export default {
     })
     // expose
     return {
+      imgPlaceholder,
       useChapterDotStateClass,
       onChapterSearch,
       contentRatingClass,

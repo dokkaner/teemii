@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import libraryAPI from '@/api/library'
 import logger from '@/utils/logger'
 import helpers from '@/stores/utils'
+import { useDark } from '@vueuse/core'
 
 /**
  * @typedef useStatStore
@@ -29,13 +30,21 @@ export const useStatStore = defineStore('stat', {
       return this.stats
     },
     getStatsByGenre () {
+      // detect dark mode
+      const isDark = useDark()
+
       const genres = this.stats.genres
       const maxGenres = 5
       const data = []
       const labels = []
-      const colors = helpers.generateColor('#fcf0ff', '#6a6472', maxGenres + 1)
-
-
+      let colors = []
+      if (isDark) {
+        console.log('dark mode')
+        colors = helpers.generateColor('#fdf1ff', '#7a7482', maxGenres + 1)
+      } else {
+        colors = helpers.generateColor('#fcf0ff', '#6a6472', maxGenres + 1)
+      }
+      // const colors = helpers.generateColor('#fcf0ff', '#6a6472', maxGenres + 1)
 
       let others = 0
       genres.slice(maxGenres + 1, genres.length).forEach(stat => {

@@ -7,6 +7,7 @@ const ChapterController = require('./chapterController')
 const AuthController = require('./authController')
 const BackupController = require('./backupController')
 const ServicesController = require('./servicesController')
+const ReleaseController = require('./releaseController')
 
 const libCtl = new LibraryController()
 const preferencesCtl = new PreferencesController()
@@ -17,8 +18,10 @@ const chapterCtl = new ChapterController()
 const authCtl = new AuthController()
 const backupCtl = new BackupController()
 const servicesCtl = new ServicesController()
+const releaseCtl = new ReleaseController()
 
 module.exports = {
+  releaseCtl,
   authCtl,
   chapterCtl,
   libCtl,

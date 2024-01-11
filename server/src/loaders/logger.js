@@ -4,6 +4,7 @@ const pino = require('pino')
 const pretty = require('pino-pretty')
 const path = require('path')
 const osSvc = require('../services/osService')
+const { reporter } = require('./sentry')
 
 const DEFAULT_MAX_ROTATIONS = 7
 const DAY = 24 * 60 * 60 * 1000
@@ -188,6 +189,7 @@ function createLogRotation ({ logFile, maxSavedLogFiles = DEFAULT_MAX_ROTATIONS,
 
   return boom
 }
+
 class Logger {
   constructor () {
     this.logger = null

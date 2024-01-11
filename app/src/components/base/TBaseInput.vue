@@ -1,36 +1,47 @@
 <template>
 
   <div :class="[containerClass, computedContainerClass]" class="font-base relative rounded-md shadow-sm">
-    <div v-if="loading && loadingPosition === 'left'" class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-      <svg class="h-5 w-5 animate-spin text-main-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <div v-if="loading && loadingPosition === 'left'"
+         class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+      <svg class="h-5 w-5 animate-spin text-main-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+           viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
     </div>
 
     <div v-else-if="hasLeftIconSlot" class="absolute inset-y-0 left-0 flex items-center pl-3">
-      <component :is="heroIcons[iconLeft]" v-if="isLoaded && iconLeft" class="h-5 w-5 text-main-400"/>
+      <component :is="heroIcons[iconLeft]" v-if="isLoaded && iconLeft"
+                 class="h-5 w-5 text-main-400 dark:text-light-400"/>
     </div>
 
     <div v-if="inlineAddon" class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-      <span class="text-main-500 sm:text-sm">{{ inlineAddon }}</span>
+      <span class="text-main-500 sm:text-sm dark:text-light-500">{{ inlineAddon }}</span>
     </div>
 
-    <span v-if="addon" class="inline-flex items-center rounded-l-md border border-r-0 border-main-200 bg-main-50 px-3 text-main-500 sm:text-sm">
+    <span v-if="addon"
+          class="inline-flex items-center rounded-l-md border border-r-0 border-main-200 bg-main-50 px-3 text-main-500 dark:text-light-500 sm:text-sm">
       {{ addon }}
     </span>
 
-    <input v-bind="$attrs" :type="type" :value="modelValue" :disabled="disabled" :class="[defaultInputClass, inputPaddingClass, inputAddonClass, inputInvalidClass, inputDisabledClass]" @input="emitValue"/>
+    <input v-bind="$attrs" :type="type" :value="modelValue" :disabled="disabled"
+           :class="[defaultInputClass, inputPaddingClass, inputAddonClass, inputInvalidClass, inputDisabledClass]"
+           @input="emitValue"/>
 
-    <div v-if="loading && loadingPosition === 'right'" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-      <svg class="h-5 w-5 animate-spin text-main-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <div v-if="loading && loadingPosition === 'right'"
+         class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+      <svg class="h-5 w-5 animate-spin text-main-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+           viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
     </div>
 
     <div v-if="hasRightIconSlot" class="absolute inset-y-0 right-0 flex items-center pr-3">
-      <component :is="heroIcons[iconRight]" v-if="isLoaded && iconRight" class="h-5 w-5 text-main-400"/>
+      <component :is="heroIcons[iconRight]" v-if="isLoaded && iconRight"
+                 class="h-5 w-5 text-main-400 dark:text-light-400"/>
     </div>
   </div>
 </template>
@@ -87,7 +98,7 @@ const props = defineProps({
   defaultInputClass: {
     type: String,
     default:
-        'py-2 px-2 font-base block bg-white border w-full sm:text-sm border-main-200 rounded-md text-main-900 placeholder-main-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-accent-600 focus:ring-white focus:border-white sm:text-sm'
+        'block py-2 px-2 font-base sm:text-sm bg-white border w-full border-main-200 rounded-md text-main-900 placeholder-main-300 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-offset-accent-600 focus:ring-white dark:text-light-300 dark:border-darkMain-300 dark:placeholder-darkAccent-400 dark:focus:ring-offset-darkAccent-600 dark:focus:border-darkAccent-600 dark:bg-darkMain-800'
   },
   iconLeft: {
     type: String,
@@ -143,12 +154,12 @@ const inputInvalidClass = computed(() => {
     return 'border-red-500 ring-red-500 focus:ring-red-500 focus:border-red-500'
   }
 
-  return 'focus:ring-primary-400 focus:border-primary-400'
+  return 'focus:ring-primary-400 focus:border-primary-400 dark:focus:ring-darkAccent-400 dark:focus:border-darkAccent-400'
 })
 
 const inputDisabledClass = computed(() => {
   if (props.disabled) {
-    return 'border-main-100 bg-main-100 !text-main-400 ring-main-200 focus:ring-main-200 focus:border-main-100'
+    return 'border-main-100 dark:border-darkMain-300 bg-main-100 dark:bg-darkMain-300 !text-main-400 dark:!text-darkLight-300 ring-main-200 dark:ring-darkMain-300 focus:ring-main-200 dark:focus:ring-darkMain-300 focus:border-main-100 dark:focus:border-darkMain-300'
   }
 
   return ''

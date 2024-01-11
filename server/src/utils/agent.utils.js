@@ -8,6 +8,7 @@ const { logger } = require('../loaders/logger.js')
 const uuidv4 = require('uuid').v4
 const Anilist = require('anilist-node')
 const AniCli = new Anilist()
+const { rmdir } = require('../services/osService')
 
 const langMap = generateLangMap()
 const minimalArgs = [
@@ -282,6 +283,14 @@ async function getBody (url, clickOn, AdBlock = false, Intercept = true, textOnl
     args: minimalArgs,
     headless: 'new'
   })
+  let chromeTmpDataDir = null
+
+  const chromeSpawnArgs = browser.process().spawnargs
+  for (const element of chromeSpawnArgs) {
+    if (element.indexOf('--user-data-dir=') === 0) {
+      chromeTmpDataDir = element.replace('--user-data-dir=', '')
+    }
+  }
 
   const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/93.0.148 Chrome/87.0.4280.148 Safari/537.36'
   const page = (await browser.pages())[0]
@@ -326,6 +335,9 @@ async function getBody (url, clickOn, AdBlock = false, Intercept = true, textOnl
   } finally {
     await page.close()
     await browser.close()
+    if (chromeTmpDataDir !== null) {
+      await rmdir(chromeTmpDataDir)
+    }
   }
 }
 
@@ -337,6 +349,14 @@ async function downloadPage (url, downloadFolder, fileName, referer = '') {
     defaultViewport: null,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   })
+  let chromeTmpDataDir = null
+
+  const chromeSpawnArgs = browser.process().spawnargs
+  for (const element of chromeSpawnArgs) {
+    if (element.indexOf('--user-data-dir=') === 0) {
+      chromeTmpDataDir = element.replace('--user-data-dir=', '')
+    }
+  }
 
   const page = await browser.newPage()
   page.on('error', e => {
@@ -391,6 +411,9 @@ async function downloadPage (url, downloadFolder, fileName, referer = '') {
   } finally {
     await page.close()
     await browser.close()
+    if (chromeTmpDataDir !== null) {
+      await rmdir(chromeTmpDataDir)
+    }
   }
 }
 

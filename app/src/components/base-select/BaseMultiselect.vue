@@ -1,33 +1,33 @@
 <template>
   <TBaseContentPlaceholders v-if="contentLoading">
     <TBaseContentPlaceholdersBox
-      :rounded="true"
-      class="w-full"
-      style="height: 40px"
+        :rounded="true"
+        class="w-full"
+        style="height: 40px"
     />
   </TBaseContentPlaceholders>
   <div
-    v-else
-    :id="id"
-    ref="multiselect"
-    :tabindex="tabindex"
-    :class="classList.container"
-    @focusin="activate"
-    @focusout="deactivate"
-    @keydown="handleKeydown"
-    @focus="handleFocus"
+      v-else
+      :id="id"
+      ref="multiselect"
+      :tabindex="tabindex"
+      :class="classList.container"
+      @focusin="activate"
+      @focusout="deactivate"
+      @keydown="handleKeydown"
+      @focus="handleFocus"
   >
     <!-- Search -->
     <template v-if="mode !== 'tags' && searchable && !disabled">
       <input
-        ref="input"
-        :type="inputType"
-        :modelValue="search"
-        :value="search"
-        :class="classList.search"
-        :autocomplete="autocomplete"
-        @input="handleSearchInput"
-        @paste.stop="handlePaste"
+          ref="input"
+          :type="inputType"
+          :modelValue="search"
+          :value="search"
+          :class="classList.search"
+          :autocomplete="autocomplete"
+          @input="handleSearchInput"
+          @paste.stop="handlePaste"
       />
     </template>
 
@@ -35,18 +35,18 @@
     <template v-if="mode == 'tags'">
       <div :class="classList.tags">
         <slot
-          v-for="(option, i, key) in iv"
-          name="tag"
-          :option="option"
-          :handleTagRemove="handleTagRemove"
-          :disabled="disabled"
+            v-for="(option, i, key) in iv"
+            name="tag"
+            :option="option"
+            :handleTagRemove="handleTagRemove"
+            :disabled="disabled"
         >
           <span :key="key" :class="classList.tag">
             {{ option[label] }}
             <span
-              v-if="!disabled"
-              :class="classList.tagRemove"
-              @mousedown.stop="handleTagRemove(option, $event)"
+                v-if="!disabled"
+                :class="classList.tagRemove"
+                @mousedown.stop="handleTagRemove(option, $event)"
             >
               <span :class="classList.tagRemoveIcon">
                   <component :is="heroIcons['XMarkIcon']" class="self-center"/>
@@ -61,16 +61,16 @@
 
           <!-- Actual search input -->
           <input
-            v-if="searchable && !disabled"
-            ref="input"
-            :type="inputType"
-            :modelValue="search"
-            :value="search"
-            :class="classList.tagsSearch"
-            :autocomplete="autocomplete"
-            style="box-shadow: none !important"
-            @input="handleSearchInput"
-            @paste.stop="handlePaste"
+              v-if="searchable && !disabled"
+              ref="input"
+              :type="inputType"
+              :modelValue="search"
+              :value="search"
+              :class="classList.tagsSearch"
+              :autocomplete="autocomplete"
+              style="box-shadow: none !important"
+              @input="handleSearchInput"
+              @paste.stop="handlePaste"
           />
         </div>
       </div>
@@ -110,20 +110,20 @@
 
     <!-- Clear -->
     <slot
-      v-if="hasSelected && !disabled && canClear && !busy"
-      name="clear"
-      :clear="clear"
+        v-if="hasSelected && !disabled && canClear && !busy"
+        name="clear"
+        :clear="clear"
     >
       <span :class="classList.clear" @mousedown="clear"
-        ><span :class="classList.clearIcon"></span
+      ><span :class="classList.clearIcon"></span
       ></span>
     </slot>
 
     <!-- Caret -->
     <slot v-if="caret" name="caret">
       <span
-        :class="classList.caret"
-        @mousedown.prevent.stop="handleCaretClick"
+          :class="classList.caret"
+          @mousedown.prevent.stop="handleCaretClick"
       ></span>
     </slot>
 
@@ -135,15 +135,15 @@
         <ul :class="classList.options">
           <template v-if="groups">
             <li
-              v-for="(group, i, key) in fg"
-              :key="key"
-              :class="classList.group"
+                v-for="(group, i, key) in fg"
+                :key="key"
+                :class="classList.group"
             >
               <div
-                :class="classList.groupLabel(group)"
-                :data-pointed="isPointed(group)"
-                @mouseenter="setPointer(group)"
-                @click="handleGroupClick(group)"
+                  :class="classList.groupLabel(group)"
+                  :data-pointed="isPointed(group)"
+                  @mouseenter="setPointer(group)"
+                  @click="handleGroupClick(group)"
               >
                 <slot name="grouplabel" :group="group">
                   <span>{{ group[groupLabel] }}</span>
@@ -152,12 +152,12 @@
 
               <ul :class="classList.groupOptions">
                 <li
-                  v-for="(option, i, key) in group.__VISIBLE__"
-                  :key="key"
-                  :class="classList.option(option, group)"
-                  :data-pointed="isPointed(option)"
-                  @mouseenter="setPointer(option)"
-                  @click="handleOptionClick(option)"
+                    v-for="(option, i, key) in group.__VISIBLE__"
+                    :key="key"
+                    :class="classList.option(option, group)"
+                    :data-pointed="isPointed(option)"
+                    @mouseenter="setPointer(option)"
+                    @click="handleOptionClick(option)"
                 >
                   <slot name="option" :option="option" :search="search">
                     <span>{{ option[label] }}</span>
@@ -168,12 +168,12 @@
           </template>
           <template v-else>
             <li
-              v-for="(option, i, key) in fo"
-              :key="key"
-              :class="classList.option(option)"
-              :data-pointed="isPointed(option)"
-              @mouseenter="setPointer(option)"
-              @click="handleOptionClick(option)"
+                v-for="(option, i, key) in fo"
+                :key="key"
+                :class="classList.option(option)"
+                :data-pointed="isPointed(option)"
+                @mouseenter="setPointer(option)"
+                @click="handleOptionClick(option)"
             >
               <slot name="option" :option="option" :search="search">
                 <span>{{ option[label] }}</span>
@@ -190,33 +190,33 @@
           <div :class="classList.noResults" v-html="noResultsText"></div>
         </slot>
 
-        <slot name="afterlist" :options="fo"> </slot>
+        <slot name="afterlist" :options="fo"></slot>
       </div>
       <slot name="action"></slot>
     </div>
 
     <input
-      v-if="required"
-      :class="classList.fakeInput"
-      tabindex="-1"
-      :value="textValue"
-      required
+        v-if="required"
+        :class="classList.fakeInput"
+        tabindex="-1"
+        :value="textValue"
+        required
     />
 
     <template v-if="nativeSupport">
       <input
-        v-if="mode == 'single'"
-        type="hidden"
-        :name="name"
-        :value="plainValue !== undefined ? plainValue : ''"
+          v-if="mode == 'single'"
+          type="hidden"
+          :name="name"
+          :value="plainValue !== undefined ? plainValue : ''"
       />
       <template v-else>
         <input
-          v-for="(v, i) in plainValue"
-          :key="i"
-          type="hidden"
-          :name="`${name}[]`"
-          :value="v"
+            v-for="(v, i) in plainValue"
+            :key="i"
+            type="hidden"
+            :name="`${name}[]`"
+            :value="v"
         />
       </template>
     </template>
@@ -437,74 +437,53 @@ export default {
       type: Object,
       required: false,
       default: () => ({
-        container:
-          'p-0 relative mx-auto w-full flex items-center justify-end box-border cursor-pointer border border-accent-200 rounded-md bg-white text-sm leading-snug outline-none max-h-10',
-        containerDisabled:
-          'cursor-default bg-accent-200 bg-opacity-50 !text-accent-400',
+        container: 'p-0 relative mx-auto w-full flex items-center justify-end box-border cursor-pointer border border-accent-200 rounded-md bg-white text-sm leading-snug outline-none max-h-10 dark:bg-darkMain-800 dark:border-darkMain-300 dark:text-darkLight-300',
+        containerDisabled: 'cursor-default bg-accent-200 bg-opacity-50 !text-accent-400 dark:bg-darkAccent-200 dark:bg-opacity-50 !dark:text-darkAccent-400',
         containerOpen: '',
         containerOpenTop: '',
-        containerActive: 'ring-1 ring-primary-400 border-primary-400',
-        containerInvalid:
-          'border-red-400 ring-red-400 focus:ring-red-400 focus:border-red-400',
+        containerActive: 'ring-1 ring-primary-400 border-primary-400 dark:ring-darkAccent-400 dark:border-darkAccent-400',
+        containerInvalid: 'border-red-400 ring-red-400 focus:ring-red-400 focus:border-red-400',
         containerInvalidActive: 'ring-1 border-red-400 ring-red-400',
-        singleLabel:
-          'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5',
-        multipleLabel:
-          'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5',
-        search:
-          'w-full absolute inset-0 outline-none appearance-none box-border border-0 text-sm font-sans bg-white rounded-md pl-3.5',
+        singleLabel: 'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5',
+        multipleLabel: 'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5',
+        search: 'w-full absolute inset-0 outline-none appearance-none box-border border-0 text-sm font-sans bg-white rounded-md pl-3.5 dark:bg-darkMain-800',
         tags: 'grow shrink flex flex-wrap mt-1 pl-2',
-        tag: 'bg-main-500 text-white text-sm font-semibold py-0.5 pl-2 rounded mr-1 mb-1 flex items-center whitespace-nowrap',
-        tagDisabled: 'pr-2 !bg-accent-400 text-white',
-        tagRemove:
-          'flex items-center justify-center p-1 mx-0.5 rounded-sm hover:bg-black hover:bg-opacity-10 group',
-        tagRemoveIcon:
-          'bg-multiselect-remove bg-main-500 text-white bg-center bg-no-repeat opacity-30 inline-block w-3 h-3 group-hover:opacity-60',
+        tag: 'bg-main-500 text-white text-sm font-semibold py-0.5 pl-2 rounded mr-1 mb-1 flex items-center whitespace-nowrap dark:bg-darkMain-600 dark:text-light-300',
+        tagDisabled: 'pr-2 !bg-accent-400 text-white !dark:bg-darkAccent-400 dark:text-light-300',
+        tagRemove: 'flex items-center justify-center p-1 mx-0.5 rounded-sm hover:bg-black hover:bg-opacity-10 group',
+        tagRemoveIcon: 'bg-main-500 text-white bg-center bg-no-repeat opacity-30 inline-block w-3 h-3 group-hover:opacity-60',
         tagsSearchWrapper: 'inline-block relative mx-1 mb-1 grow shrink h-full',
-        tagsSearch:
-          'absolute inset-0 border-0 focus:outline-none !shadow-none !focus:shadow-none appearance-none p-0 text-sm font-sans box-border w-full',
+        tagsSearch: 'absolute inset-0 border-0 focus:outline-none !shadow-none !focus:shadow-none appearance-none p-0 text-sm font-sans box-border w-full dark:bg-darkMain-800',
         tagsSearchCopy: 'invisible whitespace-pre-wrap inline-block h-px',
-        placeholder:
-          'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5 text-accent-400 text-sm',
-        caret:
-          'bg-multiselect-caret bg-center bg-no-repeat w-5 h-5 py-px box-content z-5 relative mr-1 opacity-40 shrink-0 grow-0 transition-transform',
+        placeholder: 'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5 text-accent-400 text-sm dark:text-darkAccent-400',
+        caret: 'bg-multiselect-caret bg-center bg-no-repeat w-5 h-5 py-px box-content z-5 relative mr-1 opacity-40 shrink-0 grow-0 transition-transform',
         caretOpen: 'rotate-180 pointer-events-auto',
-        clear:
-          'pr-3.5 relative z-10 opacity-40 transition duration-300 shrink-0 grow-0 flex hover:opacity-80',
-        clearIcon:
-          'bg-multiselect-remove bg-center bg-no-repeat w-2.5 h-4 py-px box-content inline-block',
-        spinner:
-          'bg-multiselect-spinner bg-center bg-no-repeat w-4 h-4 z-10 mr-3.5 animate-spin shrink-0 grow-0',
-        dropdown:
-          'max-h-60 shadow-lg absolute -left-px -right-px -bottom-1 translate-y-full border border-accent-300 mt-1 overflow-y-auto z-50 bg-white flex flex-col rounded-md',
-        dropdownTop:
-          '-translate-y-full -top-2 bottom-auto flex-col-reverse rounded-md',
+        clear: 'pr-3.5 relative z-10 opacity-40 transition duration-300 shrink-0 grow-0 flex hover:opacity-80',
+        clearIcon: 'bg-main-500 bg-center bg-no-repeat w-2.5 h-4 py-px box-content inline-block',
+        spinner: 'bg-center bg-no-repeat w-4 h-4 z-10 mr-3.5 animate-spin shrink-0 grow-0',
+        dropdown: 'max-h-60 shadow-lg absolute -left-px -right-px -bottom-1 translate-y-full border border-accent-300 mt-1 overflow-y-auto z-50 bg-white flex flex-col rounded-md dark:border-darkAccent-900 dark:bg-darkMain-800',
+        dropdownTop: '-translate-y-full -top-2 bottom-auto flex-col-reverse rounded-md',
         dropdownHidden: 'hidden',
         options: 'flex flex-col p-0 m-0 list-none',
         optionsTop: 'flex-col-reverse',
         group: 'p-0 m-0',
-        groupLabel:
-          'flex text-sm box-border items-center justify-start text-left py-1 px-3 font-semibold bg-accent-200 cursor-default leading-normal',
+        groupLabel: 'flex text-sm box-border items-center justify-start text-left py-1 px-3 font-semibold bg-accent-200 cursor-default leading-normal dark:bg-darkAccent-200',
         groupLabelPointable: 'cursor-pointer',
-        groupLabelPointed: 'bg-accent-300 text-accent-700',
-        groupLabelSelected: 'bg-primary-600 text-white',
-        groupLabelDisabled: 'bg-accent-100 text-accent-300 cursor-not-allowed',
-        groupLabelSelectedPointed: 'bg-primary-600 text-white opacity-90',
-        groupLabelSelectedDisabled:
-          'text-primary-100 bg-primary-600 bg-opacity-50 cursor-not-allowed',
+        groupLabelPointed: 'bg-accent-300 text-accent-700 dark:bg-darkAccent-300 dark:text-darkAccent-700',
+        groupLabelSelected: 'bg-primary-600 text-white dark:bg-darkMain-600 dark:text-white',
+        groupLabelDisabled: 'bg-accent-100 text-accent-300 cursor-not-allowed dark:bg-darkAccent-100 dark:text-accent-300',
+        groupLabelSelectedPointed: 'bg-primary-600 text-white opacity-90 dark:bg-darkMain-600 dark:text-white',
+        groupLabelSelectedDisabled: 'text-primary-100 bg-primary-600 bg-opacity-50 cursor-not-allowed dark:text-darkMain-100 dark:bg-darkMain-600 dark:bg-opacity-50',
         groupOptions: 'p-0 m-0',
-        option:
-          'flex items-center justify-start box-border text-left cursor-pointer text-sm leading-snug py-2 px-3',
-        optionPointed: 'text-accent-800 bg-accent-100',
-        optionSelected: 'text-white bg-primary-500',
-        optionDisabled: 'text-accent-300 cursor-not-allowed',
-        optionSelectedPointed: 'text-white bg-primary-500 opacity-90',
-        optionSelectedDisabled:
-          'text-primary-100 bg-primary-500 bg-opacity-50 cursor-not-allowed',
-        noOptions: 'py-2 px-3 text-accent-600 bg-white',
-        noResults: 'py-2 px-3 text-accent-600 bg-white',
-        fakeInput:
-          'bg-transparent absolute left-0 right-0 -bottom-px w-full h-px border-0 p-0 appearance-none outline-none text-transparent',
+        option: 'flex items-center justify-start box-border text-left cursor-pointer text-sm leading-snug py-2 px-3 dark:text-darkAccent-100',
+        optionPointed: 'text-accent-800 bg-accent-100 dark:text-darkAccent-800 dark:bg-darkAccent-100',
+        optionSelected: 'text-white bg-primary-500 dark:text-white dark:bg-darkMain-500',
+        optionDisabled: 'text-accent-300 cursor-not-allowed dark:text-darkAccent-300',
+        optionSelectedPointed: 'text-white bg-primary-500 opacity-90 dark:text-white dark:bg-darkMain-500',
+        optionSelectedDisabled: 'text-primary-100 bg-primary-500 bg-opacity-50 cursor-not-allowed dark:text-darkMain-100 dark:bg-darkMain-500',
+        noOptions: 'py-2 px-3 text-accent-600 bg-white dark:bg-darkMain-500 dark:text-darkAccent-600',
+        noResults: 'py-2 px-3 text-accent-600 bg-white dark:bg-darkMain-500 dark:text-darkAccent-600',
+        fakeInput: 'bg-transparent absolute left-0 right-0 -bottom-px w-full h-px border-0 p-0 appearance-none outline-none text-transparent',
         spacer: 'h-9 py-px box-content'
       })
     },

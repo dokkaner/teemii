@@ -1,117 +1,106 @@
 <template>
-  <div v-if="shouldShowPagination" class="mt-4 flex items-center justify-between bg-white">
-    <!-- mobile -->
+  <div v-if="shouldShowPagination" class="mt-4 flex items-center justify-between">
+    <!-- Mobile Pagination -->
     <div class="flex flex-1 justify-between sm:hidden">
-      <router-link :to="anchor" :class="{
-          'disabled pointer-events-none cursor-default !bg-main-100 !text-main-400': Number(pagination.currentPage) === 1,
-        }"
-         class="relative inline-flex items-center rounded-md border-none border-main-300 bg-white px-4 py-2 text-sm font-medium text-main-700 hover:bg-main-50"
-         @click="previousPage()"
-      >
+      <a :href="anchor"
+         :class="{
+           'cursor-normal disabled pointer-events-none !bg-main-100 !text-main-400': Number(pagination.currentPage) === 1,
+           'rounded-md bg-white px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:bg-darkMain-700 dark:text-darkLight-50 dark:hover:bg-darkAccent-500': true
+         }"
+         @click="previousPage()">
         Previous
-      </router-link>
-
-      <router-link :to="anchor" :class="{
-          'disabled pointer-events-none cursor-default !bg-main-100 !text-main-400': Number(pagination.currentPage) === Number(pagination.totalPages),
-          }"
-         class="relative ml-3 inline-flex items-center rounded-md border-none border-main-300 bg-white px-4 py-2 text-sm font-medium text-main-700 hover:bg-main-50"
-         @click="nextPage()"
-      >
+      </a>
+      <a :href="anchor"
+         :class="{
+           'disabled pointer-events-none cursor-default !bg-main-100 !text-main-400': Number(pagination.currentPage) === Number(pagination.totalPages),
+           'rounded-md bg-white px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:bg-darkMain-700 dark:text-darkLight-50 dark:hover:bg-darkAccent-500': true
+         }"
+         @click="nextPage()">
         Next
-      </router-link>
+      </a>
     </div>
-    <!-- end mobile -->
+    <!-- End Mobile Pagination -->
+
+    <!-- Desktop Pagination -->
     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
       <div>
-        <p class="text-sm text-main-700">
-          Showing {{ ' ' }}
-          <span v-if="pagination.limit && pagination.currentPage" class="font-black text-main-700">
-            {{ Number(pagination.currentPage) * Number(pagination.limit) - (Number(pagination.limit) - 1) }}
+        <!-- Pagination Info -->
+        <p class="text-sm text-dark-700 dark:text-darkLight-50">
+          Showing
+          <span v-if="pagination.limit && pagination.currentPage"
+                class="font-bold text-dark-700 dark:text-darkAccent-400">
+            {{ pagination.currentPage * pagination.perPageItems - (pagination.perPageItems - 1) }}
           </span>
-          {{ ' ' }} to {{ ' ' }}
-          <span v-if="pagination.limit && pagination.currentPage" class="font-black text-main-700">
-            <span v-if="Number(pagination.currentPage) * Number(pagination.limit) <= Number(pagination.totalCount)">
-              {{ Number(pagination.currentPage) * Number(pagination.limit) }}
+          to
+          <span v-if="pagination.limit && pagination.currentPage"
+                class="font-bold text-dark-700 dark:text-darkAccent-400">
+            <span v-if="pagination.currentPage * pagination.perPageItems <= pagination.totalCount">
+              {{ pagination.currentPage * pagination.perPageItems }}
             </span>
             <span v-else>
               {{ pagination.totalCount }}
             </span>
           </span>
-          {{ ' ' }} of {{ ' ' }}
-          <span v-if="pagination.totalCount" class="font-black text-accent-700">
+          of
+          <span v-if="pagination.totalCount" class="font-bold text-accent-700 dark:text-darkAccent-400">
             {{ pagination.totalCount }}
           </span>
-          {{ ' ' }} results
+          results
         </p>
       </div>
       <div>
-        <nav class="relative inline-flex items-center justify-end py-2 text-sm font-medium" aria-label="Pagination">
-          <router-link :to="anchor"
-             :class="{'disabled pointer-events-none cursor-default !text-main-100': Number(pagination.currentPage) === 1}"
-             class="relative inline-flex items-center rounded-l-md border-none border-main-300 bg-white p-2 text-sm font-medium text-main-500 hover:bg-main-50"
-             @click="previousPage()">
+        <!-- Pagination Controls -->
+        <nav class="relative inline-flex items-center justify-end py-2 text-sm font-medium"
+             aria-label="Pagination">
+          <!-- Previous Page Button -->
+          <a :href="anchor"
+             :class="getPageClasses('<')"
+             @click="pageClicked(pagination.currentPage - 1)">
             <span class="sr-only">Previous</span>
             <ChevronLeftIcon class="h-5 w-5" aria-hidden="true"/>
-          </router-link>
-          <router-link
-              v-if="hasFirst" :to="anchor" aria-current="page"
-              :class="{'z-10 border-b-2 border-accent-500 bg-accent-50 font-medium text-accent-600': isActive(1),
-                       'border-main-300 bg-white text-main-400 hover:bg-accent-50 hover:text-accent-400':!isActive(1),
-                      }"
-              class="relative inline-flex items-center px-4 py-2 text-sm font-medium"
-              @click="nextPage()"
-          >
-            1
-          </router-link>
-
-          <span v-if="hasFirstEllipsis"
-                class="relative inline-flex items-center border-none border-main-300 px-4 py-2 text-sm text-main-500">
-            ...
-          </span>
-          <router-link
-              v-for="page in pages"
-              :key="page"
-              :to="anchor"
-              :class="{'z-10 border-b-2 border-accent-500 bg-accent-50 font-medium text-accent-600': isActive(page),
-                       'border-main-300 bg-white text-main-400 hover:bg-accent-50 hover:text-accent-400': !isActive(page),
-              disabled: page === '...',
-            }"
-              class="relative hidden items-center px-4 py-2 text-sm font-medium md:inline-flex"
-              @click="pageClicked(page)"
-          >
+          </a>
+          <!-- Page Number Buttons -->
+          <template v-if="hasFirst">
+            <a href="#"
+               :class="getPageClasses(1)"
+               @click="pageClicked(1)">
+              1
+            </a>
+            <span v-if="hasFirstEllipsis"
+                  class="relative inline-flex items-center px-4 py-2 text-sm text-dark-500 dark:text-darkLight-300">
+              ...
+            </span>
+          </template>
+          <a v-for="page in pages"
+             :key="page"
+             href="#"
+             :class="getPageClasses(page)"
+             @click="pageClicked(page)">
             {{ page }}
-          </router-link>
-
-          <span
-              v-if="hasLastEllipsis"
-              class="relative inline-flex items-center border-none border-main-300 bg-white px-4 py-2 text-sm font-medium text-main-700"
-          > ...
-          </span>
-          <router-link
-              v-if="hasLast"
-              :to="anchor"
-              aria-current="page"
-              :class="{
-              'z-10 border-b-2 border-accent-500 bg-accent-50 font-medium text-accent-600': isActive(pagination.totalPages),
-              'border-main-300 bg-white text-main-400 hover:bg-accent-50 hover:text-accent-400': !isActive(pagination.totalPages),
-            }"
-              class="relative inline-flex items-center border-none px-4 py-2 text-sm font-medium"
-              @click="pageClicked(pagination.totalPages)"
-          >
-            {{ pagination.totalPages }}
-          </router-link>
-          <router-link :to="anchor"
-             class="relative inline-flex items-center rounded-r-md border-none border-main-300 bg-white p-2 text-sm font-medium text-main-500 hover:bg-main-50"
-             :class="{'disabled pointer-events-none cursor-default !text-main-100': Number(pagination.currentPage) === Number(pagination.totalPages)}"
-             @click="pageClicked(Number(pagination.currentPage) + 1)">
+          </a>
+          <template v-if="hasLast">
+            <span v-if="hasLastEllipsis" :class="getPageClasses('...')">
+              ...
+            </span>
+            <a href="#"
+               :class="getPageClasses(pagination.totalPages)"
+               @click="pageClicked(pagination.totalPages)">
+              {{ pagination.totalPages }}
+            </a>
+          </template>
+          <!-- Next Page Button -->
+          <a :href="anchor"
+             :class="getPageClasses('>')"
+             @click="pageClicked(pagination.currentPage + 1)">
             <span class="sr-only">Next</span>
             <ChevronRightIcon class="h-5 w-5" aria-hidden="true"/>
-          </router-link>
+          </a>
         </nav>
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/solid'
@@ -166,9 +155,39 @@ export default {
     }
   },
   methods: {
+    getPageClasses (page) {
+      const baseClasses = 'relative inline-flex items-center px-4 py-2 text-sm font-medium'
+      const activeClasses = 'border-b-2 border-accent-500 bg-accent-50 text-accent-600 dark:border-darkAccent-400 dark:bg-darkMain-600 dark:text-darkLight-50 rounded-t-md'
+      const inactiveClasses = 'bg-white text-dark-400 hover:bg-dark-50 dark:bg-darkMain-700 dark:text-darkLight-300 dark:hover:bg-darkAccent-500 dark:hover:text-light-500'
+      const disabledClasses = 'pointer-events-none cursor-default'
+      const chevronLeftClasses = 'rounded-l-md border-none border-main-300 bg-white p-2 text-sm font-medium text-main-500 hover:bg-main-50 dark:bg-darkMain-700 dark:hover:bg-darkAccent-500 dark:text-light-600'
+      const chevronRightClasses = 'rounded-r-md border-none border-main-300 bg-white p-2 text-sm font-medium text-main-500 hover:bg-main-50 dark:bg-darkMain-700 dark:hover:bg-darkAccent-500 dark:text-light-600'
+      const ellipsisClasses = 'relative inline-flex items-center px-4 py-2 text-sm text-dark-500 dark:text-darkLight-300'
+
+      if (page === '...') {
+        return `${disabledClasses} ${ellipsisClasses}`
+      } else if (page === '<') {
+        return `${baseClasses} ${this.pagination.currentPage === 1 ? disabledClasses : chevronLeftClasses}`
+      } else if (page === '>') {
+        return `${baseClasses} ${this.pagination.currentPage === this.pagination.totalPages ? disabledClasses : chevronRightClasses}`
+      }
+      return `${baseClasses} ${this.isActive(page) ? activeClasses : inactiveClasses}`
+    },
     isActive (page) {
-      const currentPage = Number(this.pagination.currentPage) || 1
+      const currentPage = this.pagination.currentPage || 1
       return currentPage === page
+    },
+    pageClicked (page) {
+      if (
+          page === '...' ||
+          page === this.pagination.currentPage ||
+          page > this.pagination.totalPages ||
+          page < 1
+      ) {
+        return
+      }
+
+      this.$emit('pageChange', page)
     },
     previousPage () {
       const page = Number(this.pagination.currentPage) - 1
@@ -186,18 +205,6 @@ export default {
 
       this.$emit('pageChange', Number(page))
     },
-    pageClicked (page) {
-      if (
-        page === '...' ||
-          page === this.pagination.currentPage ||
-          page > this.pagination.totalPages ||
-          page < 1
-      ) {
-        return
-      }
-
-      this.$emit('pageChange', Number(page))
-    },
     pageLinks () {
       const pages = []
       let left = 2
@@ -205,8 +212,8 @@ export default {
       if (this.pagination.totalPages >= 10) {
         left = Math.max(1, this.pagination.currentPage - 2)
         right = Math.min(
-          this.pagination.currentPage + 2,
-          this.pagination.totalPages
+            this.pagination.currentPage + 2,
+            this.pagination.totalPages
         )
       }
       for (let i = left; i <= right; i++) {

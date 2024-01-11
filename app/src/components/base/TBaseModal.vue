@@ -3,7 +3,8 @@
     <TransitionRoot appear as="template" :show="show">
       <Dialog as="div" static class="fixed inset-0 z-40 overflow-y-auto" :open="show" @close="$emit('close')">
         <div class="flex min-h-screen  items-end  justify-center  px-4 text-center sm:block sm:px-2">
-          <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
+          <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
+                           leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
             <DialogOverlay
                 class="fixed inset-0 bg-main-700/25 transition-opacity"
             />
@@ -20,9 +21,12 @@
               leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-                :class="`inline-block align-middle bg-white rounded-lg text-left overflow-hidden relative shadow-xl transition-all my-4 ${modalSize} sm:w-full border border-main-300 rounded shadow-xl`"
+                :class="`inline-block align-middle bg-white dark:bg-darkMain-800 rounded-lg text-left overflow-hidden
+                 relative shadow-xl transition-all dark:border-darkMain-800 my-4 ${modalSize} sm:w-full border border-main-300
+                 rounded shadow-xl`"
             >
-              <div v-if="hasHeaderSlot" class="flex items-center justify-between px-6 py-4 text-lg font-medium text-black">
+              <div v-if="hasHeaderSlot"
+                   class="flex items-center justify-between px-6 py-4 text-lg font-medium text-black">
                 <slot name="header"/>
               </div>
 

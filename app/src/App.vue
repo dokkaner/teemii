@@ -14,7 +14,6 @@ export default defineComponent({
   name: 'Teemii',
   setup () {
     const { currentRoute } = useRouter()
-
     const layout = computed(
       () => `${currentRoute.value.meta.layout || defaultLayout}-layout`
     )

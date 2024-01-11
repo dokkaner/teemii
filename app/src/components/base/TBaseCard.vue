@@ -2,23 +2,25 @@
   <div class="mx-auto flex-col w-fit">
     <div class="mb-2 block overflow-hidden w-[140px] sm:w-[200px]">
       <div v-show="progression > 1" class="mb-1.5 flex h-0.5 w-full rounded-full bg-light-600/80">
-        <div class="bg-accent-600/50" :style="{ width: progression + '%' }"></div>
+        <div class="bg-accent-600/50 dark:bg-darkAccent-500/60" :style="{ width: progression + '%' }"></div>
       </div>
       <div class="flex justify-between">
-        <span class="line-clamp-1 truncate text-left text-xs font-medium uppercase tracking-widest text-main-700">
+        <span
+            class="line-clamp-1 truncate text-left text-xs font-medium uppercase tracking-widest text-main-700 dark:text-light-500">
           <TBaseLoadingIcon v-if="contentLoading" :loading="loading" :contentLoading="contentLoading" :error="error"/>
           {{ headerText }}
         </span>
         <TBaseRating v-if="score > 0 && progression > 1" :disabled="true" v-model="starScore" colorClass="bg-orange-400"
                      sizeClass="rating-xs"/>
       </div>
-      <p v-if="title" class="self-start text-xs tracking-tight text-main-400 line-clamp-1">
+      <p v-if="title" class="self-start text-xs tracking-tight text-main-400 line-clamp-1 dark:text-light-400">
         {{ title || ' - ' }}
       </p>
     </div>
     <div class="group/item block transition-all duration-1000 ease-in-out">
       <div
-          class="h-[80px] sm:h-[120px] w-[140px] sm:w-[200px] overflow-hidden rounded-md border border-light-600/60 text-center">
+          class="h-[80px] sm:h-[120px] w-[140px] sm:w-[200px] overflow-hidden rounded-md
+          dark:border-darkLight-500 border border-light-600/60">
         <div class="relative flex">
           <div class="overflow-visible">
             <router-link :to="to">

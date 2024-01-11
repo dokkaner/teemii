@@ -1,4 +1,7 @@
-const { authCtl, chapterCtl, backupCtl, servicesCtl } = require('../controllers')
+const {
+  authCtl, chapterCtl, backupCtl,
+  servicesCtl, releaseCtl
+} = require('../controllers')
 const { restart } = require('../controllers/setupController.js')
 const express = require('express')
 const router = express.Router()
@@ -21,5 +24,8 @@ router.route('/backup/download').post(backupCtl.downloadBackup)
 router.route('/scrobblers').get(servicesCtl.getScrobblers)
 router.route('/scrobblers/:name').post(servicesCtl.updateScrobblers)
 router.route('/scrobblers/statistics').get(servicesCtl.getScrobblerStatistics)
+
+// release routes
+router.route('/releases/latest').get(releaseCtl.getReleasesLatest)
 
 module.exports = router
