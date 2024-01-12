@@ -1,0 +1,29 @@
+{
+  "navigation": {
+    "home": "Início",
+    "search": "Pesquisar",
+    "collection": "Coleção",
+    "activity": "Atividade",
+    "sync": "Sincronizar.",
+    "settings": "Configurações",
+    "backend_loading": "Carregando...",
+    "backend_running": "Backend em funcionamento",
+    "backend_stopped": "Backend parado"
+  },
+  "general": {
+  },
+  "home": {
+    "total_mangas": "Total de mangás",
+    "total_chapters": "Total de capítulos",
+    "page_read": "Páginas lidas",
+    "last_chapters": "Últimos capítulos",
+    "recently_added": "Recentemente adicionados",
+    "recently_read": "Recentemente lidos",
+    "what_readings": "O que você está lendo?",
+    "genres": "Gêneros",
+    "user_top_mangas": "Seus mangás favoritos",
+    "user_top_authors": "Seus autores favoritos",
+    "user_recommendations": "Recomendações para você",
+    "top_mangas": "Mangás mais populares"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "navigation": {
+    "home": "首页",
+    "search": "搜索",
+    "collection": "收藏",
+    "activity": "活动",
+    "sync": "同步.",
+    "settings": "设置",
+    "backend_loading": "加载中...",
+    "backend_running": "后端运行中",
+    "backend_stopped": "后端已停止"
+  },
+  "general": {
+  },
+  "home": {
+    "total_mangas": "漫画总数",
+    "total_chapters": "章节总数",
+    "page_read": "已读页数",
+    "last_chapters": "最新章节",
+    "recently_added": "最近添加",
+    "recently_read": "最近阅读",
+    "what_readings": "你在读什么？",
+    "genres": "类型",
+    "user_top_mangas": "你最喜欢的漫画",
+    "user_top_authors": "你最喜欢的作者",
+    "user_recommendations": "为你推荐",
+    "top_mangas": "热门漫画"
+  }
+}

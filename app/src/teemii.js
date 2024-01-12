@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import i18next from 'i18next'
-import I18NextVue from 'i18next-vue'
+import I18NextVue, { useTranslation } from 'i18next-vue'
 import App from './App.vue'
 import './index.css'
 import logger from './loaders/logger.js'
@@ -32,6 +32,7 @@ app.config.warnHandler = (warn) => {
 defineGlobalComponents(app)
 const pinia = createPinia()
 
+i18next.changeLanguage('en')
 app.use(I18NextVue, { i18next })
 app.use(logger)
 app.use(router)

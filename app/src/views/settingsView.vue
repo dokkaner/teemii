@@ -40,7 +40,7 @@
             class="min-w-0 max-w-2xl flex-auto divide-y divide-main-200 px-4 dark:divide-darkMain-500 lg:max-w-none lg:pl-8 lg:pr-0 xl:px-16">
           <div class="col-span-1 grid grid-cols-1 gap-x-8 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
             <div>
-              <h2 class="font-bold leading-7 text-main-600 dark:text-light-500">Theme</h2>
+              <h2 class="font-bold leading-7 text-main-600 dark:text-light-500">Interface</h2>
               <p class="my-1 text-xs leading-6 tracking-tight text-main-500 dark:text-main-400">
                 Customize the look and feel of Teemii.
               </p>

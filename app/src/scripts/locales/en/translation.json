@@ -5,8 +5,25 @@
     "collection": "Collection",
     "activity": "Activity",
     "sync": "Sync.",
-    "settings": "Settings"
+    "settings": "Settings",
+    "backend_loading": "Loading...",
+    "backend_running": "Backend is running",
+    "backend_stopped": "Backend is stopped"
   },
   "general": {
+  },
+  "home": {
+    "total_mangas": "Total mangas",
+    "total_chapters": "Total chapters",
+    "page_read": "Pages read",
+    "last_chapters": "Last chapters",
+    "recently_added": "Recently added",
+    "recently_read": "Recently read",
+    "what_readings": "What are you reading?",
+    "genres": "Genres",
+    "user_top_mangas": "Your top mangas",
+    "user_top_authors": "Your top authors",
+    "user_recommendations": "Recommendations for you",
+    "top_mangas": "Top mangas"
   }
 }

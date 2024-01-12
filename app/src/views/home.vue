@@ -55,7 +55,7 @@
           <div class="stat-figure">
             <component :is="heroIcons['BookOpenIcon']" class="h-8 w-8"/>
           </div>
-          <div class="stat-title text-main-500 dark:text-light-600">Total Mangas</div>
+          <div class="stat-title text-main-500 dark:text-light-600">{{ t('home.total_mangas') }}</div>
           <div class="stat-value text-main-500 dark:text-light-50">{{ mangaCount }}</div>
         </div>
 
@@ -63,7 +63,7 @@
           <div class="stat-figure">
             <component :is="heroIcons['Bars3BottomLeftIcon']" class="h-8 w-8"/>
           </div>
-          <div class="stat-title text-main-500 dark:text-light-600">Total Chapters</div>
+          <div class="stat-title text-main-500 dark:text-light-600">{{ t('home.total_chapters') }}</div>
           <div class="stat-value text-main-500 dark:text-light-50">{{ chapterCount }}</div>
         </div>
 
@@ -71,7 +71,7 @@
           <div class="stat-figure">
             <component :is="heroIcons['DocumentIcon']" class="h-8 w-8"/>
           </div>
-          <div class="stat-title text-main-500 dark:text-light-600">Page Read</div>
+          <div class="stat-title text-main-500 dark:text-light-600">{{ t('home.page_read') }}</div>
           <div class="stat-value text-main-500 dark:text-light-50">{{ stats.totalPagesRead }}</div>
         </div>
       </div>
@@ -83,7 +83,8 @@
 
     <section v-if="lastPubChapters.length>0" class="pb-8">
       <div class="rounded-xl bg-white p-8 shadow dark:bg-darkMain-600">
-        <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-light-600">Last Chapters</h3>
+        <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-light-600">
+          {{ t('home.last_chapters') }}</h3>
         <section class="">
           <TBaseCarousel uID="mbc" :slides="lastPubChapters"/>
         </section>
@@ -93,12 +94,12 @@
     <section>
       <div v-if="mangaCount > 0" class="rounded-xl bg-main-600 p-8 shadow dark:bg-darkMain-600">
         <TBaseTabGroup vAlign="center">
-          <TBaseTab title="Recently added">
+          <TBaseTab :title="t('home.recently_added')">
             <section>
               <TBaseCarousel uID="mbr" :slides="lastAddedMangas" :contentLoading="storeIsLoading" :selectable="false"/>
             </section>
           </TBaseTab>
-          <TBaseTab title="Recently read">
+          <TBaseTab :title="t('home.recently_read')">
             <section>
               <TBaseCarousel uID="mbr" :slides="lastMangasRead" :contentLoading="storeIsLoading"/>
             </section>
@@ -108,12 +109,13 @@
 
       <template v-if="mangaCount > 0">
         <div class="mt-8 rounded-xl bg-light-400 p-8 shadow dark:bg-darkMain-600">
-          <h3 class="mb-4 text-lg font-bold text-main-900 dark:text-light-600">What are you reading</h3>
+          <h3 class="mb-4 text-lg font-bold text-main-900 dark:text-light-600">{{ t('home.what_readings') }}</h3>
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-6">
 
             <template v-if="genresStats?.labels?.length > 0">
               <div class="flex flex-col items-center rounded-xl bg-white p-8 dark:bg-darkLight-500">
-                <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-main-200">Genres</h3>
+                <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-main-200">
+                  {{ t('home.genres') }}</h3>
                 <CChart v-if="isLoaded"
                         class="h-[200px] w-[200px] text-main-500 dark:text-main-400 sm:h-[300px] sm:w-[300px]"
                         type="doughnut"
@@ -127,7 +129,7 @@
 
             <div class="flex flex-col items-center rounded-xl bg-white p-8 dark:bg-darkLight-500">
               <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-main-200">
-                Your top mangas</h3>
+                {{ t('home.user_top_mangas') }}</h3>
               <ul role="list" class="w-full">
                 <li v-for="manga in topReadMangas.slice(0,4)" :key="manga.slug" class="flex py-4">
                   <router-link :to="storeHelpers.getMangaRouterTo(manga)" class="shrink-0">
@@ -151,8 +153,9 @@
 
             <template v-if="stats?.authors?.length > 0">
               <div class="flex flex-col items-center rounded-xl bg-white p-8 dark:bg-darkLight-500">
-                <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-main-200">Your top
-                  artists</h3>
+                <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-main-200">
+                  {{ t('home.user_top_authors') }}
+                </h3>
                 <ul role="list" class="w-full">
                   <li v-for="(author, index) in stats?.authors.slice(0, 4)" :key="index" class="flex py-4">
                     <TBaseAvatar :name="author.name" image="/assets/images/avatar.png" href="#"/>
@@ -168,14 +171,14 @@
     </section>
 
     <div v-if="personalRecommendations?.length > 0" class="mt-8 rounded-xl p-8">
-      <h3 class="mb-4 self-start text-lg font-bold text-main-900">Recommendations for you</h3>
+      <h3 class="mb-4 self-start text-lg font-bold text-main-900">{{ t('home.user_recommendations') }}</h3>
       <section class="pb-4">
         <TBaseCarousel uID="mbps" :slides="personalRecommendations" :contentLoading="suggestions.loading"/>
       </section>
     </div>
 
     <div v-if="(topMangasRecommendations?.length>0)" class="mt-8 rounded-xl p-8">
-      <h3 class="mb-4 self-start text-lg font-bold text-main-900">Top mangas</h3>
+      <h3 class="mb-4 self-start text-lg font-bold text-main-900">{{ t('home.top_mangas') }}</h3>
       <section class="px-8 pb-4">
         <TBaseCarousel uID="mbs" :slides="topMangasRecommendations" :contentLoading="topMangas.loading"/>
       </section>
@@ -204,6 +207,7 @@ import { useStatStore } from '@/stores/statsStore'
 import libraryAPI from '@/api/library'
 import TBaseSlider from '@/components/base/TBaseSlider.vue'
 import { useThemeStore } from '@/stores/themeStore.js'
+import { useTranslation } from 'i18next-vue'
 
 export default {
   name: 'Home',
@@ -221,6 +225,7 @@ export default {
   props: [],
   setup () {
     const isLoaded = ref(false)
+    const { i18next, t } = useTranslation()
 
     // #region new pinia implementation
     const themeStore = useThemeStore()
@@ -301,7 +306,7 @@ export default {
           return {
             id: c.id,
             to: storeHelpers.getMangaRouterTo(manga),
-            title: `Chap. ${c.chapter} - ${manga.titles?.en}`,
+            title: `Chap. ${c.chapter} ${c.titles?.en ?? ''}`,
             image: storeHelpers.getMangaCover(manga.id, 240, 360, 'cover', manga.state),
             progress: manga.readProgress,
             tags: [manga.canonicalTitle],
@@ -381,6 +386,7 @@ export default {
 
     // expose
     return {
+      t,
       // pinia
       storeHelpers,
       randMangas,

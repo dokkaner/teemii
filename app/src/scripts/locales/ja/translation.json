@@ -1,0 +1,29 @@
+{
+  "navigation": {
+    "home": "ホーム",
+    "search": "検索",
+    "collection": "コレクション",
+    "activity": "アクティビティ",
+    "sync": "同期.",
+    "settings": "設定",
+    "backend_loading": "読み込み中...",
+    "backend_running": "バックエンド実行中",
+    "backend_stopped": "バックエンド停止中"
+  },
+  "general": {
+  },
+  "home": {
+    "total_mangas": "総マンガ数",
+    "total_chapters": "総章数",
+    "page_read": "読んだページ数",
+    "last_chapters": "最新の章",
+    "recently_added": "最近追加されたもの",
+    "recently_read": "最近読んだもの",
+    "what_readings": "何を読んでいますか？",
+    "genres": "ジャンル",
+    "user_top_mangas": "お気に入りのマンガ",
+    "user_top_authors": "お気に入りの作者",
+    "user_recommendations": "あなたへのおすすめ",
+    "top_mangas": "トップマンガ"
+  }
+}

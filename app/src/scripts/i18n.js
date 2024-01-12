@@ -2,7 +2,7 @@ import i18n from 'i18next'
 
 const resources = {}
 
-const locales = ['en', 'fr']
+const locales = ['en', 'fr', 'es', 'pt', 'zh-CN', 'ja', 'de', 'it']
 
 locales.forEach(locale => {
   import(`./locales/${locale}/translation.json`).then((translations) => {

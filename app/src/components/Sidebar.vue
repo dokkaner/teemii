@@ -2,11 +2,11 @@
   <!-- Static sidebar for desktop -->
   <div class="z-40 hidden md:fixed md:inset-y-0 md:flex md:flex-col drop-shadow-lg">
     <div
-        class="hidden h-full w-full overflow-visible rounded-r-2xl bg-dark-500 md:block dark:bg-darkMain-800">
+        class="hidden h-full overflow-visible rounded-r-2xl bg-dark-500 md:block dark:bg-darkMain-800 ">
       <div class="flex flex-col items-center py-6">
         <img class="h-12 w-auto shrink-0" src="/assets/icons/logo.png" alt="Timy"/>
 
-        <nav class="flex-1 mt-6" aria-label="desktop navigation">
+        <nav class="flex-1 mt-6 min-w-20" aria-label="desktop navigation">
           <ul role="list">
             <li v-for="item in navigation" :key="item.name">
               <router-link :to="item.href"
@@ -160,7 +160,7 @@ export default {
     const router = useRouter()
     const previousRoutePath = ref('')
     const currentRoutePath = ref('')
-    i18next.changeLanguage('en')
+
     const navigation = ref([])
 
     watchEffect(() => {
@@ -187,11 +187,11 @@ export default {
 
     const statusText = computed(() => {
       if (storeIsLoading.value) {
-        return 'Loading...'
+        return t('navigation.backend_loading')
       } else if (isConnected.value) {
-        return 'Backend is up and running'
+        return t('navigation.backend_running')
       } else {
-        return 'Backend is down!'
+        return t('navigation.backend_stopped')
       }
     })
 
