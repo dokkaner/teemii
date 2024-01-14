@@ -1,4 +1,5 @@
 import libraryAPI from '@/api/library'
+import { useUserInterfaceStore } from '@/stores/UserInterfaceStore.js'
 
 function convertToHex (rgb) {
   return '#' + rgb.map(x => x.toString(16).padStart(2, '0')).join('')
@@ -21,16 +22,16 @@ function secureRandom () {
 }
 
 export default {
-  isR18(rating, genres) {
-    const adultGenres = ['hentai', 'smut', 'yaoi', 'yuri', 'lolicon', 'adult', 'josei'];
+  isR18 (rating, genres) {
+    const adultGenres = ['hentai', 'smut', 'yaoi', 'yuri', 'lolicon', 'adult', 'josei']
 
-    const isAdultRating = typeof rating === 'string' && rating.toLowerCase() === 'pornographic';
+    const isAdultRating = typeof rating === 'string' && rating.toLowerCase() === 'pornographic'
 
     const hasAdultGenre = Array.isArray(genres) && genres.some(genre =>
       typeof genre === 'string' && adultGenres.includes(genre.toLowerCase())
-    );
+    )
 
-    return isAdultRating || hasAdultGenre;
+    return isAdultRating || hasAdultGenre
   },
 
   shuffleArray (array) {
@@ -109,6 +110,19 @@ export default {
     }
   },
 
+  getMangaDescription (manga) {
+    const UserInterfaceStore = useUserInterfaceStore()
+    const lang = UserInterfaceStore.userLanguage || 'en'
+    const description = manga.description || {}
+    const matchedDescription = Object.keys(description).find(key => key.startsWith(lang + '_'))
+
+    if (matchedDescription) {
+      return description[matchedDescription] || description.en_us || 'No description available.'
+    } else {
+      return description.en_us || 'No description available.'
+    }
+  },
+
   getMangaHREF (manga) {
     return `/mangas/${manga.id}/1`
   },
@@ -128,7 +142,7 @@ export default {
       progress: manga.readProgress,
       tags: manga.genres,
       state: parseInt(manga.state),
-      variant: variant
+      variant
     }
   },
 

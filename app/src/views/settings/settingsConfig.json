@@ -2,29 +2,29 @@
   "sections": [
     {
       "id": "Security",
-      "title": "Security",
-      "desc": "Require Username and Password to access Teemii.",
+      "title": "settings.security",
+      "desc": "settings.security_desc",
       "help": "",
       "preferencesRoot": "security",
       "items": [
         {
-          "name": "login",
-          "label": "Username",
+          "name": "general.username",
+          "label": "general.username",
           "preference": "login",
           "component": "TBaseInput",
           "type": "text"
         },
         {
-          "name": "password",
-          "label": "Password",
+          "name": "general.password",
+          "label": "general.password",
           "preference": "password",
           "component": "TBaseInput",
           "type": "password",
           "secure": true
         },
         {
-          "name": "enable",
-          "label": "Enable authentication to access Teemii",
+          "name": "general.enable",
+          "label": "settings.security_enable",
           "preference": "enable",
           "component": "TBaseSwitch",
           "type": ""
@@ -33,16 +33,16 @@
     },
     {
       "id": "advancedFeatures",
-      "title": "Advanced features",
-      "desc": "Advanced features are a set of Teemii features that includes, for ex., the ability to upscale chapter page.",
+      "title": "settings.advanced_features",
+      "desc": "settings.advanced_features_desc",
       "help": "",
       "preferencesRoot": "advancedFeatures",
       "items": [
         {
           "name": "waifu2xPath",
-          "label": "Waifu2x Path",
+          "label": "settings.waifu2x_path",
           "desc": "",
-          "help": "Allow upscale of cover and chapter page.",
+          "help": "settings.waifu2x_help",
           "preference": "waifu2xPath",
           "bind": "",
           "component": "TBaseInput",
@@ -50,7 +50,7 @@
         },
         {
           "name": "imageMagickPath",
-          "label": "Image Magick Path (Q16-HDRI version)",
+          "label": "settings.imagemagick_path",
           "desc": "",
           "help": "",
           "preference": "imageMagickPath",
@@ -60,7 +60,7 @@
         },
         {
           "name": "enhancedPages",
-          "label": "Enable Chapter Page enhancement",
+          "label": "settings.enhance_chapter",
           "desc": "",
           "help": "",
           "preference": "enhancedPages",
@@ -70,7 +70,7 @@
         },
         {
           "name": "enhancedAssets",
-          "label": "Enable Assets (cover, banner...) enhancement",
+          "label": "settings.enhance_cover",
           "desc": "",
           "help": "",
           "preference": "enhancedAssets",
@@ -82,14 +82,14 @@
     },
     {
       "id": "agentOptions",
-      "title": "Agents Options",
-      "desc": "Behaviour of Teemii agents. Define how Teemii will behave when looking for metadata, covers, banners, etc.",
+      "title": "settings.agents_options",
+      "desc": "settings.agents_options_desc",
       "help": "",
       "preferencesRoot": "agentOptions",
       "items": [
         {
           "name": "excludeGenres",
-          "label": "Exclude Genres",
+          "label": "integration.excluded_genres",
           "preference": "excludeGenres",
           "component": "BaseMultiselect",
           "mode": "tags",
@@ -98,7 +98,7 @@
         },
         {
           "name": "languages",
-          "label": "Languages",
+          "label": "settings.agents_languages",
           "preference": "languages",
           "component": "BaseMultiselect",
           "mode": "tags",
@@ -112,15 +112,15 @@
     },
     {
       "id": "agentAuth",
-      "title": "Agents Authentication",
-      "desc": "Define authentication parameters for each agent. If you don't have an account for an agent, leave the fields blank.",
+      "title": "settings.agents_authentications",
+      "desc": "settings.agents_authentications_desc",
       "help": "",
       "preferencesRoot": "agentAuth",
       "items": [
         {
           "name": "OpenAI",
-          "label": "OpenAI API Key",
-          "help": "Used to generate personal recommendations.",
+          "label": "settings.agents_openai_api_key",
+          "help": "settings.agents_openai_api_key_desc",
           "preference": "openai_key",
           "component": "TBaseInput",
           "type": "password",
@@ -128,8 +128,8 @@
         },
         {
           "name": "Goodreads",
-          "label": "Goodreads API Key",
-          "help": "Used to complete metadata.",
+          "label": "settings.agents_goodreads_api_key",
+          "help": "settings.agents_goodreads_api_key_desc",
           "preference": "goodreads_key",
           "component": "TBaseInput",
           "type": "password",

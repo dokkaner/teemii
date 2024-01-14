@@ -115,7 +115,7 @@
             <template v-if="genresStats?.labels?.length > 0">
               <div class="flex flex-col items-center rounded-xl bg-white p-8 dark:bg-darkLight-500">
                 <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-main-200">
-                  {{ t('home.genres') }}</h3>
+                  {{ t('general.genres') }}</h3>
                 <CChart v-if="isLoaded"
                         class="h-[200px] w-[200px] text-main-500 dark:text-main-400 sm:h-[300px] sm:w-[300px]"
                         type="doughnut"
@@ -206,7 +206,7 @@ import { useChapterStore } from '@/stores/chaptersStore'
 import { useStatStore } from '@/stores/statsStore'
 import libraryAPI from '@/api/library'
 import TBaseSlider from '@/components/base/TBaseSlider.vue'
-import { useThemeStore } from '@/stores/themeStore.js'
+import { useUserInterfaceStore } from '@/stores/UserInterfaceStore.js'
 import { useTranslation } from 'i18next-vue'
 
 export default {
@@ -225,10 +225,10 @@ export default {
   props: [],
   setup () {
     const isLoaded = ref(false)
-    const { i18next, t } = useTranslation()
+    const { t } = useTranslation()
 
     // #region new pinia implementation
-    const themeStore = useThemeStore()
+    const UserInterfaceStore = useUserInterfaceStore()
 
     const statsStore = useStatStore()
     const stats = computed(() => statsStore.getStats)
@@ -260,7 +260,7 @@ export default {
           title: m.canonicalTitle,
           image: storeHelpers.getMangaCover(m.id, 1440, 403, 'banner'),
           content: m.title,
-          description: m.description.en_us || m.description.fr_fr,
+          description: storeHelpers.getMangaDescription(m),
           route: storeHelpers.getMangaRouterTo(m)
         }
       })
@@ -331,8 +331,8 @@ export default {
           callbacks: {
             labelColor: function (context) {
               return {
-                borderColor: themeStore.isDark ? '#fff' : '#584e64',
-                backgroundColor: themeStore.isDark ? '#fff' : '#584e64',
+                borderColor: UserInterfaceStore.isDark ? '#fff' : '#584e64',
+                backgroundColor: UserInterfaceStore.isDark ? '#fff' : '#584e64',
                 borderWidth: 1
               }
             }
@@ -344,7 +344,7 @@ export default {
           align: 'start',
           textAlign: 'center',
           labels: {
-            color: themeStore.isDark ? '#fff' : '#584e64'
+            color: UserInterfaceStore.isDark ? '#fff' : '#584e64'
           }
         }
       },

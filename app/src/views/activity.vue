@@ -6,8 +6,9 @@
         <div class="hidden sm:flex">
           <div class="flex items-center">
             <div class="flex-none">
-              <p class="text-base dark:text-light-50"> Activity </p>
-              <p class="text-xs tracking-tight dark:text-light-600"><b> {{ activities?.length }} </b> Jobs </p>
+              <p class="text-base dark:text-light-50"> {{ t('navigation.activity') }} </p>
+              <p class="text-xs tracking-tight dark:text-light-600"><b> {{ activities?.length }} </b>
+                {{ t('activity.jobs') }} </p>
             </div>
           </div>
         </div>
@@ -18,10 +19,10 @@
         <thead class="border-main/10 text-main border-b text-sm dark:border-darkMain-500/10 dark:text-light-300">
         <tr>
           <th scope="col" class=""></th>
-          <th scope="col" class="hidden md:table-cell">Job</th>
-          <th scope="col" class="hidden lg:table-cell">Status</th>
-          <th scope="col" class="hidden lg:table-cell">Duration</th>
-          <th scope="col" class="hidden lg:table-cell">Last update</th>
+          <th scope="col" class="hidden md:table-cell">{{ t('activity.job') }}</th>
+          <th scope="col" class="hidden lg:table-cell">{{ t('activity.status') }}</th>
+          <th scope="col" class="hidden lg:table-cell">{{ t('activity.duration') }}</th>
+          <th scope="col" class="hidden lg:table-cell">{{ t('activity.last_updated') }}</th>
           <th scope="col" class=""></th>
         </tr>
         </thead>
@@ -108,11 +109,13 @@
   </div>
 </template>
 <script setup>
+import { useTranslation } from 'i18next-vue'
 import { pageTitle } from '@/global.js'
 import { useJobStore } from '@/stores/jobsStore'
 import helpers from '@/stores/utils'
 import { computed, onMounted } from 'vue'
 
+const { t } = useTranslation()
 const jobsStore = useJobStore()
 const storeIsLoading = computed(() => jobsStore.getIsLoading)
 const activities = computed(() => jobsStore.jobs)

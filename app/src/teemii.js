@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import i18next from 'i18next'
-import I18NextVue, { useTranslation } from 'i18next-vue'
+import I18NextVue from 'i18next-vue'
 import App from './App.vue'
 import './index.css'
 import logger from './loaders/logger.js'
@@ -14,11 +14,13 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
 import { faLifeRing, faPaw } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-regular-svg-icons'
-
+import { useUserInterfaceStore } from '@/stores/UserInterfaceStore.js'
 // fontawesome
 library.add(faGithub, faLifeRing, faHeart, faPaw, faXTwitter)
 
+const pinia = createPinia()
 const app = createApp(App)
+
 app.name = 'Teemii'
 
 app.config.errorHandler = (err) => {
@@ -30,13 +32,14 @@ app.config.warnHandler = (warn) => {
 }
 
 defineGlobalComponents(app)
-const pinia = createPinia()
 
-i18next.changeLanguage('en')
+app.use(pinia)
 app.use(I18NextVue, { i18next })
 app.use(logger)
 app.use(router)
 app.use(veProgress)
-app.use(pinia)
 app.component('font-awesome-icon', FontAwesomeIcon)
+
+const UserInterfaceStore = useUserInterfaceStore()
+i18next.changeLanguage(UserInterfaceStore.userLanguage)
 app.mount('#app')

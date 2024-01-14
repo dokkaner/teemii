@@ -71,16 +71,16 @@
     </div>
     <div v-if="tabs[0].current">
       <div class="py-6 pl-2">
-        <div class="text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">Add a new
-          manga
+        <div class="text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">
+          {{ t('search.add_manga') }}
         </div>
         <div class="mt-0.5 flex items-center pt-4 font-medium text-main-400 dark:text-light-500">
-          Get started by adding your favorite manga to the library.
+          {{ t('search.add_manga_sub') }}
         </div>
       </div>
       <div class="flex flex-1 justify-center px-2 pt-4 lg:justify-start">
         <div class="w-full rounded-xl border border-main-600 p-2 dark:border-none dark:p-0">
-          <label for="search" class="sr-only">Search</label>
+          <label for="search" class="sr-only">{{ t('general.search') }}</label>
           <div class="relative">
             <div
                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-main-700 dark:text-light-400">
@@ -88,17 +88,17 @@
                          class="h-5 w-5"/>
             </div>
 
-            <input id="search" name="search" placeholder="Search" type="text" v-model="searchData.q"
+            <input id="search" name="search" :placeholder="t('general.search')" type="text" v-model="searchData.q"
                    autocomplete="off" @input="onInput" @keydown.down.prevent="onKeyDown"
                    @keydown.up.prevent="onKeyUp"
                    @keydown.enter.prevent="onEnter"
                    class="block w-full rounded-md bg-light-100 py-2 pl-10 pr-3 leading-5
                      placeholder:text-main-200 focus:border-white focus:bg-white
-                     focus:text-main-600 focus:outline-none focus:ring-white dark:border-darkAccent-400
-                     dark:bg-darkMain-700 dark:text-light-100 dark:placeholder:text-darkLight-200
+                     focus:text-main-600 focus:outline-none focus:ring-white dark:border-2
+                     dark:border-darkAccent-400 dark:bg-darkMain-700
+                     dark:text-light-100 dark:placeholder:text-darkLight-200
                      dark:focus:border-darkAccent-500 dark:focus:bg-darkMain-700
-                     dark:focus:text-darkLight-50 dark:focus:ring-darkAccent-500
-                     sm:text-sm"/>
+                     dark:focus:text-darkLight-50 dark:focus:ring-darkAccent-500 sm:text-sm"/>
             <ul v-if="suggestions.data?.length > 1"
                 class="absolute z-10 mt-4 w-full space-y-1 rounded border border-main-300 bg-white/90 p-1
                   drop-shadow-lg backdrop-blur-2xl dark:border-none dark:bg-darkMain-500/80">
@@ -122,43 +122,42 @@
       </div>
       <div v-if="searchData.correctedQuery && !searchData.loading"
            class="ml-2 mt-4 text-sm text-main-500 dark:text-light-400">
-        <p>Results for : <span class="font-medium text-main-800 dark:text-darkLight-200">{{
+        <p>{{ t('search.results_for') }} <span class="font-medium text-main-800 dark:text-darkLight-200">{{
             searchData.correctedQuery
           }}</span></p>
-        <p>Try the original spelling: <a href="#" @click="searchForced(searchData.q)"
-                                         class="text-accent-500 hover:underline dark:text-darkAccent-500">{{
+        <p>{{ t('search.try_spelling') }} <a href="#" @click="searchForced(searchData.q)"
+                                             class="text-accent-500 hover:underline dark:text-darkAccent-500">{{
             searchData.q
           }}</a></p>
       </div>
-    </div>
 
-    <div v-if='searchData.loading' class="mx-auto h-full w-full justify-items-center">
-      <img src="/assets/images/teemii_read.png" class="mx-auto h-[255px] w-[255px]" alt="logo" loading="lazy">
-    </div>
-    <!-- results -->
-    <div v-if='!searchData.loading' class="container mx-auto">
-      <TBaseGrid id="mangas" :key="gridKey">
-        <TBasePosterCard v-for="(manga) in searchData.data" :key="manga.id"
-                         :id="`manga-${manga.title.toUpperCase()}`"
-                         :title="manga.title"
-                         :image="manga.cover"
-                         :tags="manga.genre"
-                         :blur-poster="storeHelpers.isR18(manga.r, manga.genre)"
-                         state="2"
-                         variant="primary"
-                         @click="showAddmanga(manga)"
-        >
-        </TBasePosterCard>
-      </TBaseGrid>
+      <div v-if='searchData.loading' class="mx-auto h-full w-full justify-items-center">
+        <img src="/assets/images/teemii_read.png" class="mx-auto h-[255px] w-[255px]" alt="logo" loading="lazy">
+      </div>
+      <!-- results -->
+      <div v-if='!searchData.loading' class="container mx-auto">
+        <TBaseGrid id="mangas" :key="gridKey">
+          <TBasePosterCard v-for="(manga) in searchData.data" :key="manga.id"
+                           :id="`manga-${manga.title.toUpperCase()}`"
+                           :title="manga.title"
+                           :image="manga.cover"
+                           :tags="manga.genre"
+                           :blur-poster="storeHelpers.isR18(manga.r, manga.genre)"
+                           state="2"
+                           variant="primary"
+                           @click="showAddmanga(manga)"
+          >
+          </TBasePosterCard>
+        </TBaseGrid>
+      </div>
     </div>
     <div v-if="tabs[1].current">
       <div class="py-6 pl-2">
-        <div class="text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">Import your
-          collection
+        <div class="text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">
+          {{ t('search.import_title') }}
         </div>
         <div class="mt-0.5 flex items-center pt-4 font-medium text-main-400 dark:text-light-500">
-          Here you can import your collection from CBZ or CBR files.
-          You can import multiples archives at once. But only one manga per upload.
+          {{ t('search.import_title_sub') }}
         </div>
       </div>
 
@@ -178,7 +177,7 @@
 
           <span
               class="block text-sm text-main-900 group-hover:text-accent-600 dark:text-darkLight-50
-              group-hover:dark:text-darkAccent-400">Click here and choose your files to upload</span>
+              group-hover:dark:text-darkAccent-400">{{ t('search.click_here') }}</span>
           <input type='file' multiple @change="onFileChange" class="hidden"/>
         </label>
       </div>
@@ -266,10 +265,10 @@
             </div>
             <div v-else class="flex gap-x-2">
               <TBaseButton :rounded=true size="sm" variant="secondary" @click="clearAllUpload">
-                Clear all
+                {{ t('general.clear') }}
               </TBaseButton>
               <TBaseButton :rounded=true size="sm" variant="primary" @click="uploadFiles">
-                Import
+                {{ t('general.import') }}
               </TBaseButton>
             </div>
           </div>
@@ -282,16 +281,16 @@
             <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
               <button type="button" @click="closeSelectMangaModal"
                       class="rounded-md bg-white text-main-400 hover:text-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2">
-                <span class="sr-only">Close</span>
+                <span class="sr-only">{{ t('general.close') }}</span>
                 <component :is="heroIcons['XMarkIcon']" class="h-6 w-6 text-center"/>
               </button>
             </div>
             <div class="flex w-full">
               <div class="mx-auto mt-3 w-full overflow-hidden">
-                <div class="text-base font-semibold leading-6 text-main-900">Select the manga for this import</div>
+                <div class="text-base font-semibold leading-6 text-main-900">{{ t('search.select_manga') }}</div>
                 <div class="mt-2 flex w-full justify-center px-2 pt-4 lg:justify-start">
                   <div class="w-full rounded-xl border border-main-600 p-2">
-                    <label for="search" class="sr-only">Search</label>
+                    <label for="search" class="sr-only">{{ t('general.search') }}</label>
                     <div class="relative">
                       <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <TBaseIcon :solid="true" name="MagnifyingGlassIcon" aria-hidden="true"
@@ -316,12 +315,12 @@
             <div class="mt-5 shrink gap-x-2 sm:mt-4 sm:flex sm:flex-row-reverse">
               <div class="shrink-0">
                 <TBaseButton :rounded=true size="sm" variant="primary" @click="closeSelectMangaModal">
-                  Select
+                  {{ t('general.select') }}
                 </TBaseButton>
               </div>
               <div class="shrink-0">
                 <TBaseButton :rounded=true size="sm" variant="secondary" @click="closeSelectMangaModal">
-                  Cancel
+                  {{ t('general.cancel') }}
                 </TBaseButton>
               </div>
             </div>
@@ -333,6 +332,7 @@
 </template>
 
 <script>
+import { useTranslation } from 'i18next-vue'
 import * as heroIcons from '@heroicons/vue/24/solid'
 import { ChevronRightIcon } from '@heroicons/vue/24/solid'
 import { computed, onMounted, reactive, ref } from 'vue'
@@ -365,6 +365,7 @@ export default {
     ChevronRightIcon
   },
   setup () {
+    const { t } = useTranslation()
     const openTab = ref(0)
     const gridKey = ref(0)
     const uploadStatus = ref({ done: 0, total: 0, errors: 0, status: 'idle', data: [] })
@@ -372,8 +373,8 @@ export default {
     const selectedMangaForUpload = ref(null)
     const searchUpload = ref({ q: '', force: false, data: [], loading: false, correctedQuery: '' })
     const tabs = ref([
-      { index: 0, name: 'Search Online', href: '#', current: true },
-      { index: 1, name: 'Import', href: '#', current: false }
+      { index: 0, name: t('search.search_online'), href: '#', current: true },
+      { index: 1, name: t('search.import_manga'), href: '#', current: false }
     ])
 
     async function getUploadFileInfo () {
@@ -614,6 +615,7 @@ export default {
     })
     // expose
     return {
+      t,
       imgPlaceholder,
       storeHelpers,
       gridKey,

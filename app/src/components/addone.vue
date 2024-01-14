@@ -3,11 +3,10 @@
     <form
         action="#"
         @submit.prevent="addMedia(media.data.id)"
-        class="flex h-full flex-col divide-y divide-main-200 bg-white dark:bg-darkMain-600 shadow-xl"
+        class="flex h-full flex-col divide-y divide-main-200 bg-white dark:bg-darkMain-500 shadow-xl"
     >
       <div class="h-0 flex-1 overflow-y-auto">
-        <div :style="{ backgroundImage: `url(${media.data.cover})` }"
-             class="overflow-hidden bg-cover bg-center bg-no-repeat">
+        <div :style="{ backgroundImage: `url(${media.data.cover})` }" class="overflow-hidden bg-cover bg-no-repeat">
 
           <div class="bg-main-600/90 dark:bg-darkAccent-900/90 px-4 py-6 bg-blend-normal backdrop-blur-md sm:px-6 ">
             <div class="flex items-center justify-between">
@@ -59,7 +58,7 @@
               </div>
             </div>
 
-            <div class="col-span-full">
+            <div class="col-span-full mr-4">
               <TBaseSwitch v-model="monitor" labelLeft="Monitor" class="flex"/>
             </div>
           </div>
@@ -124,7 +123,8 @@ export default {
           year: props.media.data.year,
           externalIds: props.media.data.externalIds,
           altTitles: props.media.data.altTitles,
-          source: props.media.data.source
+          source: props.media.data.source,
+          monitor: monitor.value
         },
         entityId: id
       }

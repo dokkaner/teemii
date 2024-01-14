@@ -3,10 +3,11 @@
     <div class="w-full max-w-md space-y-8">
       <div>
         <img class="mx-auto h-12 w-auto" src="/assets/icons/logo.png" alt="Teemii"/>
-        <h2 class="mt-6 text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">Welcome
-          back!</h2>
+        <h2 class="mt-6 text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">
+          {{ t('login.welcome_title') }}
+        </h2>
         <div class="mt-0.5 flex items-center pt-4 font-medium text-main-400 dark:text-light-500">
-          Please sign in to continue to Teemii.
+          {{ t('login.welcome_subtitle') }}
         </div>
       </div>
 
@@ -22,7 +23,7 @@
                 autocomplete="login"
                 required=""
                 class="relative block w-full appearance-none rounded-none rounded-t-md border border-main-300 px-3 py-2 text-main-900 placeholder:text-main-500 focus:z-10 focus:border-accent-500 focus:outline-none focus:ring-main-500 sm:text-sm"
-                placeholder="Username"
+                :placeholder="t('general.username')"
                 v-model="loginData.login"
             />
           </div>
@@ -36,7 +37,7 @@
                   autocomplete="current-password"
                   required=""
                   class="w-full rounded-none rounded-b-md border border-main-300 px-3 py-2 pe-12 text-main-900 placeholder:text-main-500 focus:z-10 focus:border-accent-500 focus:outline-none focus:ring-main-500 sm:text-sm"
-                  placeholder="Password"
+                  :placeholder="t('general.password')"
                   v-model="loginData.password"
               />
               <span class="absolute inset-y-0 end-0 z-10 grid place-content-center px-4"
@@ -70,13 +71,15 @@
         </div>
 
         <div>
-          <button type="submit"
-                  class="group relative flex w-full justify-center rounded-md border border-transparent bg-main-600 px-4 py-2 text-sm font-medium text-white hover:bg-main-700 focus:outline-none focus:ring-2 focus:ring-main-500 focus:ring-offset-2 dark:bg-darkAccent-600 dark:hover:bg-darkAccent-700 dark:focus:ring-darkAccent-400">
+          <button type="submit" class="group relative flex w-full justify-center rounded-md border border-transparent
+            bg-main-600 px-4 py-2 text-sm font-medium text-white hover:bg-main-700 focus:outline-none focus:ring-2
+            focus:ring-main-500 focus:ring-offset-2 dark:bg-darkAccent-600 dark:hover:bg-darkAccent-700
+            dark:focus:ring-darkAccent-400">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
               <LockClosedIcon class="h-5 w-5 text-main-500 group-hover:text-main-400 dark:text-light-500"
                               aria-hidden="true"/>
             </span>
-            Sign in
+            {{ t('login.sign_in') }}
           </button>
         </div>
       </form>
@@ -87,7 +90,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { useTranslation } from 'i18next-vue'
 import { XCircleIcon, XMarkIcon, LockClosedIcon } from '@heroicons/vue/24/solid'
 import { useAuthStore } from '@/stores/authStore.js'
 
@@ -96,6 +99,7 @@ defineOptions({
   inheritAttrs: false,
   customOptions: {}
 })
+const { t } = useTranslation()
 const isLoading = ref(false)
 const isShowPassword = ref(false)
 const authStore = useAuthStore()

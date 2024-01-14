@@ -15,6 +15,19 @@ const services = require('../../services')
 const EntityJobService = require('../services/EntityJobService')
 const { realm } = require('../../loaders/realm')
 
+function mergeAndNormalizeDescriptions (existingDescriptions, newDescriptions) {
+  const normalizedDescriptions = { ...existingDescriptions }
+
+  Object.keys(newDescriptions).forEach(key => {
+    if (key !== 'null') {
+      const lowerCaseKey = key.toLowerCase()
+      normalizedDescriptions[lowerCaseKey] = newDescriptions[key]
+    }
+  })
+
+  return normalizedDescriptions
+}
+
 function findHighestPriorityUrl (asset, priorities, manga) {
   const result = asset.agents.reduce((acc, agent) => {
     const priority = priorities[agent]
@@ -253,7 +266,7 @@ async function fetchExtraMangaData (manga, agentsList) {
       manga.altTitles = manga.altTitles || {}
 
       manga.titles.fr_fr = extManga.titles?.fr_fr ?? null
-      manga.description.fr_fr = extManga.description?.fr_fr ?? null
+      manga.description = mergeAndNormalizeDescriptions(manga.description, extManga.description)
       manga.altTitles.fr = extManga.titles?.fr_fr ?? null
       manga.score = manga.score ?? extManga.score ?? null
       manga.favoritesCount += extManga.favoritesCount
@@ -332,7 +345,7 @@ async function upsertManga (slug, year) {
   }
 }
 
-async function importOrCreateManga (jobID, title, year, externalIds, trackingInfo) {
+async function importOrCreateManga (jobID, title, year, externalIds, trackingInfo, monitor) {
   const lookupAgents = await services.agents.agentsEnabledForCapability('MANGA_METADATA_FETCH')
   const metadataAgents = []
   const extraAgents = []
@@ -363,6 +376,7 @@ async function importOrCreateManga (jobID, title, year, externalIds, trackingInf
   manga.state = 2
   manga.slug = slug
   if (trackingInfo) manga.scrobblersKey = trackingInfo
+  if (monitor) manga.monitor = monitor
 
   if (meta.insertMode === 0) {
     await orm.manga.upsert(manga, { returning: true, plain: true })

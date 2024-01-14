@@ -74,6 +74,84 @@ function generateLangMap () {
   return { ...langMap, ...langMap2 }
 }
 
+const top30Locales = [
+  'zh_cn', // Mandari
+  'es_es', // Espagnol
+  'es_la', // Espagnol Amérique Latine
+  'en_us', // Anglais
+  'hi_in', // Hindi
+  'bn_bd', // Bengali
+  'pt_pt', // Portugais
+  'pt_br', // Portugais Brésilien
+  'ru_ru', // Russe
+  'ja_jp', // Japonais
+  'pa_pk', // Pendjabi
+  'mr_in', // Marathi
+  'te_in', // Telugu
+  'tr_tr', // Turc
+  'ko_kr', // Coréen
+  'fr_fr', // Français
+  'de_de', // Allemand
+  'vi_vn', // Vietnamien
+  'ta_in', // Tamoul
+  'jv_id', // Javanais
+  'it_it', // Italien
+  'ar_eg', // Arabe Égyptien
+  'gu_in', // Gujarati
+  'fa_ir', // Persan
+  'bh_in', // Bhojpuri
+  'ha_ng', // Haoussa
+  'kn_in', // Kannada
+  'id_id', // Indonésien
+  'zh_cn', // Wu
+  'zh_cn', // Min Nan
+  'zh_cn', // Hakka
+  'zh_cn', // Ji
+  'th_th', // Thaï
+  'uk_ua' // Ukrainien
+]
+
+function convertToLocale (languageCode) {
+  const languageToLocaleMap = {
+    zh: 'zh_cn',
+    es: 'es_es',
+    es_la: 'es_la',
+    en: 'en_us',
+    hi: 'hi_in',
+    bn: 'bn_bd',
+    pt: 'pt_pt',
+    pt_br: 'pt_br',
+    ru: 'ru_ru',
+    ja: 'ja_jp',
+    pa: 'pa_pk',
+    mr: 'mr_in',
+    te: 'te_in',
+    tr: 'tr_tr',
+    ko: 'ko_kr',
+    fr: 'fr_fr',
+    de: 'de_de',
+    vi: 'vi_vn',
+    ta: 'ta_in',
+    jv: 'jv_id',
+    it: 'it_it',
+    ar: 'ar_eg',
+    gu: 'gu_in',
+    fa: 'fa_ir',
+    bh: 'bh_in',
+    ha: 'ha_ng',
+    kn: 'kn_in',
+    id: 'id_id',
+    wu: 'zh_cn',
+    mn: 'zh_cn',
+    hak: 'zh_cn',
+    jin: 'zh_cn',
+    th: 'th_th',
+    uk: 'uk_ua'
+  }
+  const langCode = languageCode.replace('-', '_').toLowerCase()
+  return languageToLocaleMap[langCode] || null
+}
+
 const cleanStr = function (str) {
   let cleanStr = ''
   if (str) {
@@ -418,6 +496,8 @@ async function downloadPage (url, downloadFolder, fileName, referer = '') {
 }
 
 module.exports = {
+  top30Locales,
+  convertToLocale,
   extractTitleNChapter,
   domain,
   userPreferredMangaTitle,

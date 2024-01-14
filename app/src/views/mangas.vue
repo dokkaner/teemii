@@ -3,15 +3,15 @@
     <div v-show="mangaCount<1" class="flex h-screen flex-col items-center justify-center">
       <div class="text-center">
         <img src="/assets/images/empty.png" alt="Empty Shelf" class="mx-auto mb-6 h-52 w-52">
-        <h1 class="mb-4 text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">It's a Bit
-          Empty Here!</h1>
-        <p class="mb-6 mt-0.5 flex items-center pt-4 font-medium text-main-400 dark:text-light-500"> It seems like your
-          manga collection is empty. Don't worry, I'm here to help you.
-          <br> Just hit that 'Search Manga' button to get started. 📚✨.</p>
+        <h1 class="mb-4 text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">
+          {{ t('empty.title') }}
+        </h1>
+        <p class="mb-6 mt-0.5 flex items-center pt-4 font-medium text-main-400 dark:text-light-500">
+          {{ t('empty.subtitle') }}
+        </p>
         <router-link to="/search"
                      class="inline-block rounded-md bg-accent-500 px-6 py-3 text-lg text-white dark:bg-darkAccent-500 dark:text-light-100">
-          Search a
-          manga
+          {{ t('general.search') }}
         </router-link>
       </div>
     </div>
@@ -24,8 +24,9 @@
         <div class="hidden sm:flex">
           <div class="flex items-center">
             <div class="flex-none">
-              <p class="text-base dark:text-light-50"> Collection </p>
-              <p class="text-xs tracking-tight dark:text-light-600"><b>{{ mangaCount }}</b> mangas </p>
+              <p class="text-base dark:text-light-50"> {{ t('navigation.collection') }} </p>
+              <p class="text-xs tracking-tight dark:text-light-600"><b>{{ mangaCount }}</b> {{ t('general.mangas') }}
+              </p>
             </div>
           </div>
         </div>
@@ -64,7 +65,7 @@
           <PopoverButton
               class="inline-flex items-center rounded-md bg-light-400 px-2 py-1 text-xs font-semibold text-main-600
               dark:bg-darkMain-500 dark:text-light-400">
-            <span>Filters</span>
+            <span>{{ t('general.filters') }}</span>
             <div class="ml-2 shrink-0">
               <TBaseIcon :solid="true" name="AdjustmentsHorizontalIcon" aria-hidden="true"
                          class="h-5 w-5 text-accent-700 dark:text-darkAccent-400"/>
@@ -86,7 +87,7 @@
                   class="-top-[6px] rounded-b-lg bg-light-400 dark:bg-darkMain-500"
                   @clear="clearFilter"
               >
-                <TBaseInputGroup label="Genres">
+                <TBaseInputGroup :label="t('general.genres')">
                   <BaseMultiselect
                       v-model="filters.genres"
                       :options="itemGenres"
@@ -97,7 +98,7 @@
                   />
                 </TBaseInputGroup>
 
-                <TBaseInputGroup label="Demographics">
+                <TBaseInputGroup :label="t('general.demographics')">
                   <TBaseSelectInput
                       v-model="filters.types"
                       :options="itemPubDemographics"
@@ -108,7 +109,7 @@
                   />
                 </TBaseInputGroup>
                 <div class="relative flex w-full gap-x-8">
-                  <TBaseInputGroup :label="`Published: ${filters.years[0]} - ${filters.years[1]}`">
+                  <TBaseInputGroup :label="`${t('general.published')}: ${filters.years[0]} - ${filters.years[1]}`">
                     <div class="pb-6">
                       <TBaseVueSlider
                           class="w-full"
@@ -121,7 +122,8 @@
                     </div>
                   </TBaseInputGroup>
 
-                  <TBaseInputGroup :label="`Scores: ${filters.scores[0].toFixed(2)} - ${filters.scores[1].toFixed(2)}`">
+                  <TBaseInputGroup
+                      :label="`${t('general.scores')}: ${filters.scores[0].toFixed(2)} - ${filters.scores[1].toFixed(2)}`">
                     <div class="pb-6">
                       <TBaseVueSlider
                           class="w-full"
@@ -135,13 +137,13 @@
                     </div>
                   </TBaseInputGroup>
                 </div>
-                <TBaseInputGroup label="Search filter" class="">
+                <TBaseInputGroup :label="t('general.search')">
                   <TBaseInput placeholder="title, author, tags..." v-model="filters.searchText"
                               @input="onSearched()"></TBaseInput>
                 </TBaseInputGroup>
-                <TBaseInputGroup :label="`by ${filters.orderByField} (${filters.orderBy})`">
+                <TBaseInputGroup :label="`${t('general.by')} ${filters.orderByField} (${filters.orderBy})`">
                   <div role="group" aria-label="First group">
-                    <TBaseDropdown position="bottom-start" width-class="w-50" position-class="left-0">
+                    <TBaseDropdown position="bottom-start" width-class="w-50">
                       <template #activator>
                         <TBaseButton variant="secondary">
                           <TBaseIcon name="FunnelIcon" class="h-2 w-2"/>
@@ -209,21 +211,25 @@
 
     <div v-if="tabs[0].current">
       <section class="px-8 pb-4" v-if="lastMangasRead?.length>0">
-        <TBaseCarousel uID="mbr" title="Continue Reading" :slides="lastMangasRead" :contentLoading="storeIsLoading"/>
+        <TBaseCarousel uID="mbr" :title="t('mangas.continue_reading')" :slides="lastMangasRead"
+                       :contentLoading="storeIsLoading"/>
       </section>
       <section class="px-8">
-        <TBaseCarousel uID="mla" title="Recently Added" :slides="lastAddedMangas" :contentLoading="storeIsLoading"/>
+        <TBaseCarousel uID="mla" :title="t('mangas.recently_added')" :slides="lastAddedMangas"
+                       :contentLoading="storeIsLoading"/>
       </section>
       <section class="px-8">
-        <TBaseCarousel uID="mlp" title="Recently Published" :slides="lastPublishedMangas"
+        <TBaseCarousel uID="mlp" :title="t('mangas.recently_published')" :slides="lastPublishedMangas"
                        :contentLoading="storeIsLoading"/>
       </section>
       <section v-if="preferredGenres" class="px-8">
-        <TBaseCarousel uID="mtg" :title="`Top mangas in ${preferredGenres?.name}`" :slides="topMangasByGenre"
+        <TBaseCarousel uID="mtg" :title="`${t('mangas.top_mangas_in')} ${preferredGenres?.name}`"
+                       :slides="topMangasByGenre"
                        :contentLoading="storeIsLoading"/>
       </section>
       <section class="px-8">
-        <TBaseCarousel uID="tum" title="Top unread mangas" :slides="topUnreadMangas" :contentLoading="storeIsLoading"/>
+        <TBaseCarousel uID="tum" :title="t('mangas.top_unread')" :slides="topUnreadMangas"
+                       :contentLoading="storeIsLoading"/>
       </section>
     </div>
 
@@ -260,6 +266,7 @@
 
 </template>
 <script>
+import { useTranslation } from 'i18next-vue'
 import { useMangaStore } from '@/stores/mangasStore'
 import { useStatStore } from '@/stores/statsStore'
 import helpers from '@/stores/utils'
@@ -267,11 +274,6 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { itemPubDemographics, itemGenres } from '@/global'
 import { pageTitle } from '@/global.js'
-
-const tabs = ref([
-  { index: 0, name: 'Recommended', href: '#', current: true },
-  { index: 1, name: 'Library', href: '#', current: false }
-])
 
 export default {
   name: 'Mangas',
@@ -281,6 +283,13 @@ export default {
     PopoverPanel
   },
   setup () {
+    const { t } = useTranslation()
+
+    const tabs = ref([
+      { index: 0, name: t('mangas.recommended'), href: '#', current: true },
+      { index: 1, name: t('mangas.library'), href: '#', current: false }
+    ])
+
     const filters = reactive({
       orderBy: 'asc',
       orderByField: 'canonicalTitle',
@@ -412,6 +421,7 @@ export default {
 
     // expose
     return {
+      t,
       // pinia
       storeIsLoading,
       lastMangasRead,

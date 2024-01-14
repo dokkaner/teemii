@@ -53,7 +53,7 @@ class Mangaupdates extends Agent {
     'titles.ja_jp': '',
     'titles.fr_fr': '',
     'titles.de_de': '',
-    'titles.es-la': '',
+    'titles.es_la': '',
     altTitles: null,
     slug: '',
     publicationDemographics: '',
@@ -246,6 +246,7 @@ class Mangaupdates extends Agent {
         })
     })
   };
+
   // #endregion
 
   // #region public
