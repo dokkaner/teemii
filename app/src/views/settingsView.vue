@@ -407,7 +407,7 @@ import BaseTable from '@/components/base-table/BaseTable.vue'
 import { markdownToHtml } from '@/composables/useUXHelpers.js'
 import TBaseIcon from '@/components/base/TBaseIcon.vue'
 import TBaseActionIcon from '@/components/base/TBaseActionIcon.vue'
-import { useUserInterfaceStore } from '@/stores/UserInterfaceStore.js'
+import { useUserInterfaceStore } from '@/stores/userInterfaceStore.js'
 import i18next from 'i18next'
 
 const { t } = useTranslation()

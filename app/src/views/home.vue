@@ -206,7 +206,7 @@ import { useChapterStore } from '@/stores/chaptersStore'
 import { useStatStore } from '@/stores/statsStore'
 import libraryAPI from '@/api/library'
 import TBaseSlider from '@/components/base/TBaseSlider.vue'
-import { useUserInterfaceStore } from '@/stores/UserInterfaceStore.js'
+import { useUserInterfaceStore } from '@/stores/userInterfaceStore.js'
 import { useTranslation } from 'i18next-vue'
 
 export default {

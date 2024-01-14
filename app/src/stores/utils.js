@@ -1,5 +1,5 @@
 import libraryAPI from '@/api/library'
-import { useUserInterfaceStore } from '@/stores/UserInterfaceStore.js'
+import { useUserInterfaceStore } from '@/stores/userInterfaceStore.js'
 
 function convertToHex (rgb) {
   return '#' + rgb.map(x => x.toString(16).padStart(2, '0')).join('')
