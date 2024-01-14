@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
 import { faLifeRing, faPaw } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-regular-svg-icons'
-import { useUserInterfaceStore } from '@/stores/UserInterfaceStore.js'
+import { useUserInterfaceStore } from './stores/userInterfaceStore.js'
 // fontawesome
 library.add(faGithub, faLifeRing, faHeart, faPaw, faXTwitter)
 
