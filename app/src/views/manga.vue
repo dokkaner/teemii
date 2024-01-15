@@ -35,7 +35,8 @@
 
               <p class="z-40 -mt-8 line-clamp-1 overflow-hidden text-center text-xs font-medium tracking-tighter
                text-light-100 shadow-main-900 text-shadow-sm dark:text-light-400">
-                {{ manga.primaryAltTitle }} - {{ manga.serialization }} published by {{ manga.publishers[0] }}
+                {{ manga.primaryAltTitle }} - {{ manga.serialization }} {{ t('manga.published_by') }}
+                {{ manga.publishers[0] }}
               </p>
             </div>
 
@@ -95,7 +96,7 @@
                       class="dart:text-accent-200 inline-flex items-center rounded-md bg-green-50/50 px-2 py-1 text-xs
                       font-medium tracking-tight text-green-700
                       ring-1 ring-inset ring-green-600/20 dark:bg-darkMain-500/50 dark:ring-0">
-                    Licensed
+                    {{ t('manga.licensed') }}
                   </span>
                 </template>
 
@@ -107,18 +108,18 @@
               </div>
             </div>
 
-            <div v-if="manga.description.fr_fr || manga.description.en_us"
-                 class="max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300
+            <div
+                class="max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300
                  scrollbar-thumb-main-500 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl">
               <article class="pb-8 pr-8 text-main-500 dark:text-light-400">
-                <p v-html="manga.description.en_us || manga.description.en_us"
+                <p v-html="storeHelpers.getMangaDescription(manga)"
                    class="hyphens-auto text-base leading-relaxed"></p>
               </article>
             </div>
 
             <div v-if="isLoaded" class="my-4 mr-4 sm:col-span-1">
               <div class="flex w-full gap-x-1 align-middle">
-                <p class="text-sm font-medium text-light-800 dark:text-light-500">Sources</p>
+                <p class="text-sm font-medium text-light-800 dark:text-light-500">{{ t('manga.sources') }}</p>
                 <div class="flex gap-x-2 rounded-md">
                   <button v-for="(source, index) in manga.sources" :key="index" type="button" :data-tip="source.name"
                           class="tooltip tooltip-top relative h-6 w-6 cursor-pointer rounded-full grayscale hover:grayscale-0">
@@ -133,20 +134,20 @@
             <div class="py-4">
               <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
                 <dl class="col-span-1">
-                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Authors</dt>
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">{{ t('manga.authors') }}</dt>
                   <dd v-for="(author, index) in manga.authors?.slice(0,1)" :key="index"
                       class="mt-1 text-sm text-main-900 dark:text-light-400">
                     {{ author }}
                   </dd>
                 </dl>
                 <dl class="col-span-1">
-                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Year</dt>
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">{{ t('manga.year') }}</dt>
                   <dd class="mt-1 text-sm text-main-500 dark:text-light-400">
                     {{ manga.startYear }} - {{ manga.endYear || manga.status }}
                   </dd>
                 </dl>
                 <dl class="col-span-1">
-                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Chapters</dt>
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">{{ t('manga.chapters') }}</dt>
                   <dd class="text-sm text-main-500 dark:text-light-400">
                     <span class="inline-flex items-center gap-x-1.5 rounded-md py-1">
                     <svg v-if="(ownedChapters < manga.chapterCount)" class="h-1.5 w-1.5 fill-red-500"
@@ -161,7 +162,7 @@
                   </dd>
                 </dl>
                 <dl class="col-span-1">
-                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">Space Used</dt>
+                  <dt class="text-sm font-medium text-light-800 dark:text-light-500">{{ t('manga.space_used') }}</dt>
                   <dd class="mt-1 text-sm text-main-500 dark:text-light-400">{{ formatDiskSize }}</dd>
                 </dl>
               </div>
@@ -171,12 +172,12 @@
               <div class=" w-full gap-x-1">
                 <p class="flex text-sm font-medium text-light-800 dark:text-light-500">
                   <template v-if="lastChapters?.length > 0">
-                    Latest releases
+                    {{ t('manga.latest_release') }}
                     <span class="tooltip tooltip-top ml-1 h-6 w-6" :data-tip="averageReleaseIntervalTip(manga)">
                       <component :is="heroIcons['InformationCircleIcon']" class="h-5 w-5"/>
                     </span>
                   </template>
-                  <template v-else>No releases</template>
+                  <template v-else>{{ t('manga.no_release') }}</template>
                 </p>
               </div>
 
@@ -191,10 +192,10 @@
                   <p class="mr-2 line-clamp-1 grow text-sm leading-5">
                     <router-link v-if="chapter.state === 3" :to="storeHelpers.getChapterRouterTo(chapter)"
                                  class="font-medium hover:text-main-700 dark:hover:text-light-300">
-                      c{{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
+                      {{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
                     </router-link>
                     <span v-else>
-                      c{{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
+                      {{ chapter.chapter }} - {{ chapter.titles?.en || chapter.titles?.fr || chapter.titles?.ru }}
                     </span>
                   </p>
 
@@ -204,7 +205,9 @@
                 </li>
               </ul>
 
-              <p v-else class="mt-1 text-sm text-main-500 dark:text-light-600">No chapters available.</p>
+              <p v-else class="mt-1 text-sm text-main-500 dark:text-light-600">
+                {{ t('manga.no_chapters') }}
+              </p>
             </div>
 
             <!-- Actions -->
@@ -213,13 +216,13 @@
                 <div class="-mx-3 flex items-center">
 
                   <TBaseButton :rounded="true" size="sm" variant="primary" @click="continueReading()">
-                    Continue Reading
+                    {{ t('manga.continue_reading') }}
                   </TBaseButton>
 
                   <div class="flex w-4/5 justify-start px-3">
                     <span class="flex gap-x-2 rounded-md">
                       <template
-                          v-for="(action, index) in [{ tip: 'Bookmark', click: switchBookmark, condition: manga.bookmark, icon: 'BookmarkIcon' }, { tip: 'Mark as read', click: switchReaded, condition: manga.readed, icon: 'EyeIcon' }, { tip: 'Monitor this manga', click: switchMonitor, condition: manga.monitor, icon: 'CheckBadgeIcon' }]"
+                          v-for="(action, index) in [{ tip: t('general.bookmark'), click: switchBookmark, condition: manga.bookmark, icon: 'BookmarkIcon' }, { tip: t('general.mark_as_read'), click: switchReaded, condition: manga.readed, icon: 'EyeIcon' }, { tip: t('general.monitor'), click: switchMonitor, condition: manga.monitor, icon: 'CheckBadgeIcon' }]"
                           :key="index">
                         <button type="button" :data-tip="action.tip" @click="action.click"
                                 class="tooltip tooltip-top relative inline-flex cursor-pointer items-center rounded-md
@@ -259,14 +262,14 @@
         <!-- Tabs -->
         <div class="scrollbar-custom w-full overflow-x-auto rounded-xl bg-white p-8 dark:bg-darkMain-700">
           <TBaseTabGroup class="min-h-[300px]" vAlign="center" @change="onTabChange">
-            <TBaseTab title="Chapters" icon="BookOpenIcon" :count="pagination.totalItems">
+            <TBaseTab :title="t('manga.chapters')" icon="BookOpenIcon" :index=0 :count="pagination.totalItems">
               <div v-if="chaptersCount < 1">
                 <div class="container mx-auto">
                   <section class="mx-auto max-w-7xl px-4">
                     <div class="mx-auto w-full text-center lg:w-2/3">
                       <p class="mb-3 text-xl font-bold text-main-900 md:text-2xl">Meh'</p>
                       <p class="mb-3 text-lg font-medium text-main-700">
-                        Teemii didn't find any chapters!
+                        {{ t('empty.no_chapters') }}
                       </p>
                     </div>
                   </section>
@@ -312,7 +315,7 @@
                 <!--  end of pagination -->
               </div>
             </TBaseTab>
-            <TBaseTab title="Characters" icon="UserGroupIcon" @click="OnCharactersTabClick()">
+            <TBaseTab :title="t('manga.characters')" icon="UserGroupIcon" :index=1>
               <div v-show="storeIsLoading" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 <TBaseProfilCard v-for="index in 10" :key="index" :contentLoading="true">
                 </TBaseProfilCard>
@@ -330,7 +333,7 @@
               </div>
             </TBaseTab>
 
-            <TBaseTab title="Recommendations" icon="LightBulbIcon">
+            <TBaseTab :title="t('manga.recommendations')" icon="LightBulbIcon" :index=2>
               <section class="px-1 pb-4 sm:px-4">
                 <TBaseCarousel uID="mbs" :slides="suggestions" :contentLoading="storeIsLoading"/>
               </section>
@@ -346,52 +349,42 @@
           <template #header>
             <div class="flex w-full overflow-y-auto whitespace-nowrap">
               <div class="flex flex-wrap items-center justify-between sm:flex-nowrap">
-                <h3
-                    class="mr-2 text-xs font-medium uppercase leading-6 tracking-widest text-main-400 dark:text-darkLight-50"
-                >
-                  {{ manga.canonicalTitle }} c. {{ selectedChapter.chapter }}
+                <h3 class="mr-2 text-xs font-medium uppercase tracking-widest text-main-400 dark:text-darkLight-50">
+                  {{ manga.canonicalTitle }} - {{ selectedChapter.chapter }}
                   {{ selectedChapter.titles.en_us }}
                 </h3>
-
-                <div
-                    v-if="selectedChapter.state !== 3"
-                    class="dark:bg-darkRed-100 dark:text-darkRed-600 inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-600"
-                >
-                  Missing
+                <div v-if="selectedChapter.state !== 3"
+                     class="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-600
+                    dark:bg-red-100 dark:text-red-600">
+                  {{ t('general.missing') }}
                 </div>
                 <div v-else class="inline-flex gap-x-2">
-        <span
-            class="dark:bg-darkGreen-100 dark:text-darkGreen-700 inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700"
-        >
-          downloaded
-        </span>
-                  <span
-                      class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700 dark:text-darkLight-300"
-                  >
-          <component
-              :is="heroIcons['BookOpenIcon']"
-              class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
-          />
-          {{ selectedChapter.pages }} Pages
-        </span>
-                  <span
-                      class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700 dark:text-darkLight-300"
-                  >
-          <component
-              :is="heroIcons['LanguageIcon']"
-              class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
-          />
-          {{ selectedChapter.dlSource?.lang?.toUpperCase() }}
-        </span>
-                  <span
-                      class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700 dark:text-darkLight-300"
-                  >
-          <component
-              :is="heroIcons['FolderIcon']"
-              class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
-          />
-          {{ selectedChapter.dlSource?.local }}
-        </span>
+                  <span class="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700
+                  dark:bg-green-100 dark:text-green-700">
+                    {{ t('general.downloaded') }}
+                  </span>
+                  <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700
+                    dark:text-darkLight-300">
+                  <component :is="heroIcons['BookOpenIcon']"
+                             class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
+                  />
+                  {{ selectedChapter.pages }} {{ t('general.pages') }}
+                  </span>
+                  <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700
+                    dark:text-darkLight-300">
+                  <component
+                      :is="heroIcons['LanguageIcon']"
+                      class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
+                  />
+                    {{ selectedChapter.dlSource?.lang?.toUpperCase() }}
+                  </span>
+                  <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-main-700
+                   dark:text-darkLight-300">
+                    <component :is="heroIcons['FolderIcon']"
+                               class="m-1 h-3 w-3 cursor-pointer text-main-500 dark:text-darkAccent-400"
+                    />
+                    {{ selectedChapter.dlSource?.local }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -410,14 +403,14 @@
               <table class="min-w-full divide-y divide-darkMain-300" aria-describedby="sources list">
                 <thead class="text-xs dark:bg-darkMain-800 dark:text-light-500">
                 <tr class="h-[48px]">
-                  <th scope="col" class="border-main-300 dark:border-none">Source</th>
-                  <th scope="col" class="hidden sm:table-cell">Group Scan</th>
-                  <th scope="col" class="">Lang</th>
-                  <th scope="col" class="hidden sm:table-cell">Votes</th>
-                  <th scope="col" class="hidden sm:table-cell">Pages</th>
-                  <th scope="col" class="">Title</th>
-                  <th scope="col" class="hidden sm:table-cell">Version</th>
-                  <th scope="col" class="hidden sm:table-cell">Last Update</th>
+                  <th scope="col" class="border-main-300 dark:border-none">{{ t('manga.source') }}</th>
+                  <th scope="col" class="hidden sm:table-cell">{{ t('manga.group_scan') }}</th>
+                  <th scope="col" class="">{{ t('manga.language') }}</th>
+                  <th scope="col" class="hidden sm:table-cell">{{ t('general.votes') }}</th>
+                  <th scope="col" class="hidden sm:table-cell">{{ t('general.pages') }}</th>
+                  <th scope="col" class="">{{ t('general.title') }}</th>
+                  <th scope="col" class="hidden sm:table-cell">{{ t('general.version') }}</th>
+                  <th scope="col" class="hidden sm:table-cell">{{ t('activity.last_updated') }}</th>
                   <th scope="col" class=""></th>
                   <th scope="col" class=""></th>
                 </tr>
@@ -456,6 +449,7 @@
 </template>
 
 <script>
+import { useTranslation } from 'i18next-vue'
 import { useMangaStore } from '@/stores/mangasStore'
 import { useDialogStore } from '@/stores/dialogsStore'
 import { useNotificationStore } from '@/stores/notificationsStore'
@@ -495,6 +489,7 @@ export default {
   },
   props: ['id'],
   setup () {
+    const { t } = useTranslation()
     // #region new pinia implementation
     const route = useRoute()
     const mangaId = route.params.id
@@ -532,9 +527,9 @@ export default {
     }
 
     function onTabChange (data) {
-      if (data.title === 'Characters') {
+      if (data.index === 1) {
         mangasStore.fetchCharacters(mangaId)
-      } else if (data.title === 'Recommendations') {
+      } else if (data.index === 2) {
         mangasStore.fetchSuggestions(manga, true)
       }
     }
@@ -630,10 +625,10 @@ export default {
 
     async function userValidationDeleteManga () {
       const payload = {
-        title: 'Delete manga',
-        message: 'You are about to delete this manga. Do you want to continue?',
-        yesLabel: 'Yes',
-        noLabel: 'No',
+        title: t('manga.delete_manga'),
+        message: t('manga.delete_manga_confirm'),
+        yesLabel: t('general.yes'),
+        noLabel: t('general.no'),
         variant: 'danger',
         hideNoButton: false
       }
@@ -645,8 +640,8 @@ export default {
       if (go) {
         await storeHelpers.deleteManga(mangaId)
         notificationsStore.showNotification({
-          title: 'Manga deleted',
-          message: `${manga.value.canonicalTitle} has been deleted from your library`,
+          title: t('manga.manga_deleted'),
+          message: `${manga.value.canonicalTitle} ${t('manga.manga_has_being_deleted')} `,
           type: 'success'
         })
         router.push({
@@ -683,10 +678,10 @@ export default {
 
     async function userValidationDeleteChapterPages () {
       const payload = {
-        title: 'Chapter replacement',
-        message: 'You are about to replace the pages of this chapter. Do you want to continue ?',
-        yesLabel: 'Yes',
-        noLabel: 'No',
+        title: t('manga.chapter_replace'),
+        message: t('manga.chapter_replace_confirm'),
+        yesLabel: t('general.yes'),
+        noLabel: t('general.no'),
         variant: 'danger',
         hideNoButton: false
       }
@@ -707,8 +702,8 @@ export default {
         await storeHelpers.downloadChapter(mangaId, chapter.id, sourceId)
 
         notificationsStore.showNotification({
-          title: 'A new issue is pending download',
-          message: manga.value.canonicalTitle + ' - c.' + chapter.chapter + ' has been added to the download queue',
+          title: t('manga.chapter_pending_download'),
+          message: manga.value.canonicalTitle + ' - ' + chapter.chapter + t('manga.chapter_pending_message'),
           type: 'success'
         })
       }
@@ -763,6 +758,7 @@ export default {
     })
     // expose
     return {
+      t,
       imgPlaceholder,
       useChapterDotStateClass,
       onChapterSearch,

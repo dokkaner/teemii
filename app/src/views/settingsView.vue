@@ -6,7 +6,7 @@
         <div>
           <nav class="navbar flex w-full justify-center align-middle" aria-label="tabs">
             <div class="sm:hidden">
-              <label for="tabs" class="sr-only">Select a tab</label>
+              <label for="tabs" class="sr-only">{{ t('general.select_tab') }}</label>
               <select id="tabs" name="tabs" @change="toggleTabs($event.target.selectedIndex)"
                       class="block w-full rounded-md border-main-300 py-2 pl-3 pr-10 text-base
                     focus:border-accent-500 focus:outline-none focus:ring-accent-500 dark:border-darkLight-400 focus:dark:bg-darkAccent-500
@@ -36,35 +36,56 @@
 
     <div v-if="tabs[0].current" class="flex w-full">
       <div class="relative mx-auto flex w-full max-w-7xl flex-auto justify-center sm:px-2 lg:px-8 xl:px-12">
-        <div
-            class="min-w-0 max-w-2xl flex-auto divide-y divide-main-200 px-4 dark:divide-darkMain-500 lg:max-w-none lg:pl-8 lg:pr-0 xl:px-16">
+        <div class="min-w-0 max-w-2xl flex-auto divide-y divide-main-200 px-4 dark:divide-darkMain-500 lg:max-w-none
+          lg:pl-8 lg:pr-0 xl:px-16">
+
           <div class="col-span-1 grid grid-cols-1 gap-x-8 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
             <div>
-              <h2 class="font-bold leading-7 text-main-600 dark:text-light-500">Theme</h2>
+              <h2 class="font-bold leading-7 text-main-600 dark:text-light-500">
+                {{ t('settings.user_interface') }}
+              </h2>
               <p class="my-1 text-xs leading-6 tracking-tight text-main-500 dark:text-main-400">
-                Customize the look and feel of Teemii.
+                {{ t('settings.user_interface') }}
               </p>
             </div>
+            <form @submit.prevent="savePreferences('interface')" class="md:col-span-2">
+              <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:max-w-xl sm:grid-cols-6">
+                <div class="col-span-full">
+                  <TBaseSwitch v-model="UserInterfaceStore.isDarkTheme" labelLeft="Dark Mode" class="flex"/>
 
-            <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:max-w-xl sm:grid-cols-6">
-              <div class="col-span-full">
-                <TBaseSwitch v-model="themeStore.isDark" labelLeft="Dark Mode" class="flex"/>
+                </div>
+
+                <div class="col-span-full">
+                  <TBaseInputGroup :label="t('settings.language_interface')">
+                    <BaseMultiselect
+                        searchable
+                        :required="true"
+                        v-model="UserInterfaceStore.userLanguage"
+                        label="name"
+                        track-by="code"
+                        value-prop="code"
+                        placeholder="choose a language"
+                        :options="UserInterfaceStore.languages"
+                        @update:modelValue="i18next.changeLanguage(UserInterfaceStore.userLanguage)"
+                    />
+                  </TBaseInputGroup>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
-          <div v-for="section in settingsConfig.sections" :key="section.id" class="col-span-1 grid grid-cols-1 gap-x-8
-          px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8" :id="section.id">
+
+          <div v-for="section in settingsConfig.sections" :key="section.id"
+               class="col-span-1 grid grid-cols-1 gap-x-8 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8" :id="section.id">
             <div>
-              <h2 class="font-bold leading-7 text-main-600 dark:text-light-500">{{ section.title }}</h2>
-              <p class="my-1 text-xs leading-6 tracking-tight text-main-500 dark:text-main-400">{{
-                  section.desc
-                }}</p>
+              <h2 class="font-bold leading-7 text-main-600 dark:text-light-500">{{ t(section.title) }}</h2>
+              <p class="my-1 text-xs leading-6 tracking-tight text-main-500 dark:text-main-400">
+                {{ t(section.desc) }}</p>
             </div>
             <form @submit.prevent="savePreferences(section.id)" class="md:col-span-2">
               <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:max-w-xl sm:grid-cols-6">
                 <div v-for="item in section.items" :key="item.preference" class="col-span-full">
                   <div v-if="item.component === 'TBaseInput'">
-                    <TBaseInputGroup :label="item.label" :tooltip="item.help">
+                    <TBaseInputGroup :label="t(item.label)" :tooltip="t(item.help)">
                       <TBaseInput
                           v-model="bindings[`${section.preferencesRoot}.${item.preference}`]"
                           :type="item.type"
@@ -74,10 +95,10 @@
                   </div>
                   <div v-else-if="item.component === 'TBaseSwitch'">
                     <TBaseSwitch v-model="bindings[`${section.preferencesRoot}.${item.preference}`]"
-                                 :labelLeft="item.label" class="flex"/>
+                                 :labelLeft="t(item.label)" class="flex"/>
                   </div>
                   <div v-else-if="item.component === 'BaseMultiselect'">
-                    <TBaseInputGroup :label="item.label" :tooltip="item.help">
+                    <TBaseInputGroup :label="t(item.label)" :tooltip="t(item.help)">
                       <BaseMultiselect
                           searchable
                           :required="item.required || false"
@@ -85,7 +106,7 @@
                           :label="`${item.trackBy}`"
                           :track-by="`${item.trackBy}`"
                           :value-prop="`${item.valueProp}`"
-                          :placeholder="`${item.label}`"
+                          :placeholder="`${t(item.label)}`"
                           :mode="item.mode"
                           :options="getOptions(item.options)"
                       />
@@ -95,13 +116,13 @@
               </div>
               <TBaseButton v-if="!section.noSave" :rounded=true size="sm" variant="primary" type="submit"
                            class="mt-4 px-8">
-                Save
+                {{ t('general.save') }}
               </TBaseButton>
             </form>
           </div>
         </div>
-        <div
-            class="hidden xl:sticky xl:top-[4.75rem] xl:-mr-6 xl:block xl:h-[calc(100vh-4.75rem)] xl:flex-none xl:overflow-y-auto xl:py-16 xl:pr-6">
+        <div class="hidden xl:sticky xl:top-[4.75rem] xl:-mr-6 xl:block xl:h-[calc(100vh-4.75rem)] xl:flex-none
+          xl:overflow-y-auto xl:py-16 xl:pr-6">
           <nav aria-labelledby="settings-nav" class="w-56">
             <ul role="list">
               <li class="relative mt-3 pl-2">
@@ -111,7 +132,7 @@
                     <a class="flex justify-between gap-2 py-1 pl-7 pr-3 text-sm text-main-600 transition
                             hover:text-main-900 dark:text-darkAccent-400 dark:hover:text-light-500"
                        :href="`#${section.id}`">
-                      <span class="truncate">{{ section.title }}</span>
+                      <span class="truncate">{{ t(section.title) }}</span>
                     </a>
                   </li>
                 </ul>
@@ -122,24 +143,22 @@
       </div>
     </div>
     <div v-if="tabs[1].current" class="block w-full divide-y divide-main-500/5">
-
       <div class="grid grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
-          <h2 class="text-base font-medium leading-7 text-main-500 dark:text-light-500">System</h2>
-          <p class="my-1 text-xs leading-6 text-main-400 dark:text-main-400">Provides insights of Teemii.</p>
+          <h2 class="text-base font-medium leading-7 text-main-500 dark:text-light-500">{{ t('general.system') }}</h2>
+          <p class="my-1 text-xs leading-6 text-main-400 dark:text-main-400">{{ t('settings.system_desc') }}</p>
         </div>
         <div class="col-start-2 col-end-4">
           <div class="w-full">
             <div class="p-4 sm:px-0">
-                <span class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">Version {{
-                    backendSys.value?.system?.appVersion
-                  }}
+                <span class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">
+                  {{ t('general.version') }} {{ backendSys.value?.system?.appVersion }}
                 </span>
               <span v-if="latestRelease.isUpdateAvailable" class="mt-1 pl-5 text-sm leading-6 text-main-700 sm:mt-2">
                   <a :href="latestRelease?.url" target="_blank">
                   <span
                       class="inline-flex items-center rounded-md bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                     {{ latestRelease?.version }} is available !
+                     {{ latestRelease?.version }} {{ t('general.is_available') }}
                        <component :is="iconoir['OpenNewWindow']"
                                   class="h-3 w-3 flex-none cursor-pointer text-green-500 hover:text-accent-500"
                                   aria-hidden="true"/>
@@ -157,24 +176,30 @@
 
             <dl class="grid grid-cols-1 sm:grid-cols-2">
               <div class="p-4 sm:col-span-1 sm:px-0">
-                <dt class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">Node / Platform</dt>
+                <dt class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">NodeJS</dt>
                 <dd class="mt-1 text-sm leading-6 text-main-700 dark:text-main-400 sm:mt-2">
                   {{ backendSys.value?.system?.nodeversion }} -
                   {{ backendSys.value?.system?.platform }}
                 </dd>
               </div>
               <div class="p-4 sm:col-span-1 sm:px-0">
-                <dt class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">Uptime</dt>
+                <dt class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">
+                  {{ t('general.uptime') }}
+                </dt>
                 <dd class="mt-1 text-sm leading-6 text-main-700 dark:text-main-400 sm:mt-2">
                   {{ helpersUtils.convertUptimeToHumanReadable(backendSys.value?.system?.startTime) }}
                 </dd>
               </div>
               <div class="p-4 sm:col-span-1 sm:px-0">
-                <dt class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">Storage Path</dt>
+                <dt class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">
+                  {{ t('settings.storage_path') }}
+                </dt>
                 <dd class="mt-1 text-sm leading-6 text-main-700 dark:text-main-400 sm:mt-2">{{ storagePath }}</dd>
               </div>
               <div class="p-4 sm:col-span-1 sm:px-0">
-                <dt class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">Database Path</dt>
+                <dt class="text-sm font-medium leading-6 text-light-800 dark:text-main-200">
+                  {{ t('settings.database_path') }}
+                </dt>
                 <dd class="mt-1 text-sm leading-6 text-main-700 dark:text-main-400 sm:mt-2">{{ databasePath }}</dd>
               </div>
             </dl>
@@ -186,7 +211,7 @@
                         class="mt-4 rounded-md bg-main-600 px-8 py-2 text-sm font-medium text-light-400 shadow-sm
                 hover:bg-main-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
                 focus-visible:outline-light-600 sm:col-start-2">
-                  restart backend
+                  {{ t('settings.restart_backend') }}
                 </button>
               </div>
             </div>
@@ -195,22 +220,23 @@
       </div>
       <div class="grid grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
-          <h2 class="text-base font-medium leading-7 text-main-500 dark:text-light-500">Backing up Teemii</h2>
-          <p class="my-1 text-xs leading-6 text-main-400 dark:text-main-400">
-            Manage the backup of your settings using built-in backup.</p>
+          <h2 class="text-base font-medium leading-7 text-main-500 dark:text-light-500">{{ t('settings.backup') }}</h2>
+          <p class="my-1 text-xs leading-6 text-main-400 dark:text-main-400">{{ t('settings.backup_desc') }}</p>
         </div>
         <div>
           <TBaseButton :rounded=true size="sm" variant="primary" type="submit" class="mt-4 px-8"
                        @click="openBackupModal()">
-            Manage Backups
+            {{ t('settings.manage_backups') }}
           </TBaseButton>
         </div>
       </div>
       <div class="grid grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
-          <h2 class="text-base font-medium leading-7 text-main-500 dark:text-light-500">Schedulers</h2>
+          <h2 class="text-base font-medium leading-7 text-main-500 dark:text-light-500">
+            {{ t('settings.schedulers') }}
+          </h2>
           <p class="my-1 text-xs leading-6 text-main-400 dark:text-main-400">
-            Provides insights into the automated tasks that help manage your manga library.
+            {{ t('settings.schedulers_desc') }}
           </p>
         </div>
 
@@ -226,7 +252,7 @@
                 <dl class="mt-2 flex flex-col text-main-500 dark:text-main-400 xl:flex-row">
                   <div class="flex items-start space-x-3">
                     <dt class="mt-0.5">
-                      <span class="sr-only">Date</span>
+                      <span class="sr-only">{{ t('general.date') }}</span>
                       <TBaseIcon :solid="true" name="CalendarIcon" aria-hidden="true"
                                  class="h-2 w-2 text-light-700 dark:text-main-400"/>
                     </dt>
@@ -236,7 +262,7 @@
                   </div>
                   <div class="flex items-start space-x-3">
                     <dt class="mt-0.5">
-                      <span class="sr-only">Location</span>
+                      <span class="sr-only">{{ t('general.path') }}</span>
                     </dt>
                     <dd> Next run: {{ helpersUtils.convertDateToHumanReadable(schedule.nextRun) }}</dd>
                   </div>
@@ -257,7 +283,6 @@
             </li>
           </ol>
         </div>
-
       </div>
 
       <template>
@@ -265,15 +290,17 @@
           <template #header>
             <div class="flex items-center">
               <div class="-px-1">
-                <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-light-300">Backups</h3>
+                <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-light-300">
+                  {{ t('settings.backup') }}
+                </h3>
                 <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500 dark:text-light-500"></p>
               </div>
             </div>
             <div class="ml-6 flex items-center">
               <div class="mx-auto mr-4 flex gap-x-4 text-white">
                 <div class="flex flex-wrap items-baseline justify-start gap-2">
-                  <TBaseActionIcon :icon="heroIcons['InboxArrowDownIcon']" tooltip="Backup now"
-                                   @click="launchBackup()"/>
+                  <TBaseActionIcon :icon="heroIcons['InboxArrowDownIcon']" :tooltip="t('settings.backup_now')"
+                                   :background="true" @click="launchBackup()"/>
                 </div>
               </div>
 
@@ -291,9 +318,9 @@
                    aria-describedby="backups list">
               <thead class="text-xs">
               <tr class="h-[48px]">
-                <th scope="col" class="">Name</th>
-                <th scope="col" class="hidden sm:table-cell">Size</th>
-                <th scope="col" class="hidden sm:table-cell">Time</th>
+                <th scope="col" class="">{{ t('general.name') }}</th>
+                <th scope="col" class="hidden sm:table-cell">{{ t('general.size') }}</th>
+                <th scope="col" class="hidden sm:table-cell">{{ t('general.time') }}</th>
                 <th scope="col" class=""></th>
                 <th scope="col" class=""></th>
               </tr>
@@ -360,6 +387,7 @@
 <script setup>
 
 // eslint-disable-next-line no-undef
+import { useTranslation } from 'i18next-vue'
 import * as iconoir from '@iconoir/vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import libraryAPI from '@/api/library'
@@ -379,24 +407,26 @@ import BaseTable from '@/components/base-table/BaseTable.vue'
 import { markdownToHtml } from '@/composables/useUXHelpers.js'
 import TBaseIcon from '@/components/base/TBaseIcon.vue'
 import TBaseActionIcon from '@/components/base/TBaseActionIcon.vue'
-import { useThemeStore } from '@/stores/themeStore.js'
+import { useUserInterfaceStore } from '@/stores/userInterfaceStore.js'
+import i18next from 'i18next'
 
+const { t } = useTranslation()
 const modalBackupActive = ref(false)
 const openTab = ref(0)
 const dialogStore = useDialogStore()
-const themeStore = useThemeStore()
+const UserInterfaceStore = useUserInterfaceStore()
 
 const tabs = ref([
-  { index: 0, name: 'Preferences', href: '#', current: true },
-  { index: 1, name: 'System', href: '#', current: false },
-  { index: 2, name: 'Logs', href: '#', current: false }
+  { index: 0, name: t('general.preferences'), href: '#', current: true },
+  { index: 1, name: t('general.system'), href: '#', current: false },
+  { index: 2, name: t('general.logs'), href: '#', current: false }
 ])
 
 const columns = computed(() => {
   return [
-    { key: 'time', label: 'timestamp', tdClass: 'text-xs flex' },
-    { key: 'level', label: 'level', thClass: 'extra', tdClass: 'text-xs' },
-    { key: 'msg', label: 'message', tdClass: 'text-xs maw-w-8' }
+    { key: 'time', label: t('general.timestamp'), tdClass: 'text-xs flex' },
+    { key: 'level', label: t('general.level'), thClass: 'extra', tdClass: 'text-xs' },
+    { key: 'msg', label: t('general.message'), tdClass: 'text-xs maw-w-8' }
   ]
 })
 
@@ -451,10 +481,10 @@ const jobMap = {
 
 async function userValidationBackupRestore () {
   const payload = {
-    title: 'Restore Backup',
-    message: 'Are you sure you want to restore this backup? It will overwrite your current database and settings.',
-    yesLabel: 'Yes',
-    noLabel: 'No',
+    title: t('settings.restore_backup'),
+    message: t('settings.restore_backup_desc'),
+    yesLabel: t('general.yes'),
+    noLabel: t('general.no'),
     variant: 'danger',
     hideNoButton: false
   }
@@ -463,14 +493,32 @@ async function userValidationBackupRestore () {
 
 async function userValidationRestartBackend () {
   const payload = {
-    title: 'Restart Backend',
-    message: 'Are you sure you want to restart the backend? It will stop all running tasks.',
-    yesLabel: 'Yes',
-    noLabel: 'No',
+    title: t('settings.restart_backend'),
+    message: t('settings.restart_backend_desc'),
+    yesLabel: t('general.yes'),
+    noLabel: t('general.no'),
     variant: 'danger',
     hideNoButton: false
   }
   return dialogStore.openDialog(payload)
+}
+
+async function restartBackend () {
+  const go = await userValidationRestartBackend()
+
+  if (!go) {
+    return
+  }
+
+  const response = await libraryAPI.backendRestart()
+
+  if (response.success) {
+    notificationsStore.showNotification({
+      title: t('settings.restart_backend'),
+      message: t('settings.backend_restarting'),
+      type: 'success'
+    })
+  }
 }
 
 async function openBackupModal () {
@@ -481,8 +529,8 @@ async function openBackupModal () {
     modalBackupActive.value = true
   } else {
     notificationsStore.showNotification({
-      title: 'Backup',
-      message: 'There was an error fetching the backups.',
+      title: t('settings.backup'),
+      message: t('settings.backup_restore_error'),
       type: 'error'
     })
   }
@@ -500,8 +548,8 @@ async function downloadBackup (backupItem) {
     URL.revokeObjectURL(link.href)
   } else {
     notificationsStore.showNotification({
-      title: 'Backup',
-      message: 'There was an error downloading the backup.',
+      title: t('settings.backup'),
+      message: t('settings.backup_download_error'),
       type: 'error'
     })
   }
@@ -518,14 +566,14 @@ async function launchRestore (backupItem) {
 
   if (response.success) {
     notificationsStore.showNotification({
-      title: 'Restore',
-      message: 'The restore has been launched.',
+      title: t('settings.restore'),
+      message: t('settings.restore_launched'),
       type: 'success'
     })
   } else {
     notificationsStore.showNotification({
-      title: 'Restore',
-      message: 'There was an error launching the restore.',
+      title: t('settings.restore'),
+      message: t('settings.restore_launched_error'),
       type: 'error'
     })
   }
@@ -536,8 +584,8 @@ async function launchBackup () {
 
   if (response.success) {
     notificationsStore.showNotification({
-      title: 'Backup',
-      message: 'The backup has been launched.',
+      title: t('settings.backup'),
+      message: t('settings.backup_launched'),
       type: 'success'
     })
 
@@ -551,8 +599,8 @@ async function launchBackup () {
     }, 2000)
   } else {
     notificationsStore.showNotification({
-      title: 'Backup',
-      message: 'There was an error launching the backup.',
+      title: t('settings.backup'),
+      message: t('settings.backup_launched_error'),
       type: 'error'
     })
   }
@@ -582,10 +630,10 @@ const createBindings = () => {
  */
 function displaySaveNotification (section, success) {
   notificationsStore.showNotification({
-    title: `Settings ${success ? 'Saved' : 'Save Failed'}: ${section.title}`,
+    title: `${t('navigation.settings')} ${success ? t('settings.saved') : t('settings.save_failed')}: ${section.title}`,
     message: success
-      ? `Settings for ${section.title} have been saved.`
-      : `There was an error saving settings for ${section.title}.`,
+      ? t('settings.settings_saved')
+      : t('settings.settings_not_saved'),
     type: success ? 'success' : 'error'
   })
 }
@@ -665,24 +713,6 @@ async function fetchLogs () {
   }
 }
 
-async function restartBackend () {
-  const go = await userValidationRestartBackend()
-
-  if (!go) {
-    return
-  }
-
-  const response = await libraryAPI.backendRestart()
-
-  if (response.success) {
-    notificationsStore.showNotification({
-      title: 'Restarting backend',
-      message: 'The backend is restarting now.',
-      type: 'success'
-    })
-  }
-}
-
 async function downloadLogs () {
   const response = await libraryAPI.getLogsDownload()
 
@@ -700,8 +730,8 @@ const executeJob = async (scheduler) => {
   const forQueue = jobMap[scheduler.name]
   if (!forQueue) {
     notificationsStore.showNotification({
-      title: 'Job not found',
-      message: 'The job you are trying to execute does not exist.',
+      title: t('settings.job_not_found'),
+      message: t('settings.job_not_found_desc.'),
       type: 'error'
     })
     return
@@ -722,8 +752,8 @@ const executeJob = async (scheduler) => {
 
   if (response.success) {
     notificationsStore.showNotification({
-      title: 'On demand job',
-      message: 'Your job execution has been scheduled now.',
+      title: t('settings.job_on_demand'),
+      message: t('settings.job_on_demand_desc'),
       type: 'success'
     })
   }
@@ -738,8 +768,8 @@ defineOptions({
 })
 
 onMounted(() => {
-  document.title = 'Settings'
-  pageTitle.value = 'Settings'
+  document.title = t('navigation.settings')
+  pageTitle.value = t('navigation.settings')
   fetchPreferences()
   // refresh every 5 seconds
   fetchSettings()

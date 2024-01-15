@@ -13,6 +13,20 @@ const { socketIOLoader } = require('../../loaders/socketio')
 const ips = require('../../services/imageProcessingService')
 const services = require('../../services')
 const EntityJobService = require('../services/EntityJobService')
+const { realm } = require('../../loaders/realm')
+
+function mergeAndNormalizeDescriptions (existingDescriptions, newDescriptions) {
+  const normalizedDescriptions = { ...existingDescriptions }
+
+  Object.keys(newDescriptions).forEach(key => {
+    if (key !== 'null') {
+      const lowerCaseKey = key.toLowerCase()
+      normalizedDescriptions[lowerCaseKey] = newDescriptions[key]
+    }
+  })
+
+  return normalizedDescriptions
+}
 
 function findHighestPriorityUrl (asset, priorities, manga) {
   const result = asset.agents.reduce((acc, agent) => {
@@ -154,10 +168,10 @@ function slugify (str) {
 }
 
 /**
-   * Fetches manga chapters and updates the manga object with relevant information.
-   *
-   * @param {object} manga - The manga object to fetch chapters for and update.
-   */
+ * Fetches manga chapters and updates the manga object with relevant information.
+ *
+ * @param {object} manga - The manga object to fetch chapters for and update.
+ */
 async function fetchMangaChapters (manga) {
   try {
     const agentsToSearchChapters = await services.agents.agentsEnabledForCapability('CHAPTER_FETCH')
@@ -229,12 +243,12 @@ async function downloadAssets (manga) {
 }
 
 /**
-   * Fetches extra manga data and updates the manga object with relevant information.
-   *
-   * @param {object} manga - The manga object to fetch extra data for and update.
-   * @param {Array} agentsList - The metadata agents to search for manga data.
-   * @returns {object} - The updated manga object.
-   */
+ * Fetches extra manga data and updates the manga object with relevant information.
+ *
+ * @param {object} manga - The manga object to fetch extra data for and update.
+ * @param {Array} agentsList - The metadata agents to search for manga data.
+ * @returns {object} - The updated manga object.
+ */
 async function fetchExtraMangaData (manga, agentsList) {
   try {
     // Search for extra manga data using specified external agents
@@ -252,7 +266,7 @@ async function fetchExtraMangaData (manga, agentsList) {
       manga.altTitles = manga.altTitles || {}
 
       manga.titles.fr_fr = extManga.titles?.fr_fr ?? null
-      manga.description.fr_fr = extManga.description?.fr_fr ?? null
+      manga.description = mergeAndNormalizeDescriptions(manga.description, extManga.description)
       manga.altTitles.fr = extManga.titles?.fr_fr ?? null
       manga.score = manga.score ?? extManga.score ?? null
       manga.favoritesCount += extManga.favoritesCount
@@ -267,12 +281,12 @@ async function fetchExtraMangaData (manga, agentsList) {
 }
 
 /**
-   * Fetches manga data from various agents and maps it to a unified format.
-   *
-   * @param {object} externalIds - External IDs for the manga.
-   * @param {Array} agentsList - The metadata agents to search for manga data.
-   * @returns {object} - The unified manga object.
-   */
+ * Fetches manga data from various agents and maps it to a unified format.
+ *
+ * @param {object} externalIds - External IDs for the manga.
+ * @param {Array} agentsList - The metadata agents to search for manga data.
+ * @returns {object} - The unified manga object.
+ */
 async function fetchMangaData (externalIds, agentsList) {
   try {
     // Search for manga data using specified agents
@@ -288,12 +302,12 @@ async function fetchMangaData (externalIds, agentsList) {
 }
 
 /**
-   * Creates or updates a manga in the collection based on its slug and start year.
-   *
-   * @param {string} slug - The slug of the manga.
-   * @param {number} year - The year the manga started.
-   * @returns {object} - An object containing newId and insertMode.
-   */
+ * Creates or updates a manga in the collection based on its slug and start year.
+ *
+ * @param {string} slug - The slug of the manga.
+ * @param {number} year - The year the manga started.
+ * @returns {object} - An object containing newId and insertMode.
+ */
 async function upsertManga (slug, year) {
   try {
     // Check if it already exists in the collection
@@ -331,7 +345,7 @@ async function upsertManga (slug, year) {
   }
 }
 
-async function importOrCreateManga (jobID, title, year, externalIds, trackingInfo) {
+async function importOrCreateManga (jobID, title, year, externalIds, trackingInfo, monitor) {
   const lookupAgents = await services.agents.agentsEnabledForCapability('MANGA_METADATA_FETCH')
   const metadataAgents = []
   const extraAgents = []
@@ -362,12 +376,14 @@ async function importOrCreateManga (jobID, title, year, externalIds, trackingInf
   manga.state = 2
   manga.slug = slug
   if (trackingInfo) manga.scrobblersKey = trackingInfo
+  if (monitor) manga.monitor = monitor
 
   if (meta.insertMode === 0) {
     await orm.manga.upsert(manga, { returning: true, plain: true })
   } else {
     await orm.manga.update(manga, { where: { id: manga.id } }, { returning: true, plain: true })
   }
+  await realm.upsertOneManga(manga)
   return { success: true, code: 200, body: manga }
 }
 

@@ -1,18 +1,22 @@
 <template>
   <div class="container mx-auto w-full">
     <div class="py-6 pl-2">
-      <div class="text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">Integrations</div>
+      <div class="text-2xl font-medium tracking-tight text-main-500 dark:text-light-400 sm:text-4xl">
+        {{ t('integration.title') }}
+      </div>
       <div class="mt-0.5 flex items-center pt-4 font-medium text-main-400 dark:text-light-500">
-        Seamlessly Connect Teemii with Your Favorite Services.
+        {{ t('integration.subtitle') }}
       </div>
     </div>
     <div class="py-5">
       <div class="flex flex-wrap items-center justify-between sm:flex-nowrap">
         <div class="ml-2 mt-4">
-          <h3 class="text-lg font-medium uppercase tracking-wide dark:text-light-600 sm:text-xl">Scrobblers</h3>
-          <p class="mt-1 text-sm text-main-500 dark:text-light-400">Automatically sync your reading progress and manga
-            library with external
-            platforms. Keep your collections aligned and up-to-date across different services.</p>
+          <h3 class="text-lg font-medium uppercase tracking-wide dark:text-light-600 sm:text-xl">
+            {{ t('integration.scrobblers') }}
+          </h3>
+          <p class="mt-1 text-sm text-main-500 dark:text-light-400">
+            {{ t('integration.scrobblers_subtitle') }}
+          </p>
         </div>
         <div class="ml-4 mt-4 shrink-0">
         </div>
@@ -22,7 +26,7 @@
     <dl class="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4 lg:px-2 xl:px-0">
       <div
           class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 dark:border-darkMain-500/10 sm:px-6 lg:border-t-0 xl:px-8">
-        <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">Push</dt>
+        <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">{{ t('integration.push') }}</dt>
         <dd class="text-xs font-medium text-gray-700 dark:text-light-300"></dd>
         <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 dark:text-light-300">
           {{ statistics.PushTotal }}
@@ -30,7 +34,9 @@
       </div>
       <div
           class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 dark:border-darkMain-500/10 sm:border-l sm:px-6 lg:border-t-0 xl:px-8">
-        <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">Push Errors</dt>
+        <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">
+          {{ t('integration.push_errors') }}
+        </dt>
         <dd class="text-xs font-medium text-red-600 dark:text-red-500"></dd>
         <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 dark:text-light-300">
           {{ statistics.PushErrors }}
@@ -38,7 +44,7 @@
       </div>
       <div
           class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 dark:border-darkMain-500/10 sm:px-6 lg:border-l lg:border-t-0 xl:px-8">
-        <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">Pull</dt>
+        <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">{{ t('integration.pull') }}</dt>
         <dd class="text-xs font-medium text-gray-700 dark:text-light-300"></dd>
         <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 dark:text-light-300">
           {{ statistics.PullTotal }}
@@ -46,7 +52,9 @@
       </div>
       <div
           class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 dark:border-darkMain-500/10 sm:border-l sm:px-6 lg:border-t-0 xl:px-8">
-        <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">Pull Errors</dt>
+        <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">
+          {{ t('integration.pull_errors') }}
+        </dt>
         <dd class="text-xs font-medium text-red-600 dark:text-red-500"></dd>
         <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 dark:text-light-300">
           {{ statistics.PullErrors }}
@@ -91,12 +99,12 @@
             <div v-if="service.status === 0"
                  class="inline-flex flex-none items-center rounded-full bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/30">
               <component :is="iconoir['LinkXmark']" class="mr-1 h-4 w-4 text-main-300 dark:text-light-400"/>
-              Disabled
+              {{ t('general.disabled') }}
             </div>
             <div v-else-if="service.status === 1"
                  class="inline-flex flex-none items-center rounded-full bg-green-400/10 px-2 py-1 text-xs font-medium text-green-500 ring-1 ring-inset ring-green-400/30">
               <div class="mr-1 h-2 w-2 rounded-full bg-current p-1"></div>
-              Connected
+              {{ t('general.connected') }}
             </div>
             <span v-else-if="service.status === 2"
                   class="inline-flex flex-none items-center rounded-full bg-indigo-400/10 px-2 py-1 text-xs font-medium text-indigo-400 ring-1 ring-inset ring-indigo-400/30">
@@ -106,12 +114,12 @@
                 <path class="opacity-75" fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Syncing
+              {{ t('general.syncing') }}
             </span>
             <div v-else
                  class="inline-flex flex-none items-center rounded-full bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-inset ring-red-400/30">
               <component :is="iconoir['WarningTriangle']" class="mr-1 h-4 w-4 text-red-300 "/>
-              Needs attention
+              {{ t('general.need_attention') }}
             </div>
             <component :is="iconoir['OpenInBrowser']" @click="openSettings(index)"
                        class="h-5 w-5 flex-none cursor-pointer text-main-500 hover:text-accent-500 dark:text-light-600 dark:hover:text-darkAccent-500"
@@ -129,9 +137,12 @@
         <div class="flex items-center p-2">
           <img class="h-12 w-12 rounded-full" :src="services[currentService].imageUrl" alt=""/>
           <div class="px-4">
-            <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-light-300">Scrobblers Settings</h3>
-            <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500 dark:text-light-500">Modify synchronisation
-              settings here.</p>
+            <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-light-300">
+              {{ t('integration.scrobblers_settings') }}
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500 dark:text-light-500">
+              {{ t('integration.scrobblers_settings_subtitle') }}
+            </p>
           </div>
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -139,18 +150,18 @@
                      class="h-6 w-6 cursor-pointer text-main-500 hover:text-accent-500 dark:text-darkAccent-500 dark:hover:text-darkAccent-400"/>
         </div>
       </template>
-      <div class="grow border-t border-gray-200 px-4 dark:border-dark-800 sm:px-6">
+      <div class="grow  border-t border-gray-200 px-4 dark:border-dark-800 sm:px-6">
         <div class="flex h-full grow flex-col overflow-y-auto px-2 text-sm">
           <form @submit.prevent="saveScrobblerSettings(currentService)" class="grow">
             <div class="mb-6 mt-4">
               <div v-if="services[currentService].loginRedirectURL"
                    class="mb-2 mt-1 items-center justify-between gap-x-6 whitespace-pre-wrap sm:mt-0 sm:flex sm:flex-auto">
                 <div class="grow">
-                  <TBaseInputGroup label="Token" tooltip="click on Authorize then paste the token here.">
+                  <TBaseInputGroup :label="t('integration.token')" :tooltip="t('integration.token_tip')">
                     <TBaseInput
                         v-model="services[currentService].token"
                         type="text"
-                        name="token"
+                        :name="t('integration.token')"
                     />
                   </TBaseInputGroup>
                 </div>
@@ -158,48 +169,53 @@
                   <a :href="services[currentService].loginRedirectURL" target="_blank" rel="noopener noreferrer">
                     <div class="flex items-center gap-x-2">
                       <component :is="iconoir['Link']" class="h-5 w-5 text-main-500"/>
-                      <span class="text-accent-500">Authorize</span>
+                      <span class="text-accent-500">{{ t('integration.scrobblers_authorize') }}</span>
                     </div>
                   </a>
                 </div>
               </div>
               <div v-else>
                 <div class="mt-4">
-                  <TBaseInputGroup label="username">
+                  <TBaseInputGroup :label="t('general.username') ">
                     <TBaseInput
                         v-model="services[currentService].username"
                         type="text"
-                        name="username"
+                        :name="t('general.username')"
                     />
                   </TBaseInputGroup>
                 </div>
                 <div class="mt-4">
-                  <TBaseInputGroup label="password">
+                  <TBaseInputGroup :label="t('general.password') ">
                     <TBaseInput
                         v-model="services[currentService].password"
                         type="password"
-                        name="password"
+                        :name="t('general.password')"
                     />
                   </TBaseInputGroup>
                 </div>
               </div>
               <div class="mt-4">
-                <TBaseInputGroup label="Excluded Genres" tooltip="Teemii will not send titles with theses genres.">
+                <TBaseInputGroup :label="t('integration.excluded_genres')"
+                                 :tooltip="t('integration.exclude_genres_tip')">
                   <BaseMultiselect
                       searchable
                       :required="false"
                       v-model="services[currentService].excludedGenres"
-                      label="Exclude Genres"
+                      :label="t('integration.excluded_genres')"
                       mode="tags"
                       :options="itemGenres"
                   />
                 </TBaseInputGroup>
               </div>
               <div class="mt-4">
-                <TBaseSwitch v-model="services[currentService].Sync2Way" labelLeft="Synchronize both way" class="flex"/>
+                <TBaseSwitch v-model="services[currentService].Sync2Way"
+                             :labelLeft="t('integration.sync_both_ways')"
+                             class="flex"/>
               </div>
               <div class="mt-4">
-                <TBaseSwitch v-model="services[currentService].enabled" labelLeft="Enabled" class="flex"/>
+                <TBaseSwitch v-model="services[currentService].enabled"
+                             :labelLeft="t('general.enabled')"
+                             class="flex"/>
               </div>
             </div>
             <div class="flex justify-end pt-2">
@@ -207,7 +223,7 @@
                 <TBaseButton type="submit" class="my-4 rounded-md bg-accent-600 px-8 py-2 text-sm font-medium text-white
                 shadow-sm hover:bg-accent-500 focus-visible:outline focus-visible:outline-2
                 focus-visible:outline-offset-2 focus-visible:outline-accent-600 sm:col-start-2">
-                  Save
+                  {{ t('general.save') }}
                 </TBaseButton>
               </div>
             </div>
@@ -220,6 +236,7 @@
 </template>
 
 <script setup>
+import { useTranslation } from 'i18next-vue'
 import { onMounted, ref } from 'vue'
 import TBaseSwitch from '@/components/base/TBaseSwitch.vue'
 import * as iconoir from '@iconoir/vue'
@@ -232,6 +249,7 @@ import { itemGenres, pageTitle } from '@/global'
 import { useNotificationStore } from '@/stores/notificationsStore.js'
 import TBaseButton from '@/components/base/TBaseButton.vue'
 
+const { t } = useTranslation()
 // status: 0 = disabled, 1 = connected, 2 = syncing, 3 = needs attention
 const services = ref([])
 const modalSettingsActive = ref(false)
@@ -270,8 +288,8 @@ async function saveScrobblerSettings (index) {
     const response = await libraryAPI.postScrobblerSettings(services.value[index].name, services.value[index])
     if (response.success) {
       notificationsStore.showNotification({
-        title: 'Success',
-        message: 'Settings saved.',
+        title: t('general.success'),
+        message: t('general.settings_saved'),
         type: 'success'
       })
 
@@ -279,8 +297,8 @@ async function saveScrobblerSettings (index) {
       modalSettingsActive.value = false
     } else {
       notificationsStore.showNotification({
-        title: 'Error',
-        message: 'An error occurred while saving settings.',
+        title: t('general.error'),
+        message: t('general.settings_not_saved'),
         type: 'error'
       })
     }
@@ -296,8 +314,8 @@ defineOptions({
 })
 
 onMounted(() => {
-  document.title = 'Integrations'
-  pageTitle.value = 'Integrations'
+  document.title = t('navigation.sync')
+  pageTitle.value = t('navigation.sync')
   fetchScrobblers()
   fetchScrobblerStatistics()
   // refresh every minute

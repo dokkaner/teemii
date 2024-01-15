@@ -1,9 +1,9 @@
 <template>
   <div>
     <TabGroup :default-index="defaultIndex" @change="onChange">
-      <TabList :class="['flex relative overflow-x-auto overflow-y-hidden lg:ml-0 lg:pb-0', alignClass]">
+      <TabList :class="['flex relative overflow-x-auto overflow-y-hidden  lg:ml-0 lg:pb-0', alignClass]">
         <Tab v-for="(tab, index) in tabs" :key="index" as="template" v-slot="{ selected }">
-          <button :class="['px-8 py-2 text-sm leading-5 font-medium flex items-center relative border-b-2 ' +
+          <button :class="['px-8 py-2 gap-x-2 text-sm leading-5 font-medium flex items-center relative border-b-2 ' +
            'focus:outline-none whitespace-nowrap', selected ? variantClassSelected : variantClassNonSelected]">
             <component :is="heroIcons[tab.icon]" v-if="isLoaded && tab.icon" class="h-5 w-5"/>
             <span class="text-base font-medium">{{ tab.title }}</span>

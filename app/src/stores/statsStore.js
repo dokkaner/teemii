@@ -39,7 +39,6 @@ export const useStatStore = defineStore('stat', {
       const labels = []
       let colors = []
       if (isDark) {
-        console.log('dark mode')
         colors = helpers.generateColor('#fdf1ff', '#7a7482', maxGenres + 1)
       } else {
         colors = helpers.generateColor('#fcf0ff', '#6a6472', maxGenres + 1)

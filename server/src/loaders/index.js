@@ -5,11 +5,14 @@ const { agents } = require('../core/agentsManager')
 const { socketIOLoader } = require('./socketio')
 const { configManager } = require('./configManager')
 const { reporter } = require('./sentry')
+const { realm } = require('./realm')
 
 async function load () {
   try {
     await openAISvc.loadOpenAI()
     reporter.init()
+    await realm.init()
+
     logger.info('✓ Config Initialized. Setup completed: ' + configManager.setupCompleted)
 
     const express = new ExpressLoader()

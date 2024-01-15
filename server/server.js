@@ -10,7 +10,6 @@ const { logger } = require('./src/loaders/logger')
 const { backup } = require('./src/services/backupService')
 const { LOGS_DIR } = require('./src/loaders/configManager')
 const { scrobblersManager } = require('./src/services/scrobblerService')
-const { reporter } = require('./src/loaders/sentry')
 
 async function startServer () {
   try {

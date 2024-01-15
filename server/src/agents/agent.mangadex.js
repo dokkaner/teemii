@@ -3,6 +3,7 @@ const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
 const { configManager } = require('../loaders/configManager')
+const { convertToLocale } = require('../utils/agent.utils')
 
 class Mangadex extends Agent {
   // #region private
@@ -146,7 +147,16 @@ class Mangadex extends Agent {
       } else { return [] }
     },
     'synopsis.en_us': '',
-    'description.en_us': 'attributes.description.en',
+    description: (iteratee) => {
+      const desc = iteratee.attributes.description
+      const languages = Object.keys(desc)
+      const descriptions = {}
+      languages.forEach((lang) => {
+        const langCode = convertToLocale(lang)
+        descriptions[langCode] = desc[lang]
+      })
+      return descriptions
+    },
     tags: (iteratee) => {
       const genres = iteratee.attributes.tags
       if (genres.length > 0) {
@@ -366,6 +376,7 @@ class Mangadex extends Agent {
     }
     return mangas
   }
+
   // #endregion
 
   // #region public

@@ -141,7 +141,8 @@ async function backup () {
     const filesToBackup = [
       configManager.configPath, // config.json
       configManager.get('databasePath'), // teemii.db
-      path.join(CONFIG_DIR, 'secret.key') // secret.key
+      path.join(CONFIG_DIR, 'secret.key'), // secret.key
+      path.join(CONFIG_DIR, 'token.key') // token.key
     ]
 
     const backupFilePath = await createBackup(filesToBackup, backupDir)
@@ -155,7 +156,8 @@ async function restore (archive) {
   const fileDestinationMapping = {
     'config.json': configManager.configPath,
     'teemii.db': configManager.get('databasePath'),
-    'secret.key': path.join(CONFIG_DIR, 'secret.key')
+    'secret.key': path.join(CONFIG_DIR, 'secret.key'),
+    'token.key': path.join(CONFIG_DIR, 'token.key')
   }
 
   try {

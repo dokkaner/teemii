@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import libraryAPI from '@/api/library'
 import logger from '@/utils/logger'
 import helpers from '@/stores/utils'
+
 const TTL = 1000 * 60 * 60 // 1 hour
 
 /**
@@ -374,8 +375,8 @@ export const useMangaStore = defineStore('manga', {
           this.updatedAt = Date.now()
           this.manga = res.body
           // remove links from description
-          this.manga.description.en_us = this.manga.description.en_us.replace(/https?:\/\/\S+/g, '')
-          this.manga.description.fr_fr = this.manga.description.fr_fr.replace(/https?:\/\/\S+/g, '')
+          this.manga.description.en = this.manga.description.en_us.replace(/https?:\/\/\S+/g, '')
+          this.manga.description.fr = this.manga.description.fr_fr.replace(/https?:\/\/\S+/g, '')
 
           this.suggestions = []
         } else {

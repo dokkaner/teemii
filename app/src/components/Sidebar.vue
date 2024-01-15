@@ -2,11 +2,11 @@
   <!-- Static sidebar for desktop -->
   <div class="z-40 hidden md:fixed md:inset-y-0 md:flex md:flex-col drop-shadow-lg">
     <div
-        class="hidden h-full w-full overflow-visible rounded-r-2xl bg-dark-500 md:block dark:bg-darkMain-800">
+        class="hidden h-full overflow-visible rounded-r-2xl bg-dark-500 md:block dark:bg-darkMain-800 ">
       <div class="flex flex-col items-center py-6">
         <img class="h-12 w-auto shrink-0" src="/assets/icons/logo.png" alt="Timy"/>
 
-        <nav class="flex-1 mt-6" aria-label="desktop navigation">
+        <nav class="flex-1 mt-6 min-w-20" aria-label="desktop navigation">
           <ul role="list">
             <li v-for="item in navigation" :key="item.name">
               <router-link :to="item.href"
@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import * as heroIcons from '@heroicons/vue/24/outline'
 import { useSocketStore } from '@/stores/socketsStore'
@@ -142,6 +142,7 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 import * as iconoir from '@iconoir/vue'
+import { useTranslation } from 'i18next-vue'
 
 export default {
   components: {
@@ -155,18 +156,23 @@ export default {
     TransitionRoot
   },
   setup () {
-
+    const { i18next, t } = useTranslation()
     const router = useRouter()
     const previousRoutePath = ref('')
     const currentRoutePath = ref('')
-    const navigation = ref([
-      { name: 'Home', href: '/', primary: true, icon: 'HomeSimple', current: false },
-      { name: 'Search', href: '/search', primary: true, icon: 'Search', current: false },
-      { name: 'Collection', href: '/mangas', primary: true, icon: 'BookStack', current: false },
-      { name: 'Activity', href: '/activity', primary: true, icon: 'Activity', current: false },
-      { name: 'Sync.', href: '/integration', primary: true, icon: 'CloudSync', current: false },
-      { name: 'Settings', href: '/settings', primary: false, icon: 'Settings', current: false }
-    ])
+
+    const navigation = ref([])
+
+    watchEffect(() => {
+      navigation.value = [
+        { name: t('navigation.home'), href: '/', primary: true, icon: 'HomeSimple', current: false },
+        { name: t('navigation.search'), href: '/search', primary: true, icon: 'Search', current: false },
+        { name: t('navigation.collection'), href: '/mangas', primary: true, icon: 'BookStack', current: false },
+        { name: t('navigation.activity'), href: '/activity', primary: true, icon: 'Activity', current: false },
+        { name: t('navigation.sync'), href: '/integration', primary: true, icon: 'CloudSync', current: false },
+        { name: t('navigation.settings'), href: '/settings', primary: false, icon: 'Settings', current: false }
+      ]
+    })
 
     const navTitle = ref('Home')
     const isLoaded = ref(false)
@@ -181,11 +187,11 @@ export default {
 
     const statusText = computed(() => {
       if (storeIsLoading.value) {
-        return 'Loading...'
+        return t('navigation.backend_loading')
       } else if (isConnected.value) {
-        return 'Backend is up and running'
+        return t('navigation.backend_running')
       } else {
-        return 'Backend is down!'
+        return t('navigation.backend_stopped')
       }
     })
 
@@ -209,6 +215,7 @@ export default {
       isLoaded.value = true
     })
     return {
+      t,
       pageTitle,
       navTitle,
       XMarkIcon,

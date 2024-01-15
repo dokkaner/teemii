@@ -5,6 +5,7 @@ const {
 } = require('./utils-mapping')
 const utils = require('../utils/agent.utils')
 const { logger } = require('../loaders/logger')
+const { top30Locales } = require('../utils/agent.utils')
 
 // General genres
 const generalGenres = [
@@ -74,18 +75,15 @@ const unifiedMangaSchema = {
   tags: (results) => mergeValuesWithoutDuplicates(results, 'tags'),
   canonicalTitle: (results) => getMostFrequentValue(results, 'canonicalTitle'),
   titles: (results) => {
-    const languages = ['en_us', 'ja_jp', 'fr_fr', 'de_de', 'es_la']
-    return formatFieldByLanguage(results, 'titles', languages)
+    return formatFieldByLanguage(results, 'titles', top30Locales)
   },
   altTitles: (results) => aggregateUniqueValues(results, 'altTitles'),
   primaryAltTitle: (results) => getMostFrequentValue(results, 'primaryAltTitle'),
   synopsis: (results) => {
-    const languages = ['en_us', 'ja_jp', 'fr_fr', 'de_de', 'es_la']
-    return formatFieldByLanguage(results, 'synopsis', languages)
+    return formatFieldByLanguage(results, 'synopsis', top30Locales)
   },
   description: (results) => {
-    const languages = ['en_us', 'ja_jp', 'fr_fr', 'de_de', 'es_la']
-    return formatFieldByLanguage(results, 'description', languages)
+    return formatFieldByLanguage(results, 'description', top30Locales)
   },
   status: (results) => getMostFrequentValue(results, 'status')?.toLowerCase(),
   isLicensed: (results) => getMostFrequentValue(results, 'isLicensed'),

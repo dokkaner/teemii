@@ -28,6 +28,10 @@ const props = defineProps({
   tabPanelContainer: {
     type: String,
     default: 'py-4 mt-px'
+  },
+  index: {
+    type: Number,
+    default: 0
   }
 })
 
