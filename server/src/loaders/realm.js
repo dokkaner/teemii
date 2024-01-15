@@ -91,6 +91,15 @@ class RealmSvc {
     }, [])
   }
 
+  #convertKeyValues (keyValues) {
+    return Object.entries(keyValues).reduce((arr, [key, value]) => {
+      if (value) {
+        arr.push(`${key}: ${value}`)
+      }
+      return arr
+    }, [])
+  }
+
   /**
    * Converts a manga object from the internal data model to a format suitable for external use.
    * This includes transforming certain fields and formatting dates and URLs appropriately.
@@ -106,10 +115,10 @@ class RealmSvc {
       publicationDemographics: manga.publicationDemographics,
       genres: manga.genres,
       tags: manga.tags,
-      titles: Object.values(manga.titles),
+      titles: this.#convertKeyValues(manga.titles),
       altTitles: manga.altTitles,
-      synopsis: [manga.synopsis.en_us || ''],
-      description: [manga.description.en_us || ''],
+      synopsis: this.#convertKeyValues(manga.synopsis),
+      description: this.#convertKeyValues(manga.description),
       status: manga.status,
       isLicensed: manga.isLicensed,
       bannerImage: this.#convertImageUrls(manga.bannerImage),

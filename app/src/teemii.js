@@ -11,12 +11,12 @@ import { createPinia } from 'pinia'
 import i18n from './scripts/i18n.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
+import { faGithub, faXTwitter, faPatreon } from '@fortawesome/free-brands-svg-icons'
 import { faLifeRing, faPaw } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { useUserInterfaceStore } from './stores/userInterfaceStore.js'
 // fontawesome
-library.add(faGithub, faLifeRing, faHeart, faPaw, faXTwitter)
+library.add(faGithub, faLifeRing, faHeart, faPaw, faXTwitter, faPatreon)
 
 const pinia = createPinia()
 const app = createApp(App)
