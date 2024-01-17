@@ -1,4 +1,4 @@
-const { Agent, AgentCapabilities } = require('../core/agent.js')
+const { Agent, AgentCapabilities, AgentHTTPClient } = require('../core/agent.js')
 const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
@@ -413,6 +413,7 @@ class Mangadex extends Agent {
     this.funcHelperChapterPagesURLByChapterId = this.#ChapterPagesURLByChapterId
     this.funcHelperLookupRecommendations = this.#helperMangaBasedRecommendations
     this.recommendationsSchema = this.#recommendationsSchema
+    this.httpClient = AgentHTTPClient.PUPPETEER
     this.maxPages = 3
   };
 

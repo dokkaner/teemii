@@ -3,6 +3,8 @@ const Bottleneck = require('bottleneck')
 const { logger } = require('../loaders/logger.js')
 const cheerio = require('cheerio')
 const utils = require('../utils/agent.utils')
+const { AgentHTTPClient } = require('../core/agent')
+const puppet = require('../utils/puppeteerPool')
 
 // noinspection JSJQueryEfficiency
 class Mangapill extends Agent {
@@ -158,7 +160,7 @@ class Mangapill extends Agent {
     const url = `${this.host}/search?q=${encodeURIComponent(query)}`
     if (page === 1) {
       try {
-        const body = await this.#limiter.schedule(() => utils.getBody(url, null, true, false))
+        const body = await this.#limiter.schedule(() => puppet.getBody(url, null, true, false))
         return await this.#parseSearch(this.host, body)
       } catch (e) {
         logger.error({ err: e }, 'Error in Mangapill helperLookupMangas')
@@ -172,11 +174,11 @@ class Mangapill extends Agent {
   async #getMangaById (host, ids) {
     try {
       if (ids.url?.includes('/manga/')) {
-        const body = await this.#limiter.schedule(() => utils.getBody(ids.url, null, true, false))
+        const body = await this.#limiter.schedule(() => puppet.getBody(ids.url, null, true, false))
         return await this.#parseManga(this.host, body, ids.url)
       } else {
         const url = `${this.host}/manga/${ids.id}`
-        const body = await this.#limiter.schedule(() => utils.getBody(url, null, true, false))
+        const body = await this.#limiter.schedule(() => puppet.getBody(url, null, true, false))
         return await this.#parseManga(this.host, body, ids.id)
       }
     } catch (e) {
@@ -189,7 +191,7 @@ class Mangapill extends Agent {
     try {
       if (page === 1) {
         const url = `${this.host}/manga/${ids.id}`
-        const body = await this.#limiter.schedule(() => utils.getBody(url, null, true, false))
+        const body = await this.#limiter.schedule(() => puppet.getBody(url, null, true, false))
         return await this.#parseSearchChapters(body, this.host, ids.url)
       } else {
         return []
@@ -202,7 +204,7 @@ class Mangapill extends Agent {
 
   async #funcHelperChapterPagesURLByChapterId (host, ids) {
     try {
-      const body = await this.#limiter.schedule(() => utils.getBody(ids.id, null, false, false))
+      const body = await this.#limiter.schedule(() => puppet.getBody(ids.id, null, false, false))
       return await this.#parseChapterPagesURL(body, ids.url)
     } catch (e) {
       logger.error({ err: e }, 'Error in Mangapill helperChapterPagesURLByChapterId')
@@ -240,6 +242,7 @@ class Mangapill extends Agent {
     this.funcGetMangaById = this.#getMangaById
     this.funcHelperLookupChapters = this.#funcHelperLookupChapters
     this.funcHelperChapterPagesURLByChapterId = this.#funcHelperChapterPagesURLByChapterId
+    this.httpClient = AgentHTTPClient.PUPPETEER
   };
 
   // #endregion

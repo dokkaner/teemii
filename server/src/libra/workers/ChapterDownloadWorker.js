@@ -127,7 +127,11 @@ class ChapterDownloadWorker extends Worker {
       throw new Error(msg)
     }
 
-    await downloadChapterPages(job, chapter, {}, manga, result, 'en')
+    // get HTTP Download mode
+    const agent = agents.agent(bestChoice.source).instance
+    const httpDownloadMode = agent.httpClient
+
+    await downloadChapterPages(job, chapter, { mode: httpDownloadMode }, manga, result, 'en')
     const mangaName = manga.canonicalTitle.replace(/[/\\?%*:|"<>]/g, '-')
     const rootStorage = configManager.get('storagePath')
 

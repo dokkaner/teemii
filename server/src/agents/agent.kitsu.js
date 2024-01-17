@@ -2,9 +2,9 @@ const { Agent, AgentCapabilities } = require('../core/agent.js')
 const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
-const utils = require('../utils/agent.utils')
 const cheerio = require('cheerio')
 const { configManager } = require('../loaders/configManager')
+const puppet = require('../utils/puppeteerPool')
 
 class Kitsu extends Agent {
   // #region private
@@ -188,7 +188,7 @@ class Kitsu extends Agent {
       return slug
     }
 
-    const body = await this.#limiter.schedule(() => utils.getBody(`${this.host}/manga/${slug}`, null, false, false, false))
+    const body = await this.#limiter.schedule(() => puppet.getBody(`${this.host}/manga/${slug}`, null, false, false, false))
     // get canonical id from body html with cheerio
     // canonicalID is in the url of the media-poster span image
     // in the form of data-src="https://media.kitsu.io/manga/[canonicalID]/poster_image/large-.jpeg"

@@ -7,6 +7,8 @@ const cors = require('cors')
 const { configManager } = require('./configManager')
 const fileUpload = require('express-fileupload')
 const jwt = require('jsonwebtoken')
+const puppet = require('../utils/puppeteerPool')
+const { rmdir } = require('../services/osService')
 
 /**
  * Middleware to authenticate JWT.

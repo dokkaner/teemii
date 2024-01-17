@@ -2,7 +2,7 @@
  * @file agent.mangakakalot.js
  * based on https://github.com/LuckyYam/MangaKakalotScrapper
  */
-const { Agent, AgentCapabilities } = require('../core/agent.js')
+const { Agent, AgentCapabilities, AgentHTTPClient } = require('../core/agent.js')
 const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const { logger } = require('../loaders/logger')
@@ -153,7 +153,7 @@ class Mangakakalot extends Agent {
       // Processing each span element within a chapter row
       $(el).find('span').each((index, element) => {
         switch (index) {
-          case 0:{ // Title and URL
+          case 0: { // Title and URL
             title = $(element).find('a').text().trim()
             const slug = $(element).find('a').attr('href')
             if (slug) {
@@ -337,6 +337,7 @@ class Mangakakalot extends Agent {
       throw e
     }
   };
+
   // #endregion
 
   // #region public
@@ -367,8 +368,10 @@ class Mangakakalot extends Agent {
     this.funcHelperLookupMangas = this.#helperLookupMangas
     this.funcHelperLookupChapters = this.#helperLookupChapters
     this.funcHelperChapterPagesURLByChapterId = this.#ChapterPagesURLByChapterId
+    this.httpClient = AgentHTTPClient.HTTP
     this.maxPages = 3
   };
+
   // #endregion
 }
 

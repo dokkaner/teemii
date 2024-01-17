@@ -1,6 +1,6 @@
 const { Agent, AgentCapabilities } = require('../core/agent.js')
 const Bottleneck = require('bottleneck')
-const utils = require('../utils/agent.utils')
+const puppet = require('../utils/puppeteerPool')
 
 class Anibrain extends Agent {
   // #region private
@@ -88,7 +88,7 @@ class Anibrain extends Agent {
 
     const requestURL = `${endpoint}?${queryParts}`
     try {
-      const response = await this.#limiter.schedule(() => utils.getBody(requestURL, null, false, false, true))
+      const response = await this.#limiter.schedule(() => puppet.getBody(requestURL, null, false, false, true))
       const json = JSON.stringify(response)
       const suggests = JSON.parse(json)
       return super.noFilterResult(this.#lookupSchema, JSON.parse(suggests).data)
@@ -102,7 +102,7 @@ class Anibrain extends Agent {
     const mediaType = 'MANGA'
     const requestURL = `${endpoint}?searchValue=${title}&mediaType=${mediaType}&adult=${adult}`
     try {
-      const response = await this.#limiter.schedule(() => utils.getBody(requestURL, null, false, false, true))
+      const response = await this.#limiter.schedule(() => puppet.getBody(requestURL, null, false, false, true))
       const json = JSON.stringify(response)
       return JSON.parse(json)
     } catch (err) {

@@ -5,6 +5,8 @@ const utils = require('../utils/agent.utils')
 const cheerio = require('cheerio')
 const axios = require('axios')
 const { configManager } = require('../loaders/configManager')
+const { AgentHTTPClient } = require('../core/agent')
+const puppet = require('../utils/puppeteerPool')
 
 class Bato extends Agent {
   // #region private
@@ -327,7 +329,7 @@ class Bato extends Agent {
   async #funcHelperChapterPagesURLByChapterId (host, ids) {
     try {
       const url = host + ids.id
-      const body = await this.#limiter.schedule(() => utils.getBody(url, '.btn.btn-sm.btn-info.btn-outline.btn-block.normal-case.opacity-80', false, false, false, 1))
+      const body = await this.#limiter.schedule(() => puppet.getBody(url, '.btn.btn-sm.btn-info.btn-outline.btn-block.normal-case.opacity-80', false, false, false, 1))
       return await this.#parseChapterPagesURL(body, url)
     } catch (e) {
       logger.error({ err: e }, 'bato: funcHelperChapterPagesURLByChapterId')
@@ -364,6 +366,7 @@ class Bato extends Agent {
     this.funcHelperLookupChapters = this.#funcHelperLookupChapters
     this.funcHelperChapterPagesURLByChapterId = this.#funcHelperChapterPagesURLByChapterId
     this.coverPriority = 10
+    this.httpClient = AgentHTTPClient.HTTP
   };
 
   // #endregion

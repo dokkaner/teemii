@@ -28,6 +28,11 @@ const AgentCapabilities = Object.freeze({
   SCROBBLER: 6
 })
 
+const AgentHTTPClient = Object.freeze({
+  HTTP: 0,
+  PUPPETEER: 1
+})
+
 /**
  * Filters a list of mangas based on a specific year, if provided.
  * If no year is provided, or no manga is found for the given year, defaults to the first manga.
@@ -129,6 +134,7 @@ class Agent {
     this.cacheEnabled = false
     this.errorTimestamps = []
     this.isActive = true
+    this.httpClient = AgentHTTPClient.HTTP
   }
 
   /**
@@ -754,4 +760,4 @@ class Agent {
 }
 
 module
-  .exports = { Agent, AgentCapabilities }
+  .exports = { Agent, AgentCapabilities, AgentHTTPClient }

@@ -8,6 +8,8 @@ const utils = require('../utils/agent.utils')
 const fs = require('fs').promises
 const { Semaphore } = require('await-semaphore')
 const ips = require('./imageProcessingService')
+const Downloader = require('nodejs-file-downloader')
+const puppet = require('../utils/puppeteerPool')
 
 /**
  * Downloads a manga page and records its metadata in the database.
@@ -16,9 +18,10 @@ const ips = require('./imageProcessingService')
  * @param {string} absolutePath - The absolute path where the file should be stored.
  * @param {string} filename - The filename to be used when saving the file.
  * @param {string} folder - The folder where the file should be stored.
+ * @param {boolean} usePuppeteer - Whether to use Puppeteer to download the page.
  * @return {Promise<boolean>} - A promise that resolves with true if the page was successfully downloaded and recorded, false otherwise.
  */
-async function downloadPage (page, absolutePath, filename, folder) {
+async function downloadPage (page, absolutePath, filename, folder, usePuppeteer = true) {
   let sourceDomain = null
   const url = page.pageURL
   try {
@@ -31,7 +34,33 @@ async function downloadPage (page, absolutePath, filename, folder) {
   // Attempt to download the page.
 
   try {
-    await utils.downloadPage(url, folder, filename, page.referer)
+    if (usePuppeteer) {
+      await puppet.downloadPage(url, folder, filename, page.referer)
+    } else {
+      const downloader = new Downloader({
+        url,
+        directory: folder,
+        fileName: filename,
+        cloneFiles: false,
+        maxAttempts: 2,
+        headers: {
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          Referer: sourceDomain || 'https://www.google.com/',
+          'Sec-Fetch-Dest': 'document',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-Site': 'cross-site',
+          'Sec-Fetch-User': '?1',
+          'Upgrade-Insecure-Requests': '1'
+        }
+      })
+
+      await downloader.download()
+    }
+
     const fullPath = path.join(folder, filename)
     const enhancedPages = configManager.get('preferences.advancedFeatures.enhancedPages') || false
     if (enhancedPages) {
@@ -106,7 +135,12 @@ module.exports = {
     job.entityType = 'chapter'
     job.entityId = chapter.id
     job.chapter = { id: chapter.id, chapter: chapter.chapter, titles: chapter.titles, mangaId: manga.id }
-    job.manga = { id: manga.id, canonicalTitle: manga.canonicalTitle, startYear: manga.startYear, authors: manga.authors }
+    job.manga = {
+      id: manga.id,
+      canonicalTitle: manga.canonicalTitle,
+      startYear: manga.startYear,
+      authors: manga.authors
+    }
 
     const mangaTitle = `${manga.canonicalTitle} (${manga.startYear})`
     const mangaFolder = os.sanitizeDirectoryName(mangaTitle, 200)
@@ -121,7 +155,7 @@ module.exports = {
 
     await orm.chapter.update({ state: 2 }, { where: { id: chapter.id } })
     chapter.state = 2
-    const concurrencyLimit = 2
+    const concurrencyLimit = settings.mode === 0 ? 2 : 5
     const semaphore = new Semaphore(concurrencyLimit)
 
     const downloadPromises = pages.map((page, index) => {
@@ -137,7 +171,7 @@ module.exports = {
           page.chapterId = chapter.id
           page.mangaName = manga.canonicalTitle
           page.chapterNum = chapter.chapter
-          success = await downloadPage(page, absolutePath, filename, rootDir)
+          success = await downloadPage(page, absolutePath, filename, rootDir, settings.mode === 1)
         } catch (e) {
           logger.error({ page, err: e }, 'Failed to download page')
           success = false

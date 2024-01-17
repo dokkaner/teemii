@@ -5,6 +5,23 @@ const fsSync = require('fs')
 const readline = require('readline')
 const checkDiskSpace = require('check-disk-space').default
 
+async function fileStats (loc) {
+  try {
+    return await fs.stat(loc)
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return null
+    }
+    throw err
+  }
+}
+
+function safeRun (fn) {
+  try {
+    fn()
+  } catch (error) {}
+}
+
 /**
  * Reads and returns the first line from the specified file.
  * @param {string} filePath Path to the file.
@@ -34,6 +51,7 @@ async function readFirstLine (filePath) {
     }
   }
 }
+
 /*
 * Adapted from https://github.com/alexbbt/read-last-lines (MIT licenced)
 */
@@ -93,6 +111,7 @@ function isDocker () {
     })
   })
 }
+
 /**
  * @description Check diskspace
  * @param {*} dir directoryPath - The file/folder path from where we want to know disk space
@@ -140,6 +159,7 @@ function OSFunc () {
   function isCommandAllowed (command) {
     return allowedCommands.some(allowedCommand => command.includes(allowedCommand))
   }
+
   /**
    * Executes a shell command in a specified directory.
    *
@@ -179,6 +199,17 @@ async function renameFile (oldPath, newPath) {
   await fs.rename(oldPath, newPath)
 }
 
+async function validate (loc) {
+  const parsed = path.parse(loc)
+  try {
+    const stat = await fs.stat(parsed.dir)
+    if (!stat) return false
+    return stat.isDirectory()
+  } catch (e) {
+    return false
+  }
+}
+
 /**
  * Sanitize a string to be used as a directory name.
  *
@@ -212,6 +243,7 @@ function sanitizeDirectoryName (input, maxLength) {
 
   return sanitized
 }
+
 /**
  * Attempts to delete a file with a delay in case of access issues.
  * Retries deletion for a specified number of attempts.
@@ -463,7 +495,42 @@ async function moveFileOrDirectory (source, destination) {
   }
 }
 
+async function clean (loc) {
+  let targetFile = null
+  let stats = null
+  let targetFolder = loc
+
+  stats = await fs.stat(loc)
+  if (!stats) {
+    const parsed = path.parse(loc)
+    targetFile = parsed.base
+    targetFolder = parsed.dir
+    stats = await fs.stat(parsed.dir)
+  }
+
+  if (!stats || !stats.isDirectory()) { throw new Error(`Invalid location ${loc}.`) }
+
+  const files = await fs.readdir(targetFolder)
+  const deleted = []
+  const regex = /(.+)\.\$\$[0-9]+(\$PART)?$/
+
+  for (const file of files) {
+    const cap = regex.exec(file)
+    if (!cap || (targetFile !== null && cap[1] !== targetFile)) continue
+    const fullPath = path.join(targetFolder, file)
+    await fs.unlink(fullPath)
+    deleted.push(fullPath)
+  }
+
+  return deleted
+}
+
 module.exports = {
+  clean,
+  delay,
+  validate,
+  fileStats,
+  safeRun,
   readFirstLine,
   readLastLines,
   diskSpace,

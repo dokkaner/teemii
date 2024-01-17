@@ -1,7 +1,16 @@
-const { Agent, AgentCapabilities } = require('../core/agent.js')
+const { Agent, AgentCapabilities, AgentHTTPClient } = require('../core/agent.js')
 const Bottleneck = require('bottleneck')
 const { logger } = require('../loaders/logger')
-const utils = require('../utils/agent.utils')
+const axios = require('axios')
+const puppet = require('../utils/puppeteerPool')
+
+function axiosBuildHeaders () {
+  return {
+    'User-Agent': 'Tachiyomi',
+    'Content-Type': 'application/json',
+    Accept: 'application/json'
+  }
+}
 
 class ComickFun extends Agent {
   // #region private
@@ -160,7 +169,7 @@ class ComickFun extends Agent {
 
     const url = `${host}/comic/${ids.id}/chapters?limit=${this.offsetInc}&page=${page}${langParam}`
     try {
-      const response = await utils.getBody(url, null, false, false, true)
+      const response = await puppet.getBody(url, null, false, false, true)
       return JSON.parse(response).chapters
     } catch (e) {
       logger.error({ err: e }, 'Error in comicfun helperLookupChapters')
@@ -174,8 +183,12 @@ class ComickFun extends Agent {
     )}`
 
     try {
-      const response = await utils.getBody(url, null, false, false, true)
-      return JSON.parse(response)
+      // const response = await utils.getBody(url, null, false, false, true)
+      // return JSON.parse(response)
+      const response = await axios.get(url, {
+        headers: axiosBuildHeaders()
+      })
+      return response.data
     } catch (e) {
       logger.error({ err: e }, 'Error in comicfun helperLookupMangas')
       throw e
@@ -185,8 +198,12 @@ class ComickFun extends Agent {
   async #getMangaById (host, ids) {
     const url = `${host}/comic/${ids.id}?tachiyomi=true`
     try {
-      const response = await utils.getBody(url, null, false, false, true)
-      return JSON.parse(response)
+      // const response = await utils.getBody(url, null, false, false, true)
+      // return JSON.parse(response)
+      const response = await axios.get(url, {
+        headers: axiosBuildHeaders()
+      })
+      return response.data
     } catch (e) {
       logger.error({ err: e }, 'Error in comicfun getMangaById')
       throw e
@@ -196,8 +213,12 @@ class ComickFun extends Agent {
   async #ChapterPagesURLByChapterId (host, ids) {
     const url = `${host}/chapter/${ids.id}?tachiyomi=true`
     try {
-      const response = await utils.getBody(url, null, false, false, true)
-      return JSON.parse(response)
+      // const response = await utils.getBody(url, null, false, false, true)
+      // return JSON.parse(response)
+      const response = await axios.get(url, {
+        headers: axiosBuildHeaders()
+      })
+      return response.data
     } catch (e) {
       logger.error({ err: e }, 'Error in comicfun ChapterPagesURLByChapterId')
       throw e
@@ -250,8 +271,8 @@ class ComickFun extends Agent {
     this.funcGetMangaById = this.#getMangaById
     this.funcHelperLookupMangas = this.#helperLookupMangas
     this.funcHelperLookupChapters = this.#helperLookupChapters
-    this.funcHelperChapterPagesURLByChapterId =
-      this.#ChapterPagesURLByChapterId
+    this.funcHelperChapterPagesURLByChapterId = this.#ChapterPagesURLByChapterId
+    this.httpClient = AgentHTTPClient.HTTP
   }
 
   // #endregion

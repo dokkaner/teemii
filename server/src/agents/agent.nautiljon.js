@@ -4,6 +4,7 @@ const { logger } = require('../loaders/logger')
 const cheerio = require('cheerio')
 const utils = require('../utils/agent.utils')
 const { AgentCapabilities } = require('../core/agent')
+const puppet = require('../utils/puppeteerPool')
 
 class Nautiljon extends Agent {
   // #region private
@@ -132,7 +133,7 @@ class Nautiljon extends Agent {
     const url = `${host}/mangas/?${params}`
     if (page === 1) {
       try {
-        const body = await this.#limiter.schedule(() => utils.getBody(url, null, true, false))
+        const body = await this.#limiter.schedule(() => puppet.getBody(url, null, true, false))
         return await this.#parseSearch(this.host, body)
       } catch (e) {
         logger.error({ err: e }, 'Error in Nautiljon helperLookupMangas')
@@ -146,13 +147,14 @@ class Nautiljon extends Agent {
   async #getMangaById (host, ids) {
     try {
       const url = `${host}${ids.id}`
-      const body = await this.#limiter.schedule(() => utils.getBody(url, null, false, true))
+      const body = await this.#limiter.schedule(() => puppet.getBody(url, null, false, true))
       return await this.#parseManga(body, ids.id)
     } catch (e) {
       logger.error({ err: e }, 'Error in Nautiljon getMangaById')
       throw e
     }
   }
+
   // #endregion
 
   // #region public
