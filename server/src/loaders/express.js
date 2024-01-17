@@ -87,7 +87,9 @@ class ExpressLoader {
 
     // Set up middleware
     app.use(cors())
-    app.use(fileUpload({}))
+    app.use(fileUpload({
+      limits: { fileSize: 100 * 1024 * 1024 } // 100MB
+    }))
     app.use(express.json())
 
     app.use(compression({
