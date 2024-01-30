@@ -130,6 +130,7 @@ async function importChapter (manga, chapter, tempDir) {
   }
   return { success, chapterCount: 1, totalPageCount }
 }
+
 /**
  * Imports a volume of manga.
  * @param {Object} manga - Manga object.
@@ -224,7 +225,9 @@ async function importCBx (JobId, params) {
 
     // 2. Create or retrieve the manga entity
     let manga = null
+
     const response = await importOrCreateManga(JobId, params.title, params.year, params.externalIds)
+
     if (!response.success) {
       logger.error({ err: response.body }, 'Error importing CBx file: Failed to create or retrieve manga')
       return response
@@ -258,6 +261,7 @@ async function importCBx (JobId, params) {
     return { success: false, code: 500, body: e.message }
   }
 }
+
 class CBxImportWorker extends Worker {
   /**
    * Processes a job.

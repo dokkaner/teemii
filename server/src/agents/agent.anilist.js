@@ -80,7 +80,7 @@ class Anilist extends Agent {
 
   #limiter = new Bottleneck({
     maxConcurrent: 1,
-    minTime: 1000
+    minTime: 665
   })
 
   #lookupSchema = {

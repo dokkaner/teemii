@@ -10,6 +10,7 @@ const { logger } = require('./src/loaders/logger')
 const { backup } = require('./src/services/backupService')
 const { LOGS_DIR } = require('./src/loaders/configManager')
 const { scrobblersManager } = require('./src/services/scrobblerService')
+const puppet = require('./src/utils/puppeteerPool')
 
 async function startServer () {
   try {
@@ -52,6 +53,17 @@ process.on('unhandledRejection', (reason, promise) => {
   // reporter.captureException(reason)
   console.error('Unhandled Rejection at:', promise, 'reason:', reason)
 })
+
+function gracefulShutdown () {
+  puppet.destructor().then(() => {
+    console.log('Shutting down...')
+    process.exit(0)
+  })
+}
+
+// Graceful shutdown
+process.on('SIGINT', gracefulShutdown)
+process.on('SIGTERM', gracefulShutdown)
 
 startServer().catch(error => {
   // reporter.captureException(error)

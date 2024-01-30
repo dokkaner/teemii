@@ -7,7 +7,7 @@ class Mal extends Agent {
   // #region private
 
   #limiter = new Bottleneck({
-    maxConcurrent: 1,
+    maxConcurrent: 3,
     minTime: 1000
   })
 
@@ -210,6 +210,7 @@ class Mal extends Agent {
         })
     })
   }
+
   // #endregion
 
   // #region public
@@ -239,6 +240,7 @@ class Mal extends Agent {
     this.funcHelperLookupRecommendations = this.#helperMangaBasedRecommendations
     this.funcGetPicturesById = this.#getMangaPictures
     this.limiter = this.#limiter
+    this.allowProxyImage = false
   };
 
   // #endregion

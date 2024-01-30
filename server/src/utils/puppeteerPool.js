@@ -38,6 +38,10 @@ async function autoScroll (page) {
 }
 
 class PuppeteerPool {
+  destructor () {
+    return this.pool.drain().then(() => this.pool.clear())
+  }
+
   constructor (maxBrowsers = 10, minBrowsers = 2) {
     puppeteer.use(AdblockerPlugin())
     puppeteer.use(StealthPlugin())
@@ -138,7 +142,7 @@ class PuppeteerPool {
       }
       return data
     } catch (e) {
-      logger.error({ err: e })
+      logger.error({ err: e }, 'Error while getting body ' + url)
       return ''
     } finally {
       await page.setRequestInterception(false)

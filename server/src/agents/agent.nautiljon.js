@@ -181,6 +181,7 @@ class Nautiljon extends Agent {
     this.lookupSchema = this.#lookupSchema
     this.funcGetMangaById = this.#getMangaById
     this.funcHelperLookupMangas = this.#helperLookupMangas
+    this.allowProxyImage = true
   };
 
   // #endregion

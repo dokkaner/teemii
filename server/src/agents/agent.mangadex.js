@@ -11,8 +11,8 @@ class Mangadex extends Agent {
   #jwtRefresh = ''
 
   #limiter = new Bottleneck({
-    maxConcurrent: 2,
-    minTime: 900
+    maxConcurrent: 5,
+    minTime: 999
   })
 
   #lookupSchema = {
@@ -123,7 +123,7 @@ class Mangadex extends Agent {
           const url = 'https://uploads.mangadex.org/covers/' + iteratee.id + '/' + cover + '.256.jpg'
           const urlBase64 = Buffer.from(url).toString('base64')
           const proxyUrl = `https://wsrv.nl/?url=https://services.f-ck.me/v1/image/${urlBase64}`
-          return proxyUrl
+          return url
         }
         return null
       }).filter(n => n)

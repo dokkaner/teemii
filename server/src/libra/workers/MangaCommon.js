@@ -14,6 +14,7 @@ const ips = require('../../services/imageProcessingService')
 const services = require('../../services')
 const EntityJobService = require('../services/EntityJobService')
 const { realm } = require('../../loaders/realm')
+const Downloader = require('nodejs-file-downloader')
 
 function mergeAndNormalizeDescriptions (existingDescriptions, newDescriptions) {
   const normalizedDescriptions = { ...existingDescriptions }
@@ -70,14 +71,41 @@ async function processImage (manga, url, origin, outputPath, dimensions, getColo
     // Ensures the target directory exists.
     await os.mkdir(folder)
 
-    // Delays the download process (useful if rate limiting is a concern).
-    await new Promise(resolve => setTimeout(resolve, 500))
-
     // Download the file to a temporary path.
     // get file extension
     const ext = os.extractFileExtension(origin)
     const tempPath = path.join(folder, `${filename}.${ext}`)
-    await utils.downloadFile(url, folder, null, `${filename}.${ext}`)
+
+    // await utils.downloadFile(url, folder, null, `${filename}.${ext}`)
+    let sourceDomain = null
+    try {
+      sourceDomain = url.startsWith('http') ? utils.domain(url) : null
+    } catch (e) {
+      logger.info('Failed to parse domain from url')
+    }
+    const downloader = new Downloader({
+      url,
+      directory: folder,
+      fileName: `${filename}.${ext}`,
+      cloneFiles: false,
+      maxAttempts: 2,
+      headers: {
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+        Referer: sourceDomain || 'https://www.google.com/',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'cross-site',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1'
+      }
+    })
+
+    await downloader.download()
+
     const enhancedAssets = configManager.get('preferences.advancedFeatures.enhancedAssets') || false
 
     if (getColor) {
@@ -88,13 +116,13 @@ async function processImage (manga, url, origin, outputPath, dimensions, getColo
     if (enhancedAssets) {
       await ips.processImage(tempPath, ['eh_waifu2x', 'cl_trim'])
     }
+
     await sharp(tempPath)
       .resize({
         width: dimensions.width,
         height: dimensions.height,
         fit: 'cover',
-        position: 'attention',
-        kernel: sharp.kernel.cubic
+        position: 'attention'
       })
       .toFormat('webp', { lossless: true })
       .toFile(outputPath + '.webp').then(() => {
@@ -210,8 +238,8 @@ async function downloadAssets (manga) {
   ]
 
   const rootStorage = configManager.get('storagePath')
-  // const priorities = agents.getCoverPriority()
   const agentsToExclude = []
+
   for (const asset of assets) {
     let success = false
     let maxErrors = 0
@@ -221,15 +249,18 @@ async function downloadAssets (manga) {
 
       if (!url) break
 
-      // proxy image
       const urlBase64 = Buffer.from(url).toString('base64')
-      let proxyUrl = `https://wsrv.nl/?url=https://services.f-ck.me/v1/image/${urlBase64}`
+      let proxyUrl = `https://services.f-ck.me/v1/image/${urlBase64}`
 
-      // if source is bato, use the original url
-      if (source === 'bato') proxyUrl = url
+      // check if agent allow proxy use
+      if (agents.allowProxyImage(source)) {
+        proxyUrl = `https://wsrv.nl/?url=https://services.f-ck.me/v1/image/${urlBase64}`
+      }
 
       const imageVPath = path.join(rootStorage, `${asset.type}s`, `${manga.id}`)
+
       try {
+        logger.info('Downloading asset' + asset.type + ' from ' + source + ' for ' + manga.canonicalTitle)
         await processImage(manga, proxyUrl, url, imageVPath, asset.dimensions, (asset.type === 'cover' && !manga.color))
         success = true
       } catch (e) {
@@ -293,7 +324,6 @@ async function fetchMangaData (externalIds, agentsList) {
     const mangas = await agents.searchManga(externalIds, agentsList)
 
     // Map the retrieved manga data to a unified format
-    // Return the unified manga object
     return mangasToUnified(mangas)
   } catch (error) {
     console.error('Error fetching manga data:', error)
@@ -346,6 +376,10 @@ async function upsertManga (slug, year) {
 }
 
 async function importOrCreateManga (jobID, title, year, externalIds, trackingInfo, monitor) {
+  // instrumentation
+  const start = performance.now()
+  // end instrumentation
+
   const lookupAgents = await services.agents.agentsEnabledForCapability('MANGA_METADATA_FETCH')
   const metadataAgents = []
   const extraAgents = []
@@ -360,6 +394,7 @@ async function importOrCreateManga (jobID, title, year, externalIds, trackingInf
   })
 
   const manga = await fetchMangaData(externalIds, metadataAgents)
+
   await fetchExtraMangaData(manga, extraAgents)
 
   const slug = `${slugify(manga.canonicalTitle)}-(${year})`
@@ -367,7 +402,6 @@ async function importOrCreateManga (jobID, title, year, externalIds, trackingInf
   manga.id = meta.newId
   await EntityJobService.createEntityJob(meta.newId, 'manga', jobID)
 
-  // run in parallel
   await Promise.all([
     downloadAssets(manga),
     fetchMangaChapters(manga)
@@ -384,6 +418,11 @@ async function importOrCreateManga (jobID, title, year, externalIds, trackingInf
     await orm.manga.update(manga, { where: { id: manga.id } }, { returning: true, plain: true })
   }
   await realm.upsertOneManga(manga)
+
+  // instrumentation
+  const end = performance.now()
+  logger.info(`_________ importOrCreateManga execution time: ${(end - start).toFixed(1)} ms`)
+  // end instrumentation
   return { success: true, code: 200, body: manga }
 }
 

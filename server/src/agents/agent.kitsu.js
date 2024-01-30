@@ -341,6 +341,7 @@ class Kitsu extends Agent {
     this.helperScrobblerPush = this.#helperScrobblerPush
     this.loggedIn = false
     this.coverPriority = 10
+    this.allowProxyImage = false
   };
 
   async login () {

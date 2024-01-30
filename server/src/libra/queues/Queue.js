@@ -1,4 +1,5 @@
 const { logger } = require('../../loaders/logger')
+const EventEmitter = require('events')
 
 class TimeoutError extends Error {
   constructor (message) {
@@ -22,7 +23,7 @@ const QueueMode = {
 /**
  * Represents a queue that manages jobs and distributes them to workers.
  */
-class Queue {
+class Queue extends EventEmitter {
   /**
    * Constructs a new Queue instance.
    * Initializes the queue with a name, an empty job list, and an array of workers.
@@ -31,6 +32,7 @@ class Queue {
    * @param {QueueMode} mode - The mode of the queue (delayed or immediate).
    */
   constructor (name, mode = QueueMode.CALLED) {
+    super()
     if (!name) {
       throw new Error('A queue must have a name.')
     }
@@ -54,6 +56,11 @@ class Queue {
 
   async start () {
     await this.#startCyclicUpdate(5)
+  }
+
+  isBusy () {
+    const processing = (this.isProcessing || this.lanes.pending.length > 0 || this.lanes.backlog.length > 0)
+    return (processing || this.lanes.processing.length > 0)
   }
 
   /**
@@ -100,6 +107,7 @@ class Queue {
 
     const process = () => {
       try {
+        // const hasBacklogJobs = this.lanes.backlog.length > 0
         // pick up jobs from backlog, only 1 job at a time
         if (this.lanes.pending.length === 0 && this.lanes.backlog.length > 0) {
           const job = this.lanes.backlog[0]
@@ -107,7 +115,6 @@ class Queue {
             job.pickUp(this.name)
           }
         }
-
         this.updateLanes()
       } catch (e) {
         logger.error({ err: e }, 'Error during lane update')
@@ -127,8 +134,12 @@ class Queue {
    * @param {Job} job - The job to be added to the queue.
    */
   async addJob (job) {
-    this.lanes.backlog.push(job)
-    // await job.pickUp(this.name)
+    if (!this.isBusy()) {
+      this.lanes.pending.push(job)
+    } else {
+      this.lanes.backlog.push(job)
+    }
+
     if ((this.mode.toString() === QueueMode.IMMEDIATE) && !this.isProcessing) {
       await this.processQueue()
     }

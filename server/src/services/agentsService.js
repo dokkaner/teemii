@@ -63,6 +63,23 @@ async function matchManga (manga, existingManga, yearDifference = 2) {
 
   return (matchScore / totalWeight) * 100
 }
+
+function teemiiGetCover (manga) {
+  const priorities = agents.getCoverPriority()
+  // Teemii as a source keep all know covers as an object of source:url
+  const covers = Object.entries(manga.cover)
+  // sort the covers object by priority
+  covers.sort((a, b) => {
+    const priorityA = priorities[a[0]]
+    const priorityB = priorities[b[0]]
+    return priorityA - priorityB
+  })
+
+  // return the cover with the highest priority
+  manga.allowProxyImage = agents.agent(covers[0]?.[0])?.instance?.allowProxyImage
+  return covers[0]?.[1] || null
+}
+
 function getBestCover (A, B) {
   // lower is better
   const priorities = agents.getCoverPriority()
@@ -88,13 +105,16 @@ async function mergeManga (existingManga, manga) {
       return objValue
     }
   })
-  // merge the external ids
-  mergedManga.externalIds = _.merge(existingManga.externalIds, manga.externalIds)
-  mergedManga.externalLinks = _.merge(existingManga.externalLinks, manga.externalLinks)
-  mergedManga.cover = getBestCover(existingManga, manga)
 
-  if (manga.source !== existingManga.source && existingID) {
-    mergedManga.externalIds[manga.source] = existingID
+  // merge the external ids
+  if (mergedManga.source !== 'teemii') {
+    mergedManga.externalIds = _.merge(existingManga.externalIds, manga.externalIds)
+    mergedManga.externalLinks = _.merge(existingManga.externalLinks, manga.externalLinks)
+    mergedManga.cover = getBestCover(existingManga, manga)
+    mergedManga.allowProxyImage = agents.agent(mergedManga.source)?.instance?.allowProxyImage
+    if (manga.source !== existingManga.source && existingID) {
+      mergedManga.externalIds[manga.source] = existingID
+    }
   }
 
   return mergedManga
@@ -340,15 +360,26 @@ module.exports = class AgentsService {
       // Determine the search terms based on force search flag and user preferences
       const searchTerms = await determineSearchTerms(term, forceSearch)
 
-      // Execute manga search through enabled agents
-      const enabledAgents = await this.agentsEnabledForCapability('MANGA_CROSS_LOOKUP')
-      const searchPromises = searchTerms.flatMap(searchTerm =>
-        enabledAgents.map(agent => agent.instance.searchMangas(searchTerm))
-      )
-      const results = await Promise.all(searchPromises)
+      let results = []
+      let filteredResults = []
 
-      // Process and filter search results
-      const filteredResults = await processSearchResults(results, excludeGenres)
+      const useTeemii = true
+      if (useTeemii) {
+        results = await agents.agent('teemii').instance.lookupMangas(term)
+        // choose the best cover from the results
+        results.forEach(result => {
+          result.cover = teemiiGetCover(result)
+        })
+        filteredResults = results
+      } else {
+        // Execute manga search through enabled agents
+        const enabledAgents = await this.agentsEnabledForCapability('MANGA_CROSS_LOOKUP')
+        const searchPromises = searchTerms.flatMap(searchTerm =>
+          enabledAgents.map(agent => agent.instance.searchMangas(searchTerm))
+        )
+        results = await Promise.all(searchPromises)
+        filteredResults = await processSearchResults(results, excludeGenres)
+      }
 
       // Check for existing mangas in the library
       const libraryMangas = await services.library.getAllManga()
@@ -361,6 +392,8 @@ module.exports = class AgentsService {
 
       // proxy the cover image
       finalResults.forEach(result => {
+        if (!result.cover) return
+        if (!result.allowProxyImage) return
         const urlBase64 = Buffer.from(result.cover).toString('base64')
         result.cover = `https://wsrv.nl/?url=https://services.f-ck.me/v1/image/${urlBase64}&w=240&h=360`
       })

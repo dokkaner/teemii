@@ -83,6 +83,14 @@ class AgentsManager {
     return this.#internalAgents.find((el) => el.id === id)
   }
 
+  allowProxyImage (id) {
+    const agent = this.#internalAgents.find((el) => el.id === id)
+    if (!agent) {
+      return false
+    }
+    return agent.instance.allowProxyImage
+  }
+
   /**
    * return a list of coverPriority for each agent
    */

@@ -273,6 +273,7 @@ class ComickFun extends Agent {
     this.funcHelperLookupChapters = this.#helperLookupChapters
     this.funcHelperChapterPagesURLByChapterId = this.#ChapterPagesURLByChapterId
     this.httpClient = AgentHTTPClient.HTTP
+    this.allowProxyImage = false
   }
 
   // #endregion

@@ -71,6 +71,9 @@ function filterMangasByAuthors (mangas, name, authors) {
   }
 
   for (const manga of mangas) {
+    if (!manga.authors) {
+      continue
+    }
     const options = { includeScore: true }
     const fuse = new Fuse(manga.authors, options)
 
@@ -135,6 +138,7 @@ class Agent {
     this.errorTimestamps = []
     this.isActive = true
     this.httpClient = AgentHTTPClient.HTTP
+    this.allowProxyImage = false
   }
 
   /**
@@ -459,8 +463,7 @@ class Agent {
         // Paginate through the manga results until maxPages is reached or no more results are found.
         let currentPageResults
         do {
-          currentPageResults = await this.limiter.schedule(() =>
-            this.funcHelperLookupMangas(this.host, query, offset, page))
+          currentPageResults = await this.limiter.schedule(() => this.funcHelperLookupMangas(this.host, query, offset, page))
           unmappedMangas.push(...currentPageResults)
           offset += this.offsetInc
           page++
@@ -472,13 +475,16 @@ class Agent {
       }
 
       // Filter and map the results using a given schema.
-      const results = this.filteredResult(query, this.lookupSchema, unmappedMangas, 0.3, ['title', 'altTitles'], altTitles)
-
+      let results = []
+      if (this.id !== 'teemii') {
+        results = this.filteredResult(query, this.lookupSchema, unmappedMangas, 0.3, ['title', 'altTitles'], altTitles)
+      } else {
+        results = this.noFilterResult(this.lookupSchema, unmappedMangas, true, 'id')
+      }
       // Apply a post-lookup schema modification function if defined.
-      if (this.funcPostLookupSchema) {
-        for (const manga of results) {
-          this.funcPostLookupSchema(manga)
-        }
+      for (const manga of results) {
+        this.funcPostLookupSchema?.(manga)
+        manga.source = this.id
       }
 
       // Log the execution time for the lookup operation.

@@ -10,7 +10,7 @@ class Mangaupdates extends Agent {
   #jwtSession = ''
 
   #limiter = new Bottleneck({
-    maxConcurrent: 3,
+    maxConcurrent: 5,
     minTime: 1000
   })
 
@@ -278,6 +278,7 @@ class Mangaupdates extends Agent {
     this.funcHelperLookupRecommendations = this.#helperMangaBasedRecommendations
     this.getCanonicalID = this.#getCanonicalID
     this.maxPages = 3
+    this.allowProxyImage = false
   };
 
   async refreshTokens () {

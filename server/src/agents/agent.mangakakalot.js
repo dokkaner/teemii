@@ -370,6 +370,7 @@ class Mangakakalot extends Agent {
     this.funcHelperChapterPagesURLByChapterId = this.#ChapterPagesURLByChapterId
     this.httpClient = AgentHTTPClient.HTTP
     this.maxPages = 3
+    this.allowProxyImage = true
   };
 
   // #endregion

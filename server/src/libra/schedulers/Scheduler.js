@@ -88,7 +88,7 @@ class Scheduler extends EventEmitter {
 
   /**
    * Returns the next run date of the scheduler.
-   * @returns {string | IfInvalid<"Invalid DateTime">} The next run date of the scheduler.
+   * @returns {string | IfInvalid<'Invalid DateTime'>} The next run date of the scheduler.
    */
   getNextRun () {
     const nextRun = this.cronJob.nextDate()

@@ -7,8 +7,6 @@ const cors = require('cors')
 const { configManager } = require('./configManager')
 const fileUpload = require('express-fileupload')
 const jwt = require('jsonwebtoken')
-const puppet = require('../utils/puppeteerPool')
-const { rmdir } = require('../services/osService')
 
 /**
  * Middleware to authenticate JWT.
@@ -88,7 +86,7 @@ class ExpressLoader {
     // Set up middleware
     app.use(cors())
     app.use(fileUpload({
-      limits: { fileSize: 100 * 1024 * 1024 } // 100MB
+      limits: { fileSize: 1024 * 1024 * 1024 } // 1GB
     }))
     app.use(express.json())
 
@@ -129,8 +127,6 @@ class ExpressLoader {
 
     process.on('uncaughtException', exitHandler(1, 'Unexpected Error'))
     process.on('unhandledRejection', exitHandler(1, 'Unhandled Promise'))
-    process.on('SIGTERM', exitHandler(0, 'SIGTERM'))
-    process.on('SIGINT', exitHandler(0, 'SIGINT'))
 
     const connections = new Set()
     this.server.on('connection', connection => {

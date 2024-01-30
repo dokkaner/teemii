@@ -243,6 +243,7 @@ class Mangapill extends Agent {
     this.funcHelperLookupChapters = this.#funcHelperLookupChapters
     this.funcHelperChapterPagesURLByChapterId = this.#funcHelperChapterPagesURLByChapterId
     this.httpClient = AgentHTTPClient.PUPPETEER
+    this.allowProxyImage = true
   };
 
   // #endregion
