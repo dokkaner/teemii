@@ -2,6 +2,7 @@ const { Agent, AgentHTTPClient } = require('../core/agent.js')
 const Bottleneck = require('bottleneck')
 const axios = require('axios')
 const _ = require('lodash')
+const { configManager } = require('../loaders/configManager')
 
 class Teemii extends Agent {
   #apiKey = ''
@@ -10,6 +11,10 @@ class Teemii extends Agent {
     maxConcurrent: 10,
     minTime: 999
   })
+
+  #getAPIKey () {
+    this.#apiKey = configManager.get('preferences.agentAuth.teemii_key') || ''
+  }
 
   #chapterSchema = {
     titles: (iteratee) => {
@@ -140,7 +145,14 @@ class Teemii extends Agent {
     id: 'id',
     title: 'canonicalTitle',
     altTitles: 'altTitles',
-    desc: 'description',
+    desc: (iteratee) => {
+      const desc = {}
+      iteratee.description?.forEach((data) => {
+        const lang = data.split(': ')[0]
+        desc[lang] = data.split(': ').slice(1).join(': ')
+      })
+      return desc
+    },
     status: 'status',
     genre: 'genres',
     year: 'startYear',
@@ -172,6 +184,7 @@ class Teemii extends Agent {
   }
 
   #helperLookupMangas (host, query) {
+    this.#getAPIKey()
     const url = `${host}/mangas/search?q=${query}&size=100&sortBy=_score`
     const config = {
       headers: { 'x-api-key': `${this.#apiKey}` }
@@ -191,6 +204,7 @@ class Teemii extends Agent {
   }
 
   async #getMangaById (host, ids) {
+    this.#getAPIKey()
     const url = `${host}/mangas/${ids.id}`
     const config = {
       headers: { 'x-api-key': `${this.#apiKey}` }
@@ -210,6 +224,7 @@ class Teemii extends Agent {
   }
 
   #helperLookupChapters (host, ids, offset, page) {
+    this.#getAPIKey()
     const url = `${host}/mangas/${ids.id}/chapters?offset=${offset}&limit=${this.offsetInc}`
     const config = {
       headers: { 'x-api-key': `${this.#apiKey}` }

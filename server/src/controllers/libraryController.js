@@ -854,10 +854,7 @@ module.exports = class LibraryController {
     const forceSearch = req.query.force === 'true'
     try {
       // profile time
-      const start = process.hrtime()
       const searchResults = await services.agents.searchMangasByTerm(term, forceSearch)
-      const end = process.hrtime(start)
-      logger.info(`Search took ${end[0]}s ${end[1] / 1000000}ms`)
       return res.status(200).send(searchResults)
     } catch (err) {
       logger.error({ err }, 'mangasLookup failed.')

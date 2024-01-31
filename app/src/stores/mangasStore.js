@@ -372,14 +372,15 @@ export const useMangaStore = defineStore('manga', {
       try {
         const res = await libraryAPI.getManga(mangaId)
         if (res.success) {
+          if (this.manga?.id === res.body?.id) {
+            this.suggestions = []
+          }
           this.lastManga = this.manga
           this.updatedAt = Date.now()
           this.manga = res.body
           // remove links from description
           this.manga.description.en = this.manga.description.en_us.replace(/https?:\/\/\S+/g, '')
           this.manga.description.fr = this.manga.description.fr_fr.replace(/https?:\/\/\S+/g, '')
-
-          this.suggestions = []
         } else {
           logger.warn('API call succeeded but returned failure: ', res)
         }

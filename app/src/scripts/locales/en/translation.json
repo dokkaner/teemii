@@ -175,6 +175,8 @@
     "agents_openai_api_key_desc": "Required to generate personal recommendations.",
     "agents_goodreads_api_key": "Goodreads API Key",
     "agents_goodreads_api_key_desc": "Required to get Goodreads metadata.",
+    "agents_teemii_api_key": "Teemii API Key (early preview - sponsors only)",
+    "agents_teemii_api_key_desc": "Required to get access to Teemii indexer.",
     "system_desc": "Provides insights of Teemii.",
     "backup": "Backups",
     "backup_desc": "Manage the backup of your settings using built-in backup.",

@@ -112,7 +112,7 @@
                 class="max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300
                  scrollbar-thumb-main-500 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl">
               <article class="pb-8 pr-8 text-main-500 dark:text-light-400">
-                <p v-html="storeHelpers.getMangaDescription(manga)"
+                <p v-html="storeHelpers.getMangaDescription(manga?.description)"
                    class="hyphens-auto text-base leading-relaxed"></p>
               </article>
             </div>

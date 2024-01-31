@@ -110,7 +110,7 @@ module.exports = class preferencesService {
     }
   }
 
-  async getUserPreferences (name, secret = false) {
+  getUserPreferences (name, secret = false) {
     try {
       const preferences = configManager.get(name, secret)
       return { success: true, code: 200, body: preferences }
@@ -142,8 +142,13 @@ module.exports = class preferencesService {
     }
   }
 
-  async getUserPreferencesOrDefault (prefKey, defaultValue) {
-    const preferencesResult = await this.getUserPreferences(prefKey)
+  getUserPreferencesOrDefault (prefKey, defaultValue) {
+    const preferencesResult = this.getUserPreferences(prefKey)
     return preferencesResult.body ? preferencesResult.body : defaultValue
+  }
+
+  existsUserPreferences (prefKey) {
+    const preferencesResult = this.getUserPreferences(prefKey)
+    return !!preferencesResult.body && preferencesResult.body !== ''
   }
 }

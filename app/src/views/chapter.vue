@@ -506,7 +506,12 @@ const changePageMode = (current) => {
   let newMode = current.id + 1
   if (newMode > pageModes.length - 1) { newMode = 0 }
   viewer.pageMode = pageModes[newMode]
-  UserInterfaceStore.readPreferences[chapter.value.mangaId].pageMode = viewer.pageMode.id
+
+  UserInterfaceStore.readPreferences[chapter.value.mangaId] = {
+    pageMode: viewer.pageMode.id,
+    fitMode: viewer.fitMode.id
+  }
+
   computeClass()
   if (newMode === 2) {
     setTimeout(() => {
@@ -521,7 +526,10 @@ const changeFitMode = (current) => {
   if (newMode > fitModes.length - 1) { newMode = 0 }
   viewer.fitMode = fitModes[newMode]
 
-  UserInterfaceStore.readPreferences[chapter.value.mangaId].fitMode = viewer.fitMode.id
+  UserInterfaceStore.readPreferences[chapter.value.mangaId] = {
+    pageMode: viewer.pageMode.id,
+    fitMode: viewer.fitMode.id
+  }
 
   computeClass()
   focusOnViewer()
@@ -696,12 +704,11 @@ onMounted(() => {
     viewer.progression = Math.round((chapter.value.readProgress * pagesCount.value) / 100)
     viewer.currentPage = route.params.page
 
-    console.log(UserInterfaceStore.readPreferences[chapter.value.mangaId].fitMode)
+    const preferences = UserInterfaceStore.readPreferences[chapter.value.mangaId] || {}
+    viewer.pageMode = pageModes.find(mode => mode.id === preferences.pageMode) || pageModes[2]
+    viewer.fitMode = fitModes.find(mode => mode.id === preferences.fitMode) || fitModes[0]
 
-    // find the pageMode regarding id
-    viewer.pageMode = pageModes.find((mode) => mode.id === UserInterfaceStore.readPreferences[chapter.value.mangaId].pageMode) || pageModes[2]
-    viewer.fitMode = fitModes.find((mode) => mode.id === UserInterfaceStore.readPreferences[chapter.value.mangaId].fitMode) || fitModes[0]
-
+    computeClass()
     setTimeout(() => {
       gridContainer.value.addEventListener('scroll', checkScroll)
       checkScroll()

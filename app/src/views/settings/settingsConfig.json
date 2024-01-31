@@ -124,7 +124,7 @@
           "preference": "openai_key",
           "component": "TBaseInput",
           "type": "password",
-          "secure": true
+          "secure": false
         },
         {
           "name": "Goodreads",
@@ -133,7 +133,16 @@
           "preference": "goodreads_key",
           "component": "TBaseInput",
           "type": "password",
-          "secure": true
+          "secure": false
+        },
+        {
+          "name": "Teemii",
+          "label": "settings.agents_teemii_api_key",
+          "help": "settings.agents_teemii_api_key_desc",
+          "preference": "teemii_key",
+          "component": "TBaseInput",
+          "type": "password",
+          "secure": false
         }
       ]
     }

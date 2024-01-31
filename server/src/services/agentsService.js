@@ -1,17 +1,10 @@
-const utils = require('../utils/agent.utils')
 const { agents } = require('../core/agentsManager')
 const _ = require('lodash')
 const { logger } = require('../loaders/logger')
 const services = require('./index.js')
-
-async function determineSearchTerms (term, forceSearch) {
-  if (forceSearch) {
-    return [term]
-  } else {
-    const altTitle = await utils.userPreferredMangaTitle(term)
-    return (term.toUpperCase() !== altTitle.toUpperCase()) ? [altTitle] : [term]
-  }
-}
+const Anilist = require('anilist-node')
+const AniCli = new Anilist()
+const axios = require('axios').default
 
 async function matchByMangaupdatesId (manga, existingManga) {
   // if one of the manga is from mangaupdates, match by mangaupdates id
@@ -127,7 +120,7 @@ async function processSearchResults (results, excludeGenres) {
   // flatten results
   const flattenedResults = []
   for (const sourceResults of results) {
-    flattenedResults.push(...sourceResults)
+    flattenedResults.push(...[sourceResults])
   }
 
   // compare each manga with the rest of the mangas
@@ -186,6 +179,35 @@ function hasExcludedGenre (genres, excludeGenres) {
 }
 
 module.exports = class AgentsService {
+  async userPreferredMangaTitle (query) {
+    const encodedQuery = encodeURIComponent(query)
+    const contentRatings = ['safe', 'suggestive', 'erotica', 'pornographic']
+    const mangadexUrl = `https://api.mangadex.org/manga?title=${encodedQuery}&limit=100&contentRating[]=${contentRatings.join('&contentRating[]=')}`
+
+    try {
+      const [aniCliResult, mangadexResult] = await Promise.all([
+        AniCli.search('manga', query).catch(err => {
+          console.error('AniCli search failed:', err)
+          return {} // Return an empty object for consistency in result structure
+        }),
+        axios.get(mangadexUrl).catch(err => {
+          console.error('Mangadex search failed:', err)
+          return {} // Return an empty object for consistency in result structure
+        })
+      ])
+
+      const altTitleAniCli = aniCliResult?.media?.[0]?.title?.userPreferred ?? ''
+      const altTitleMdex = mangadexResult?.data?.data?.[0]?.attributes?.title?.en ?? ''
+
+      return altTitleMdex && altTitleMdex !== query
+        ? altTitleMdex
+        : altTitleAniCli !== query ? altTitleAniCli : query
+    } catch (e) {
+      logger.warn({ err: e }, 'Unexpected error in fetching manga titles')
+      return query
+    }
+  }
+
   /**
    * Asynchronously retrieves agents enabled for a specific capability.
    *
@@ -193,7 +215,7 @@ module.exports = class AgentsService {
    * @returns {Promise<Array>} - The list of agents enabled for the given capability.
    */
   async agentsEnabledForCapability (capability) {
-    const agentsSettings = await services.preferences.getUserPreferencesOrDefault('AGENTS', {})
+    const agentsSettings = services.preferences.getUserPreferencesOrDefault('AGENTS', {})
     return agents.internalAgents.filter(agent => {
       const agentPreferences = agentsSettings[agent.id]
       return agentPreferences && agentPreferences[capability] === 'TRUE'
@@ -270,7 +292,7 @@ module.exports = class AgentsService {
 
       // If no suggestions are found, try with an alternate title.
       if (!suggestions) {
-        const altTitle = await utils.userPreferredMangaTitle(title)
+        const altTitle = await this.userPreferredMangaTitle(title)
         suggestions = await fetchRecommendations(altTitle)
         return suggestions
       }
@@ -349,6 +371,15 @@ module.exports = class AgentsService {
     }
   }
 
+  async determineSearchTerms (term, forceSearch) {
+    if (forceSearch) {
+      return [term]
+    } else {
+      const altTitle = await this.userPreferredMangaTitle(term)
+      return (term.toUpperCase() !== altTitle.toUpperCase()) ? [altTitle] : [term]
+    }
+  }
+
   /**
    * Search for manga titles using external agents.
    *
@@ -359,73 +390,33 @@ module.exports = class AgentsService {
    */
   async searchMangasByTerm (term, forceSearch) {
     try {
-      const excludeGenres = await services.preferences.getUserPreferencesOrDefault('preferences.agentOptions.excludeGenres', [])
+      const excludeGenres = services.preferences.getUserPreferencesOrDefault('preferences.agentOptions.excludeGenres', [])
+      const searchTerms = await this.determineSearchTerms(term, forceSearch)
+      const useTeemii = services.preferences.existsUserPreferences('preferences.agentAuth.teemii_key')
 
-      // Determine the search terms based on force search flag and user preferences
-      const searchTerms = await determineSearchTerms(term, forceSearch)
+      // Initialize results array
+      let results = []
 
-      let results
-      let filteredResults
-
-      const useTeemii = true
       if (useTeemii) {
-        // results = await
-
-        const searchPromises = searchTerms.flatMap(searchTerm =>
-          agents.agent('teemii').instance.lookupMangas(searchTerm)
-        )
-
-        // choose the best cover from the results
-        results = await Promise.all(searchPromises)
-        // flatten results
-        results = _.flatten(results)
-
-        results.forEach(result => {
-          result.cover = teemiiGetCover(result)
-        })
-        filteredResults = results
+        results = _.flatten(await Promise.all(
+          searchTerms.flatMap(searchTerm => agents.agent('teemii').instance.lookupMangas(searchTerm))
+        ))
+        results.forEach(result => result.cover = teemiiGetCover(result))
       } else {
-        // Execute manga search through enabled agents
         const enabledAgents = await this.agentsEnabledForCapability('MANGA_CROSS_LOOKUP')
-        const searchPromises = searchTerms.flatMap(searchTerm =>
-          enabledAgents.map(agent => agent.instance.searchMangas(searchTerm))
-        )
-        results = await Promise.all(searchPromises)
-        filteredResults = await processSearchResults(results, excludeGenres)
+        results = _.flatten(await Promise.all(
+          searchTerms.flatMap(searchTerm => enabledAgents.map(agent => agent.instance.searchMangas(searchTerm)))
+        ))
+        results = await processSearchResults(results, excludeGenres)
       }
 
-      // Check for existing mangas in the library
       const libraryMangas = await services.library.getAllManga()
-      const finalResults = filteredResults.map(result => {
-        return {
-          ...result,
-          alreadyInLibrary: isInLibrary(result, libraryMangas)
-        }
-      })
+      const finalResults = results.map(result => ({
+        ...result,
+        alreadyInLibrary: isInLibrary(result, libraryMangas),
+        cover: result.allowProxyImage && result.cover ? `https://wsrv.nl/?url=https://services.f-ck.me/v1/image/${Buffer.from(result.cover).toString('base64')}&w=240&h=360` : result.cover
+      })).sort((a, b) => useTeemii ? parseInt(b.faved || '-1') - parseInt(a.faved || '-1') : parseInt(b.score) - parseInt(a.score))
 
-      // proxy the cover image
-      finalResults.forEach(result => {
-        if (!result.cover) return
-        if (!result.allowProxyImage) return
-        const urlBase64 = Buffer.from(result.cover).toString('base64')
-        result.cover = `https://wsrv.nl/?url=https://services.f-ck.me/v1/image/${urlBase64}&w=240&h=360`
-      })
-
-      // order final results by score
-      if (!useTeemii) {
-        finalResults.sort((a, b) => {
-          return parseInt(b.score) - parseInt(a.score)
-        })
-      } else {
-        finalResults.sort((a, b) => {
-          const fA = parseInt(a.faved || '-1')
-          const fB = parseInt(b.faved || '-1')
-
-          return fB - fA
-        })
-      }
-
-      // Send the response
       return {
         correctedQuery: searchTerms.includes(term) ? null : searchTerms[0],
         results: finalResults

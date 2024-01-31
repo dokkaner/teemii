@@ -319,9 +319,9 @@ async function fetchExtraMangaData (manga, agentsList) {
     }
 
     return validateMangaData(manga)
-  } catch (error) {
-    logger.error('Error fetching extra manga data:', error)
-    throw error
+  } catch (e) {
+    logger.error({ err: e }, 'Error fetching extra manga data:')
+    throw e
   }
 }
 

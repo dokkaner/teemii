@@ -51,7 +51,8 @@
                   <div v-if="media.data.desc"
                        class="max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl">
                     <article class="pb-8 pr-8 text-main-500 dark:text-light-400">
-                      <p v-html="media.data.desc" class="hyphens-auto text-base leading-relaxed"></p>
+                      <p v-html="storeHelpers.getMangaDescription(media?.data?.desc)"
+                         class="hyphens-auto text-base leading-relaxed"></p>
                     </article>
                   </div>
                 </div>
@@ -77,6 +78,7 @@
 import libraryAPI from '../api/library'
 import { ref } from 'vue'
 import BaseButton from '../components/base/TBaseButton.vue'
+import storeHelpers from '@/stores/utils'
 
 import {
   DialogTitle,
@@ -151,6 +153,7 @@ export default {
     }
 
     return {
+      storeHelpers,
       addMedia,
       monitor
     }

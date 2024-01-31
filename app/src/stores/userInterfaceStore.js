@@ -1,8 +1,8 @@
 import { useDark, useMediaQuery, useStorage, useToggle } from '@vueuse/core'
 import { defineStore } from 'pinia'
-import { watch } from 'vue'
 import { locales, localesNames } from '@/scripts/i18n.js'
 
+const viewMode = { fitMode: 0, pageMode: 2 }
 /**
  * @typedef UserInterfaceStore
  * @type { actions | getters | state | import('pinia').Store }
@@ -19,7 +19,8 @@ import { locales, localesNames } from '@/scripts/i18n.js'
  */
 export const useUserInterfaceStore = defineStore('theme', {
   state: () => {
-    const readPreferences = useStorage('readPreferences', [{}])
+    const readPreferences = useStorage('readerPreferences', {}, localStorage)
+
     const isDarkTheme = useDark()
     const toggleDark = useToggle(isDarkTheme)
     const isSmallScreen = useMediaQuery('(max-width: 700px)')
