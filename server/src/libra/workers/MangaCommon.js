@@ -202,18 +202,32 @@ function slugify (str) {
  */
 async function fetchMangaChapters (manga) {
   try {
-    const agentsToSearchChapters = await services.agents.agentsEnabledForCapability('CHAPTER_FETCH')
-    const chapters = await AddChaptersToCollection(manga, agentsToSearchChapters)
-    if (chapters.length === 0) {
+    const useTeemii = false
+    let chapters = null
+    // check if we have a teemii id in externalIds
+    if (manga.externalIds.teemii && useTeemii) {
+      const teemii = await services.agents.getAgentInstance('teemii')
+      chapters = await teemii.lookupChaptersByMangaId({ id: manga.externalIds.teemii })
+      chapters = await AddChaptersToCollection(manga, null, chapters)
+    }
+
+    if (!chapters && (!manga.externalIds.teemii || !useTeemii)) {
+      const agentsToSearchChapters = await services.agents.agentsEnabledForCapability('CHAPTER_FETCH')
+      chapters = await AddChaptersToCollection(manga, agentsToSearchChapters)
+    }
+
+    if (chapters?.length === 0) {
       logger.warn(`No chapters found for Manga ${manga.id}`)
       return
     }
+
     // if chapterCount is null or 0, set it to chapters.length
     if (manga.chapterCount === null || manga.chapterCount === 0) {
       manga.chapterCount = chapters?.length || 0
     }
     manga.averageReleaseInterval = calculateAverageReleaseInterval(chapters, 20)
     manga.lastRelease = chapters[0].readableAt || chapters[0].publishAt
+    if (manga.externalIds.teemii) manga.lastRelease = new Date(manga.lastRelease)
     manga.nextRelease = new Date(manga.lastRelease?.getTime() + (manga.averageReleaseInterval * 24 * 60 * 60 * 1000))
   } catch (error) {
     logger.error('Error fetching manga chapters:', error)
@@ -375,27 +389,43 @@ async function upsertManga (slug, year) {
   }
 }
 
+async function teemiiImportOrCreateManga (id) {
+  // get teemii agent
+  const teemii = await services.agents.getAgentInstance('teemii')
+  // get manga from teemii
+  return await teemii.getMangaById({ id })
+}
+
 async function importOrCreateManga (jobID, title, year, externalIds, trackingInfo, monitor) {
   // instrumentation
   const start = performance.now()
   // end instrumentation
 
-  const lookupAgents = await services.agents.agentsEnabledForCapability('MANGA_METADATA_FETCH')
-  const metadataAgents = []
-  const extraAgents = []
+  // check if we have a teemii id in externalIds
+  let manga
+  if (externalIds.teemii) {
+    manga = await teemiiImportOrCreateManga(externalIds.teemii)
+  }
 
-  lookupAgents.forEach(agent => {
-    // check if agent ID is in externalIds
-    if (externalIds[agent.id] != null) {
-      metadataAgents.push(agent.id)
-    } else {
-      extraAgents.push(agent.id)
-    }
-  })
+  if (!manga) {
+    const lookupAgents = await agents.agentsEnabledForCapability('MANGA_METADATA_FETCH')
+    const metadataAgents = []
+    const extraAgents = []
 
-  const manga = await fetchMangaData(externalIds, metadataAgents)
+    lookupAgents.forEach(agent => {
+      // check if agent ID is in externalIds
+      if (externalIds[agent.id] != null) {
+        metadataAgents.push(agent.id)
+      } else {
+        extraAgents.push(agent.id)
+      }
+    })
 
-  await fetchExtraMangaData(manga, extraAgents)
+    manga = await fetchMangaData(externalIds, metadataAgents)
+    await fetchExtraMangaData(manga, extraAgents)
+  } else {
+    manga.externalIds.teemii = externalIds.teemii
+  }
 
   const slug = `${slugify(manga.canonicalTitle)}-(${year})`
   const meta = await upsertManga(slug, year)

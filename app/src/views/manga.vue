@@ -573,7 +573,7 @@ export default {
 
     const chaptersPaginated = (page, perPageItems, term) => {
       let chapters = mangaChapters.value.sort((a, b) => {
-        return a.chapter - b.chapter
+        return Number(a.chapter) - Number(b.chapter)
       })
 
       // use fuse.js to search in chapters

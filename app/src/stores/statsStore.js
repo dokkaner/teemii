@@ -39,9 +39,9 @@ export const useStatStore = defineStore('stat', {
       const labels = []
       let colors = []
       if (isDark) {
-        colors = helpers.generateColor('#fdf1ff', '#7a7482', maxGenres + 1)
+        colors = helpers.generateColor('#fdf1ff', '#7a7482', maxGenres)
       } else {
-        colors = helpers.generateColor('#fcf0ff', '#6a6472', maxGenres + 1)
+        colors = helpers.generateColor('#fcf0ff', '#6a6472', maxGenres)
       }
       // const colors = helpers.generateColor('#fcf0ff', '#6a6472', maxGenres + 1)
 
@@ -59,8 +59,8 @@ export const useStatStore = defineStore('stat', {
         return {}
       }
 
-      labels.push('Others')
-      data.push(others)
+      // labels.push('Others')
+      // data.push(others)
 
       return JSON.parse(JSON.stringify({
         labels: [...labels],
@@ -78,6 +78,7 @@ export const useStatStore = defineStore('stat', {
       this.isLoading = true
       try {
         const res = await libraryAPI.getReadingStats()
+
         if (res.success) {
           this.updatedAt = Date.now()
           this.stats = res.body

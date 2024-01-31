@@ -207,6 +207,14 @@ class ORMService {
   constructor () {
     this.sequelize = null
     this.Sequelize = null
+    this.manga = null
+    this.chapter = null
+    this.file = null
+    this.stats = null
+    this.storage = null
+    this.suggestion = null
+    this.job = null
+    this.entityJob = null
   }
 
   async checkApplyMigrations () {

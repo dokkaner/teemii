@@ -200,6 +200,10 @@ module.exports = class AgentsService {
     })
   }
 
+  getAgentInstance (agentId) {
+    return agents.agent(agentId).instance
+  }
+
   async getSourceURLs (manga) {
     // for each key:value from externalIds build an url
     const sources = []
@@ -366,6 +370,7 @@ module.exports = class AgentsService {
       const useTeemii = true
       if (useTeemii) {
         results = await agents.agent('teemii').instance.lookupMangas(term)
+
         // choose the best cover from the results
         results.forEach(result => {
           result.cover = teemiiGetCover(result)

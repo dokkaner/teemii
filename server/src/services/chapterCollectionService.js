@@ -6,10 +6,17 @@ const _ = require('lodash')
 
 module.exports = {
 
-  async AddChaptersToCollection (manga, probes) {
+  async AddChaptersToCollection (manga, probes, chaptersInitial) {
     try {
-      const chapters = await agents.searchMangaChapters(manga.externalIds, probes, null)
-      const chaptersUnified = await chaptersMapper.chaptersToUnified(manga, chapters)
+      let chapters
+      let chaptersUnified
+
+      if (chaptersInitial) {
+        chaptersUnified = chaptersInitial
+      } else {
+        chapters = await agents.searchMangaChapters(manga.externalIds, probes, null)
+        chaptersUnified = await chaptersMapper.chaptersToUnified(manga, chapters)
+      }
 
       logger.trace(chaptersUnified.length + ' chapters to save.')
       const uniqueIds = []
@@ -22,6 +29,7 @@ module.exports = {
         })
 
         if (!existing) {
+          c.mangaId = manga.id
           try {
             if (!uniqueIds.includes(c?.chapter)) {
               await orm.chapter.upsert(c)

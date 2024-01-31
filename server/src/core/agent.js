@@ -470,8 +470,10 @@ class Agent {
         } while (currentPageResults.length > 0 && page <= this.maxPages)
       } else {
         // If pagination is not supported, fetch the first page of results.
-        unmappedMangas.push(...await this.limiter.schedule(() =>
-          this.funcHelperLookupMangas(this.host, query, offset, page)))
+        const start = process.hrtime()
+        unmappedMangas.push(...await this.limiter.schedule(() => this.funcHelperLookupMangas(this.host, query, offset, page)))
+        const end = process.hrtime(start)
+        logger.info(`${this.id} lookupMangas - Fetching first page of results took ${(end[0] * 1000 + end[1] / 1000000).toFixed(1)} ms`)
       }
 
       // Filter and map the results using a given schema.

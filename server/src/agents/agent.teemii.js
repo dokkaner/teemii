@@ -1,23 +1,146 @@
-const { Agent, AgentCapabilities, AgentHTTPClient } = require('../core/agent.js')
+const { Agent, AgentHTTPClient } = require('../core/agent.js')
 const Bottleneck = require('bottleneck')
 const axios = require('axios')
-const { logger } = require('../loaders/logger')
-const { configManager } = require('../loaders/configManager')
-const { convertToLocale } = require('../utils/agent.utils')
+const _ = require('lodash')
 
 class Teemii extends Agent {
   #apiKey = ''
 
   #limiter = new Bottleneck({
-    maxConcurrent: 3,
+    maxConcurrent: 10,
     minTime: 999
   })
+
+  #chapterSchema = {
+    titles: (iteratee) => {
+      const langs = {}
+      iteratee.titles?.forEach((data) => {
+        const lang = data.split(': ')[0]
+        langs[lang] = data.split(': ').slice(1).join(': ')
+      })
+      return langs
+    },
+    mangaId: 'mangaId',
+    langAvailable: (iteratee) => {
+      const langs = []
+      iteratee.langAvailable?.forEach((data) => {
+        const lang = data.split(': ')[1]
+        langs.push(lang)
+      })
+      return langs
+    },
+    posterImage: 'posterImage',
+    volume: 'volumeNum',
+    chapter: 'chapterNum',
+    pages: 'pages',
+    publishAt: 'publishAt',
+    readableAt: 'readableAt',
+    metadata: (iteratee) => {
+      const metadata = []
+      iteratee.metadata?.forEach((str) => {
+        const keyValuePairs = _.split(str, ', ')
+        const pairs = _.map(keyValuePairs, pair => _.split(pair, ': '))
+        const object = _.fromPairs(pairs)
+        metadata.push(object)
+      })
+      return metadata
+    },
+    externalIds: (iteratee) => {
+      const exIds = {}
+      iteratee.externalIds?.forEach((id) => {
+        const [source, url] = id.split(': ')
+        exIds[source] = url
+      })
+      return exIds
+    },
+    externalLinks: (iteratee) => {
+      const exIds = {}
+      iteratee.externalLinks?.forEach((id) => {
+        const [source, url] = id.split(': ')
+        exIds[source] = url
+      })
+      return exIds
+    }
+  }
+
+  #mangaSchema = {
+    id: 'id',
+    type: 'type',
+    canonicalTitle: 'canonicalTitle',
+    titles: 'titles',
+    altTitles: 'altTitles',
+    slug: 'slug',
+    publicationDemographics: 'publicationDemographic',
+    genres: 'genres',
+    synopsis: 'synopsis',
+    description: 'description',
+    tags: 'tags',
+    status: 'status',
+    isLicensed: 'isLicensed',
+    bannerImage: (iteratee) => {
+      const covers = {}
+      iteratee.bannerImage.forEach((id) => {
+        const [source, url] = id.split(': ')
+        if (source !== 'bato') covers[source] = url
+      })
+      return covers
+    },
+    posterImage: (iteratee) => {
+      const covers = {}
+      iteratee.posterImage.forEach((id) => {
+        const [source, url] = id.split(': ')
+        if (source !== 'bato') covers[source] = url
+      })
+      return covers
+    },
+    coverImage: (iteratee) => {
+      const covers = {}
+      iteratee.coverImage.forEach((id) => {
+        const [source, url] = id.split(': ')
+        if (source !== 'bato') covers[source] = url
+      })
+      return covers
+    },
+    chapterCount: 'chapterCount',
+    volumeCount: 'volumeCount',
+    serialization: 'serialization',
+    nextRelease: 'nextRelease',
+    lastRelease: 'lastRelease',
+    popularityRank: 'popularityRank',
+    favoritesCount: 'favoritesCount',
+    score: 'score',
+    contentRating: 'contentRating',
+    originalLanguage: 'originalLanguage',
+    startYear: 'startYear',
+    endYear: 'endYear',
+    authors: 'authors',
+    publishers: 'publishers',
+    chapterNumbersResetOnNewVolume: 'chapterNumbersResetOnNewVolume',
+    externalLinks: (iteratee) => {
+      const exIds = {}
+      iteratee.externalLinks?.forEach((id) => {
+        const [source, url] = id.split(': ')
+        exIds[source] = url
+      })
+      exIds.teemii = 'https://teemii.io/'
+      return exIds
+    },
+    externalIds: (iteratee) => {
+      const exIds = {}
+      iteratee.externalIds?.forEach((id) => {
+        const [source, url] = id.split(': ')
+        exIds[source] = url
+      })
+      exIds.teemii = iteratee.slug
+      return exIds
+    }
+  }
 
   #lookupSchema = {
     id: 'id',
     title: 'canonicalTitle',
     altTitles: 'altTitles',
-    desc: 'description.en_us',
+    desc: 'description',
     status: 'status',
     genre: 'genres',
     year: 'startYear',
@@ -33,6 +156,7 @@ class Teemii extends Agent {
       iteratee.coverImage.forEach((id) => {
         const [source, url] = id.split(': ')
         if (source !== 'bato') covers[source] = url
+        if (source === 'mangadex') covers[source] = url + '.256.jpg'
       })
       return covers
     },
@@ -47,8 +171,8 @@ class Teemii extends Agent {
     }
   }
 
-  #helperLookupMangas (host, query, offset, page) {
-    const url = `${host}/mangas/search?q=${query}`
+  #helperLookupMangas (host, query) {
+    const url = `${host}/mangas/search?q=${query}&size=100`
     const config = {
       headers: { 'x-api-key': `${this.#apiKey}` }
     }
@@ -67,7 +191,7 @@ class Teemii extends Agent {
   }
 
   async #getMangaById (host, ids) {
-    const url = `${host}/mangas/${ids}`
+    const url = `${host}/mangas/${ids.id}`
     const config = {
       headers: { 'x-api-key': `${this.#apiKey}` }
     }
@@ -77,6 +201,26 @@ class Teemii extends Agent {
         .get(url, config)
         .then((res) => {
           const data = res.data
+          resolve(data)
+        })
+        .catch(function (err) {
+          reject(err.message)
+        })
+    })
+  }
+
+  #helperLookupChapters (host, ids, offset, page) {
+    const url = `${host}/mangas/${ids.id}/chapters?offset=${offset}&limit=${this.offsetInc}`
+    const config = {
+      headers: { 'x-api-key': `${this.#apiKey}` }
+    }
+
+    if (page > 1) return Promise.resolve([])
+    return new Promise(function (resolve, reject) {
+      axios
+        .get(url, config)
+        .then((res) => {
+          const data = res.data.items
           resolve(data)
         })
         .catch(function (err) {
@@ -106,15 +250,13 @@ class Teemii extends Agent {
     this.funcHelperLookupMangas = this.#helperLookupMangas
     this.lookupSchema = this.#lookupSchema
     this.funcGetMangaById = this.#getMangaById
-    /*
     this.mangaSchema = this.#mangaSchema
     this.chapterSchema = this.#chapterSchema
-    this.pageSchema = this.#pageSchema
     this.funcHelperLookupChapters = this.#helperLookupChapters
-    */
+    this.supportPagination = true
 
     this.httpClient = AgentHTTPClient.HTTP
-    this.maxPages = 5
+    this.maxPages = 1
   };
 }
 

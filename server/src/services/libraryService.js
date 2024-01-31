@@ -348,7 +348,7 @@ module.exports = class libraryService {
 
       // If manga is not found, return null immediately to avoid further unnecessary queries
       if (!manga) {
-        return null
+        return {}
       }
 
       // Use aggregate functions to retrieve the last read chapter number , its last read page and the last updated date
@@ -365,15 +365,20 @@ module.exports = class libraryService {
       })
 
       if (!readStatus || readStatus.lastReadChapter === null) {
-        return null
+        return {
+          mangaId: manga.id,
+          lastChapter: 1,
+          lastPage: 1,
+          lastUpdated: new Date(0)
+        }
       }
 
       // Construct the result with necessary details only
       return {
         mangaId: manga.id,
-        lastChapter: readStatus.lastReadChapter,
-        lastPage: readStatus.lastReadPage,
-        lastUpdated: readStatus.lastUpdated
+        lastChapter: readStatus.lastReadChapter || 1,
+        lastPage: readStatus.lastReadPage || 1,
+        lastUpdated: readStatus.lastUpdated || new Date(0)
       }
     } catch (e) {
       logger.error({ err: e }, `Error fetching read status for manga with slug: ${slug}`)

@@ -107,25 +107,17 @@
         </TBaseTabGroup>
       </div>
 
-      <template v-if="mangaCount > 0">
+      <template v-if="mangaCount > 0 && isLoaded">
         <div class="mt-8 rounded-xl bg-light-400 p-8 shadow dark:bg-darkMain-600">
           <h3 class="mb-4 text-lg font-bold text-main-900 dark:text-light-600">{{ t('home.what_readings') }}</h3>
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-6">
-
-            <template v-if="genresStats?.labels?.length > 0">
+            <div v-if="genresStats?.labels?.length > 0">
               <div class="flex flex-col items-center rounded-xl bg-white p-8 dark:bg-darkLight-500">
                 <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-main-200">
                   {{ t('general.genres') }}</h3>
-                <CChart v-if="isLoaded"
-                        class="h-[200px] w-[200px] text-main-500 dark:text-main-400 sm:h-[300px] sm:w-[300px]"
-                        type="doughnut"
-                        :height="300"
-                        :width="300"
-                        :redraw="true"
-                        :data="genresStats"
-                        :options="opts"/>
+                <Doughnut :data="genresStats" :options="opts" :responsive="true"/>
               </div>
-            </template>
+            </div>
 
             <div class="flex flex-col items-center rounded-xl bg-white p-8 dark:bg-darkLight-500">
               <h3 class="self-start text-lg font-semibold leading-6 text-main-900 dark:text-main-200">
@@ -192,7 +184,10 @@ import { pageTitle } from '@/global.js'
 import storeHelpers from '@/stores/utils'
 import { onMounted, computed, ref, reactive } from 'vue'
 import * as heroIcons from '@heroicons/vue/24/outline'
-import { CChart } from '@coreui/vue-chartjs'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { Doughnut } from 'vue-chartjs'
+// import * as chartConfig from './chartConfig.js'
+
 import {
   TransitionChild,
   TransitionRoot,
@@ -214,7 +209,7 @@ export default {
   components: {
     TBaseSlider,
     AddManga,
-    CChart,
+    Doughnut,
     heroIcons,
     TransitionChild,
     TransitionRoot,
@@ -224,6 +219,7 @@ export default {
   },
   props: [],
   setup () {
+    ChartJS.register(ArcElement, Tooltip, Legend)
     const isLoaded = ref(false)
     const { t } = useTranslation()
 
@@ -347,12 +343,6 @@ export default {
             color: UserInterfaceStore.isDark ? '#fff' : '#584e64'
           }
         }
-      },
-      elements: {
-        arc: {
-          spacing: 10,
-          borderRadius: 8
-        }
       }
     }
 
@@ -372,21 +362,32 @@ export default {
       }
     }
 
+    const data = {
+      labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
+      datasets: [
+        {
+          backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+          data: [40, 20, 80, 10]
+        }
+      ]
+    }
     onMounted(() => {
       document.title = 'Home - Teemii'
       pageTitle.value = 'Home'
+      statsStore.fetchStats()
       mangasStore.fetchMangas().then(() => {
+        chaptersStore.fetchChapters()
+        fetchPersonalSuggestions()
+        fetchTopMangas()
         isLoaded.value = true
       })
-      statsStore.fetchStats()
-      chaptersStore.fetchChapters()
-      fetchPersonalSuggestions()
-      fetchTopMangas()
     })
 
     // expose
     return {
+      data,
       t,
+      Doughnut,
       // pinia
       storeHelpers,
       randMangas,
