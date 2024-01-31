@@ -342,6 +342,7 @@ import { useRoute } from 'vue-router'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { useChapterStore } from '@/stores/chaptersStore.js'
+import { useUserInterfaceStore } from '@/stores/userInterfaceStore.js'
 import {
   ArrowUpCircleIcon,
   Bars3Icon, XMarkIcon,
@@ -357,6 +358,7 @@ import { debounce } from 'lodash'
 import router from '@/router'
 import TBaseRating from '@/components/base/TBaseRating.vue'
 
+const UserInterfaceStore = useUserInterfaceStore()
 const route = useRoute()
 
 // UX - constants
@@ -382,13 +384,14 @@ const showBottomGradient = ref(true)
 
 // --- viewer settings
 const viewer = reactive({})
-viewer.pageMode = pageModes[2]
-viewer.fitMode = fitModes[0]
+
 viewer.class = 'lazyload mx-auto img'
 viewer.currentPage = route.params.page || 1
 viewer.progression = 0
 viewer.currItem = {}
 viewer.nextcurrItem = {}
+viewer.pageMode = pageModes[2]
+viewer.fitMode = fitModes[0]
 
 // UX - functions
 const checkScroll = () => {
@@ -503,6 +506,7 @@ const changePageMode = (current) => {
   let newMode = current.id + 1
   if (newMode > pageModes.length - 1) { newMode = 0 }
   viewer.pageMode = pageModes[newMode]
+  UserInterfaceStore.readPreferences[chapter.value.mangaId].pageMode = viewer.pageMode.id
   computeClass()
   if (newMode === 2) {
     setTimeout(() => {
@@ -516,6 +520,9 @@ const changeFitMode = (current) => {
   let newMode = current.id + 1
   if (newMode > fitModes.length - 1) { newMode = 0 }
   viewer.fitMode = fitModes[newMode]
+
+  UserInterfaceStore.readPreferences[chapter.value.mangaId].fitMode = viewer.fitMode.id
+
   computeClass()
   focusOnViewer()
 }
@@ -688,6 +695,12 @@ onMounted(() => {
     viewer.pageId = pages.value[0].id
     viewer.progression = Math.round((chapter.value.readProgress * pagesCount.value) / 100)
     viewer.currentPage = route.params.page
+
+    console.log(UserInterfaceStore.readPreferences[chapter.value.mangaId].fitMode)
+
+    // find the pageMode regarding id
+    viewer.pageMode = pageModes.find((mode) => mode.id === UserInterfaceStore.readPreferences[chapter.value.mangaId].pageMode) || pageModes[2]
+    viewer.fitMode = fitModes.find((mode) => mode.id === UserInterfaceStore.readPreferences[chapter.value.mangaId].fitMode) || fitModes[0]
 
     setTimeout(() => {
       gridContainer.value.addEventListener('scroll', checkScroll)

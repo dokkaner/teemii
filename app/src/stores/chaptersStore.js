@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import libraryAPI from '@/api/library'
 import logger from '@/utils/logger'
+import { useUserInterfaceStore } from '@/stores/userInterfaceStore.js'
 
 const TTL = 1000 * 60 // 1 min
 
@@ -14,6 +15,7 @@ function getChapterTitle (chapter) {
   }
   return title
 }
+
 /**
  * @typedef chapterStore
  * @type { actions | getters | state | import('pinia').Store }

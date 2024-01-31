@@ -19,6 +19,7 @@ import { locales, localesNames } from '@/scripts/i18n.js'
  */
 export const useUserInterfaceStore = defineStore('theme', {
   state: () => {
+    const readPreferences = useStorage('readPreferences', [{}])
     const isDarkTheme = useDark()
     const toggleDark = useToggle(isDarkTheme)
     const isSmallScreen = useMediaQuery('(max-width: 700px)')
@@ -29,6 +30,7 @@ export const useUserInterfaceStore = defineStore('theme', {
       name: localesNames[index]
     }))
     return {
+      readPreferences,
       languages,
       userLanguage,
       isDarkTheme,
