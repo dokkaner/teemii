@@ -140,7 +140,7 @@
           <TBasePosterCard v-for="(manga) in searchData.data" :key="manga.id"
                            :id="`manga-${manga.title.toUpperCase()}`"
                            :title="manga.title"
-                           :image="manga.cover"
+                           :image="manga.cover || '/assets/images/404.png'"
                            :tags="manga.genre"
                            :blur-poster="storeHelpers.isR18(manga.r, manga.genre)"
                            state="2"

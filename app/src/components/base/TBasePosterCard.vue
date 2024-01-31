@@ -23,7 +23,7 @@
 
       <template v-if="to">
         <router-link :to="to" class="block">
-          <img :src="image" :alt="title" :class="blurClass"
+          <img :src="image" :alt="title" :class="blurClass" @error="imgPlaceholder"
                class="h-[150px] w-[100px] sm:h-[300px] sm:w-[200px] rounded-lg object-cover group-hover:border-2 group-hover:border-accent-500 dark:group-hover:border-darkAccent-500 group-hover:filter-none"/>
         </router-link>
       </template>
@@ -157,6 +157,10 @@ watch(() => props.state, () => {
     }
   })
 })
+
+function imgPlaceholder (e) {
+  e.target.src = 'https://via.placeholder.com/200x300'
+}
 
 onMounted(() => {
   isLoaded.value = true

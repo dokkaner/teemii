@@ -401,7 +401,9 @@ module.exports = class AgentsService {
         results = _.flatten(await Promise.all(
           searchTerms.flatMap(searchTerm => agents.agent('teemii').instance.lookupMangas(searchTerm))
         ))
-        results.forEach(result => result.cover = teemiiGetCover(result))
+        results.forEach(manga => {
+          manga.cover = teemiiGetCover(manga)
+        })
       } else {
         const enabledAgents = await this.agentsEnabledForCapability('MANGA_CROSS_LOOKUP')
         results = _.flatten(await Promise.all(
