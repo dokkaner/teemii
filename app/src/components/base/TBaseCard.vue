@@ -17,10 +17,10 @@
         {{ title || ' - ' }}
       </p>
     </div>
-    <div class="group/item block transition-all duration-1000 ease-in-out">
+    <div class="group/item block transition-all ">
       <div
           class="h-[80px] sm:h-[120px] w-[140px] sm:w-[200px] overflow-hidden rounded-md
-          dark:border-darkLight-500 border border-light-600/60">
+          dark:border-darkLight-500 border border-light-600/60 duration-300 ease-in-out hover:scale-110 hover:drop-shadow-2xl">
         <div class="relative flex">
           <div class="overflow-visible">
             <router-link :to="to">
