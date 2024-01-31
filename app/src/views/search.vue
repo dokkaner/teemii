@@ -136,7 +136,7 @@
       </div>
       <!-- results -->
       <div v-if='!searchData.loading' class="container mx-auto">
-        <TBaseGrid id="mangas" :key="gridKey">
+        <TBaseGrid id="mangas" :key="gridKey" class="pt-8">
           <TBasePosterCard v-for="(manga) in searchData.data" :key="manga.id"
                            :id="`manga-${manga.title.toUpperCase()}`"
                            :title="manga.title"
@@ -347,10 +347,13 @@ import TBaseModal from '../components/base/TBaseModal.vue'
 import TBaseIcon from '@/components/base/TBaseIcon.vue'
 import TBasePosterCard from '@/components/base/TBasePosterCard.vue'
 import TBaseGrid from '@/components/base/TBaseGrid.vue'
+import Fuse from 'fuse.js'
+import TBaseCarousel from '@/components/base/TBaseCarousel.vue'
 
 export default {
   name: 'Search',
   components: {
+    TBaseCarousel,
     TBaseGrid,
     TBasePosterCard,
     TBaseIcon,
@@ -565,6 +568,27 @@ export default {
       search()
     }
 
+    function filteredSearch (query, correctedQuery, data) {
+      const allTitlesToSearch = [query, correctedQuery ?? '']
+      const searchResults = []
+
+      allTitlesToSearch.forEach(titleToSearch => {
+        const fuse = new Fuse(data, {
+          keys: ['title', 'altTitles'],
+          includeScore: true,
+          threshold: 0.1
+        })
+
+        fuse.search(titleToSearch).forEach(result => {
+          if (!searchResults.includes(result.item)) {
+            searchResults.push(result.item)
+          }
+        })
+      })
+
+      return searchResults
+    }
+
     async function fetchSearch (query, force = false, output = searchData) {
       output.value.loading = true
       try {
@@ -574,7 +598,16 @@ export default {
           gridKey.value += 1
           const body = Object.freeze(response.body)
           output.value.correctedQuery = body.correctedQuery
-          output.value.data = body.results
+          const filtered = filteredSearch(query, body.correctedQuery, body.results)
+          // output.value.data = body.results.filter((m) => !output.value.filtered.includes(m))
+          output.value.data = [...filtered, ...body.results]
+          // remove duplicates based on id
+          output.value.data = output.value.data.filter((manga, index, self) =>
+            index === self.findIndex((t) => (
+              t?.title === manga?.title
+            ))
+          )
+          console.log(filtered)
         }
       } catch (error) {
         console.error(error)

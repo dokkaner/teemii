@@ -408,7 +408,7 @@ async function importOrCreateManga (jobID, title, year, externalIds, trackingInf
   }
 
   if (!manga) {
-    const lookupAgents = await agents.agentsEnabledForCapability('MANGA_METADATA_FETCH')
+    const lookupAgents = await services.agents.agentsEnabledForCapability('MANGA_METADATA_FETCH')
     const metadataAgents = []
     const extraAgents = []
 

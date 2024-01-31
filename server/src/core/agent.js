@@ -307,37 +307,31 @@ class Agent {
    * @returns {Array} An array of items that match the search query and score criteria.
    */
   filteredResult (q, schema, data, maxFuseScore, keys, alts = []) {
-    // Return an empty array immediately if there's no data to process.
     if (!Array.isArray(data) || data.length === 0) {
       return []
     }
 
-    // Map the data to the provided schema.
     const mappedData = morphism(schema, data)
+    const allTitlesToSearch = [q, ...alts]
+    const filteredMappedData = []
 
-    // Initialize Fuse.js with the mapped data and provided keys for searching.
-    const fuse = new Fuse(mappedData, {
-      includeScore: true,
-      keys,
-      threshold: maxFuseScore // Use the maximum score as the threshold for Fuse.js.
+    allTitlesToSearch.forEach(titleToSearch => {
+      const fuse = new Fuse(mappedData, {
+        keys,
+        includeScore: true,
+        threshold: maxFuseScore
+      })
+
+      const searchResults = fuse.search(titleToSearch)
+
+      searchResults.forEach(result => {
+        if (!filteredMappedData.includes(result.item)) {
+          filteredMappedData.push(result.item)
+        }
+      })
     })
 
-    // Conduct the search and filter based on the maximum score.
-    const fuseResults = fuse.search(q).filter(item => item.score <= maxFuseScore)
-
-    // If there are alternative keys, conduct a second search and filter based on the maximum score.
-    if (alts.length > 0) {
-      // for each alt use them as a query and filter the results
-      for (const alt of alts) {
-        const altFuseResults = fuse.search(alt).filter(item =>
-          item.score <= maxFuseScore
-        )
-        fuseResults.push(...altFuseResults)
-      }
-    }
-
-    // Return the filtered and mapped results.
-    return fuseResults.map(item => item.item)
+    return filteredMappedData
   }
 
   // -----------------------------------------------------------------------------------------------------------------

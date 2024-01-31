@@ -364,14 +364,22 @@ module.exports = class AgentsService {
       // Determine the search terms based on force search flag and user preferences
       const searchTerms = await determineSearchTerms(term, forceSearch)
 
-      let results = []
-      let filteredResults = []
+      let results
+      let filteredResults
 
       const useTeemii = true
       if (useTeemii) {
-        results = await agents.agent('teemii').instance.lookupMangas(term)
+        // results = await
+
+        const searchPromises = searchTerms.flatMap(searchTerm =>
+          agents.agent('teemii').instance.lookupMangas(searchTerm)
+        )
 
         // choose the best cover from the results
+        results = await Promise.all(searchPromises)
+        // flatten results
+        results = _.flatten(results)
+
         results.forEach(result => {
           result.cover = teemiiGetCover(result)
         })
@@ -404,9 +412,18 @@ module.exports = class AgentsService {
       })
 
       // order final results by score
-      finalResults.sort((a, b) => {
-        return parseInt(b.score) - parseInt(a.score)
-      })
+      if (!useTeemii) {
+        finalResults.sort((a, b) => {
+          return parseInt(b.score) - parseInt(a.score)
+        })
+      } else {
+        finalResults.sort((a, b) => {
+          const fA = parseInt(a.faved || '-1')
+          const fB = parseInt(b.faved || '-1')
+
+          return fB - fA
+        })
+      }
 
       // Send the response
       return {

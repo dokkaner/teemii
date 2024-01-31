@@ -172,7 +172,7 @@ class Teemii extends Agent {
   }
 
   #helperLookupMangas (host, query) {
-    const url = `${host}/mangas/search?q=${query}&size=100`
+    const url = `${host}/mangas/search?q=${query}&size=100&sortBy=_score`
     const config = {
       headers: { 'x-api-key': `${this.#apiKey}` }
     }

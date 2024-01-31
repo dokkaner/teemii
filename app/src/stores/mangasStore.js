@@ -330,6 +330,7 @@ export const useMangaStore = defineStore('manga', {
     },
     async fetchSuggestions (manga, explicit = false) {
       const delta = Date.now() - this.updatedAt
+
       if (this.suggestions.length > 0 && delta < TTL) {
         return
       }
