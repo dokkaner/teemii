@@ -110,17 +110,11 @@ export default {
     }
   },
 
-  getMangaDescription (mangaDescription) {
-    const UserInterfaceStore = useUserInterfaceStore()
-    const lang = UserInterfaceStore.userLanguage || 'en'
-    const description = mangaDescription || {}
-    const matchedDescription = Object.keys(description).find(key => key.startsWith(lang + '_'))
-
-    if (matchedDescription) {
-      return description[matchedDescription] || description.en_us || 'No description available.'
-    } else {
-      return description.en_us || description || 'No description available.'
-    }
+  getMangaDescription (mangaDescriptions) {
+    const { userLanguage } = useUserInterfaceStore()
+    const langPrefix = userLanguage ? `${userLanguage}_` : 'en_us'
+    const defaultDescription = 'No description available.'
+    return mangaDescriptions[langPrefix] || mangaDescriptions.en_us || defaultDescription
   },
 
   getMangaHREF (manga) {

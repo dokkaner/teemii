@@ -78,7 +78,15 @@ class Teemii extends Agent {
     publicationDemographics: 'publicationDemographic',
     genres: 'genres',
     synopsis: 'synopsis',
-    description: 'description',
+    description: (iteratee) => {
+      const desc = {}
+      iteratee.description?.forEach((data) => {
+        const cleanData = data.replace(/^\d+: /, '')
+        const lang = cleanData.split(': ')[0]
+        desc[lang] = cleanData.split(': ').slice(1).join(': ')
+      })
+      return desc
+    },
     tags: 'tags',
     status: 'status',
     isLicensed: 'isLicensed',
@@ -148,8 +156,9 @@ class Teemii extends Agent {
     desc: (iteratee) => {
       const desc = {}
       iteratee.description?.forEach((data) => {
-        const lang = data.split(': ')[0]
-        desc[lang] = data.split(': ').slice(1).join(': ')
+        const cleanData = data.replace(/^\d+: /, '')
+        const lang = cleanData.split(': ')[0]
+        desc[lang] = cleanData.split(': ').slice(1).join(': ')
       })
       return desc
     },

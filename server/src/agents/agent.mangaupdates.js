@@ -36,7 +36,17 @@ class Mangaupdates extends Agent {
     faved: '',
     url: 'record.url',
     authors: [],
-    cover: 'record.image.url.original',
+    cover: {
+      path: 'record.image.url.original',
+      fn: (propertyValue, source) => {
+        if (propertyValue) {
+          const urlBase64 = Buffer.from(propertyValue).toString('base64')
+          return `https://services.f-ck.me/v1/image/${urlBase64}`
+        } else {
+          return ''
+        }
+      }
+    },
     'externalIds.mangadex': null,
     'externalIds.anilist': null,
     'externalIds.animeplanet': null,

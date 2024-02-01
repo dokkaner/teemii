@@ -568,7 +568,7 @@ export default {
       search()
     }
 
-    function filteredSearch (query, correctedQuery, data) {
+    async function filteredSearch (query, correctedQuery, data) {
       const allTitlesToSearch = [query, correctedQuery ?? '']
       const searchResults = []
 
@@ -579,7 +579,8 @@ export default {
           threshold: 0.1
         })
 
-        fuse.search(titleToSearch).forEach(result => {
+        const fused = fuse.search(titleToSearch)
+        fused.forEach(result => {
           if (!searchResults.includes(result.item)) {
             searchResults.push(result.item)
           }
@@ -598,7 +599,7 @@ export default {
           gridKey.value += 1
           const body = Object.freeze(response.body)
           output.value.correctedQuery = body.correctedQuery
-          const filtered = filteredSearch(query, body.correctedQuery, body.results)
+          const filtered = await filteredSearch(query, body.correctedQuery, body.results)
           // output.value.data = body.results.filter((m) => !output.value.filtered.includes(m))
           output.value.data = [...filtered, ...body.results]
           // remove duplicates based on id
@@ -607,7 +608,6 @@ export default {
               t?.title === manga?.title
             ))
           )
-          console.log(filtered)
         }
       } catch (error) {
         console.error(error)

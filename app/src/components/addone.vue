@@ -42,6 +42,7 @@
                     }}</span>
                 </div>
               </div>
+
               <div class="flex w-full flex-col overflow-hidden rounded-lg md:flex-row">
                 <div class="w-full space-y-2 text-left">
                   <p class="text-xl font-bold uppercase tracking-wide text-main-500 dark:text-light-400">
@@ -51,7 +52,7 @@
                   <div v-if="media.data.desc"
                        class="max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl">
                     <article class="pb-8 pr-8 text-main-500 dark:text-light-400">
-                      <p v-html="storeHelpers.getMangaDescription(media?.data?.desc)"
+                      <p v-html="storeHelpers.getMangaDescription(media.data.desc)"
                          class="hyphens-auto text-base leading-relaxed"></p>
                     </article>
                   </div>
