@@ -46,11 +46,11 @@ export const useStatStore = defineStore('stat', {
       // const colors = helpers.generateColor('#fcf0ff', '#6a6472', maxGenres + 1)
 
       let others = 0
-      genres.slice(maxGenres + 1, genres.length).forEach(stat => {
+      genres?.slice(maxGenres + 1, genres.length).forEach(stat => {
         others += stat.normalized
       })
 
-      genres.slice(0, maxGenres).forEach(stat => {
+      genres?.slice(0, maxGenres).forEach(stat => {
         labels.push(stat.name)
         data.push(stat.normalized)
       })

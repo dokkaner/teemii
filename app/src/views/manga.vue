@@ -279,11 +279,29 @@
                 </div>
               </div>
               <div v-else>
-                <div class="mb-8 md:flex md:items-center md:justify-between">
-                  <div class="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
-                    <TBaseInput placeholder="Filter chapters" iconLeft="MagnifyingGlassIcon"
-                                @change="onChapterSearch()" v-model="pagination.searchTerm">
-                    </TBaseInput>
+
+                <div class="mb-8 mt-4 md:flex md:items-center md:justify-between">
+                  <div class="flex flex-1 justify-center gap-x-4 px-2 lg:ml-6 lg:justify-end">
+                    <div class="flex space-x-1 rounded-lg bg-light-200 p-0.5 dark:bg-darkMain-800" role="tablist"
+                         aria-orientation="horizontal">
+                      <button
+                          class="flex items-center rounded-md bg-white px-2 py-[0.4375rem] text-sm shadow lg:pr-3"
+                          id="headlessui-tabs-tab-8" role="tab" type="button" aria-selected="true" tabindex="0"
+                          data-headlessui-state="selected" aria-controls="headlessui-tabs-panel-10">
+                        <component :is="iconoir['ViewGrid']" class="h-5 w-5 text-accent-500 dark:text-darkAccent-400"/>
+                        <span class="sr-only text-slate-900 lg:not-sr-only lg:ml-2">Grid</span></button>
+                      <button
+                          class="flex items-center rounded-md px-2 py-[0.4375rem] text-sm lg:pr-3"
+                          id="headlessui-tabs-tab-9" role="tab" type="button" aria-selected="false" tabindex="-1"
+                          data-headlessui-state="" aria-controls="headlessui-tabs-panel-11">
+                        <component :is="iconoir['List']" class="h-5 w-5"/>
+                        <span class="sr-only text-slate-600 lg:not-sr-only lg:ml-2">List</span></button>
+                    </div>
+                    <div>
+                      <TBaseInput placeholder="Filter chapters" iconLeft="MagnifyingGlassIcon"
+                                  @change="onChapterSearch()" v-model="pagination.searchTerm">
+                      </TBaseInput>
+                    </div>
                   </div>
                 </div>
 
@@ -449,6 +467,7 @@
 </template>
 
 <script>
+import * as iconoir from '@iconoir/vue'
 import { useTranslation } from 'i18next-vue'
 import { useMangaStore } from '@/stores/mangasStore'
 import { useDialogStore } from '@/stores/dialogsStore'
@@ -759,6 +778,7 @@ export default {
     // expose
     return {
       t,
+      iconoir,
       imgPlaceholder,
       useChapterDotStateClass,
       onChapterSearch,

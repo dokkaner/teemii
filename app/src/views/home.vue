@@ -228,7 +228,8 @@ export default {
 
     const statsStore = useStatStore()
     const stats = computed(() => statsStore.getStats)
-    const genresStats = computed(() => statsStore.getStatsByGenre)
+    const genresStats = ref([])
+    // computed(() => statsStore.getStatsByGenre)
 
     const chaptersStore = useChapterStore()
     const chapters = computed(() => chaptersStore.getChapters)
@@ -362,19 +363,13 @@ export default {
       }
     }
 
-    const data = {
-      labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-      datasets: [
-        {
-          backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-          data: [40, 20, 80, 10]
-        }
-      ]
-    }
     onMounted(() => {
       document.title = 'Home - Teemii'
       pageTitle.value = 'Home'
-      statsStore.fetchStats()
+      statsStore.fetchStats().then(() => {
+        genresStats.value = statsStore.getStatsByGenre
+      })
+
       mangasStore.fetchMangas().then(() => {
         chaptersStore.fetchChapters()
         fetchPersonalSuggestions()
@@ -385,7 +380,6 @@ export default {
 
     // expose
     return {
-      data,
       t,
       Doughnut,
       // pinia
