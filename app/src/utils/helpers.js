@@ -1,16 +1,34 @@
 export default {
-  Paginator (items, page = 1, perPage = 10) {
+  Paginator (items, sort, page, perPage) {
+    const data = [...items].toSorted((a, b) => {
+      const valA = Number(a[sort.fieldName])
+      const valB = Number(b[sort.fieldName])
+
+      if (!isNaN(valA) && !isNaN(valB)) {
+        return sort.order === 'asc' ? valA - valB : valB - valA
+      } else {
+        if (sort.order === 'asc') {
+          return a[sort.fieldName]?.localeCompare(b[sort.fieldName])
+        } else {
+          return b[sort.fieldName]?.localeCompare(a[sort.fieldName])
+        }
+      }
+    })
+
+    // paginate the items
     const offset = (page - 1) * perPage
-    const paginatedItems = [...items.slice(offset).slice(0, perPage)]
+    const paginatedItems = data.slice(offset, offset + perPage)
     const totalPages = Math.ceil(items.length / perPage)
+
+    // return the paginated items
     return {
-      page,
-      perPage,
-      prePage: page - 1 ? page - 1 : null,
-      nextPage: (totalPages > page) ? page + 1 : null,
-      total: items.length,
-      totalPages,
-      data: paginatedItems
+      data: paginatedItems,
+      pagination: {
+        totalPages,
+        page,
+        totalCount: items.length,
+        limit: perPage
+      }
     }
   },
 
@@ -33,7 +51,7 @@ export default {
     return result.toFixed(1) + si[exp]
   },
 
-  convertDateToHumanReadable  (date) {
+  convertDateToHumanReadable (date) {
     if (!date) return ''
 
     const now = new Date()
@@ -69,11 +87,11 @@ export default {
       minute: '2-digit',
       second: '2-digit',
       ...(withMilliseconds && { fractionalSecondDigits: 3 }) // Include milliseconds if requested
-    };
+    }
 
     // Convert the date to a locale string with the specified options
-    const lang = navigator.language;
-    return new Date(date).toLocaleString(lang, options);
+    const lang = navigator.language
+    return new Date(date).toLocaleString(lang, options)
   },
 
   convertUptimeToHumanReadable (startTime) {

@@ -56,7 +56,8 @@
             <span class="block mt-1">{{ noResultsMessage }}</span>
           </div>
 
-          <BaseTablePagination v-if="pagination" :pagination="pagination" @pageChange="pageChange"/>
+          <TBasePagination :pagination="pagination"
+                           @pageChange="pageChange"></TBasePagination>
         </div>
       </div>
     </div>
@@ -72,6 +73,7 @@ import BaseTablePagination from './BaseTablePagination.vue'
 import TBaseContentPlaceholders from '@/components/base/TBaseContentPlaceholders.vue'
 import TBaseContentPlaceholdersText from '@/components/base/TBaseContentPlaceholdersText.vue'
 import TBaseIcon from '@/components/base/TBaseIcon.vue'
+import TBasePagination from '@/components/base/TBasePagination.vue'
 
 const props = defineProps({
   columns: {
@@ -86,7 +88,7 @@ const props = defineProps({
   sortOrder: { type: String, default: '' },
   tableClass: {
     type: String,
-    default: 'min-w-full divide-y divide-light-200 dark:divide-darkMain-500',
+    default: 'md:table-fixed min-w-full divide-y divide-light-200 dark:divide-darkMain-500',
   },
   theadClass: { type: String, default: 'bg-light-50 dark:bg-darkMain-800' },
   tbodyClass: { type: String, default: '' },
@@ -108,7 +110,7 @@ const props = defineProps({
   placeholderCount: {
     type: Number,
     default: 3,
-  },
+  }
 })
 
 let rows = reactive([])
@@ -121,7 +123,7 @@ let sort = reactive({
   order: '',
 })
 
-let pagination = ref('')
+let pagination = ref({})
 
 const usesLocalData = computed(() => {
   return Array.isArray(props.data)
@@ -208,12 +210,12 @@ function prepareLocalData () {
 }
 
 async function fetchServerData () {
-  const page = (pagination.value && pagination.value.currentPage) || 1
+  const page = (pagination.value && pagination.value.page) || 1
 
   isLoading.value = true
 
   const response = await props.data({
-    sort,
+    sort: sort,
     page,
   })
 
@@ -245,7 +247,7 @@ async function mapDataToRows () {
 }
 
 async function pageChange (page) {
-  pagination.value.currentPage = page
+  pagination.value.page = page
   await mapDataToRows()
 }
 

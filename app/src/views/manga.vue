@@ -284,55 +284,106 @@
                   <div class="flex flex-1 justify-center gap-x-4 px-2 lg:ml-6 lg:justify-end">
                     <div class="flex space-x-1 rounded-lg bg-light-200 p-0.5 dark:bg-darkMain-800" role="tablist"
                          aria-orientation="horizontal">
-                      <button
-                          class="flex items-center rounded-md bg-white px-2 py-[0.4375rem] text-sm shadow lg:pr-3"
-                          id="headlessui-tabs-tab-8" role="tab" type="button" aria-selected="true" tabindex="0"
-                          data-headlessui-state="selected" aria-controls="headlessui-tabs-panel-10">
-                        <component :is="iconoir['ViewGrid']" class="h-5 w-5 text-accent-500 dark:text-darkAccent-400"/>
-                        <span class="sr-only text-slate-900 lg:not-sr-only lg:ml-2">Grid</span></button>
-                      <button
-                          class="flex items-center rounded-md px-2 py-[0.4375rem] text-sm lg:pr-3"
-                          id="headlessui-tabs-tab-9" role="tab" type="button" aria-selected="false" tabindex="-1"
-                          data-headlessui-state="" aria-controls="headlessui-tabs-panel-11">
-                        <component :is="iconoir['List']" class="h-5 w-5"/>
-                        <span class="sr-only text-slate-600 lg:not-sr-only lg:ml-2">List</span></button>
+                      <button @click="chaptersViewMode = 'grid'"
+                              :class="{'bg-white shadow dark:bg-light-400': chaptersViewMode === 'grid'}"
+                              class="group flex items-center rounded-md px-2 py-[0.45rem] text-sm lg:pr-3"
+                              id="tab-grid" role="tab" type="button">
+                        <component :is="iconoir['ViewGrid']"
+                                   class="h-5 w-5 text-accent-500 dark:text-darkAccent-400"/>
+                        <span
+                            :class="{'group-hover:text-accent-300 dark:group-hover:text-darkAccent-300': chaptersViewMode === 'list'}"
+                            class="sr-only text-main-300 dark:text-darkLight-300 lg:not-sr-only lg:ml-2">Grid</span>
+                      </button>
+                      <button @click="chaptersViewMode = 'list'"
+                              :class="{'bg-white shadow dark:bg-light-400': chaptersViewMode === 'list'}"
+                              class="group flex items-center rounded-md px-2 py-[0.45rem] text-sm lg:pr-3"
+                              id="tab-list" role="tab" type="button">
+                        <component :is="iconoir['List']"
+                                   class="h-5 w-5 text-accent-500 dark:text-darkAccent-400"/>
+                        <span
+                            :class="{'group-hover:text-accent-300 dark:group-hover:text-darkAccent-300': chaptersViewMode === 'grid'}"
+                            class="sr-only text-main-300 dark:text-darkLight-300 lg:not-sr-only lg:ml-2">List</span>
+                      </button>
                     </div>
                     <div>
                       <TBaseInput placeholder="Filter chapters" iconLeft="MagnifyingGlassIcon"
                                   @change="onChapterSearch()" v-model="pagination.searchTerm">
+
                       </TBaseInput>
                     </div>
                   </div>
                 </div>
-
-                <TBaseGrid id="chapters">
-                  <TBaseCard
-                      v-for="chapter in chaptersPaginated(pagination.currentPage, pagination.perPageItems, pagination.searchTerm).data"
-                      :isSelected=false
-                      :key="chapter.chapter"
-                      :to="storeHelpers.getChapterRouterTo(chapter)"
-                      :headerText="'c.' + chapter.chapter + (chapter.volume ? ' vol.' + chapter.volume: '')"
-                      :title="chapter.titles.en || chapter.titles.fr || chapter.titles.ru"
-                      :progressCaption="chapter.pages ? (chapter.readProgress * chapter.pages / 100).toFixed(0) + ' / ' + chapter.pages + ' pages' : ((chapter.job?.progress?.value > 0) && (chapter.job?.progress?.value < 100)) ? 'Downloading ... ' + chapter.job?.progress?.value + '%' : '&nbsp;'"
-                      :image="storeHelpers.getChapterCoverPage(chapter.id, chapter.state)"
-                      :contentLoading="(chapter.state === 1 || chapter.state === 2)"
-                      :loading="Number(chapter.job?.progress?.value)"
-                      :progression="chapter.readProgress"
-                      :iconContentLoading="chapter.state === 1 ? 'DocumentSearchIcon' : 'DownloadIcon'"
-                      :actions="[null, () => userDownloadChapter(chapter, null), () => showChapterModal(chapter)]"
-                      :score="chapter.userRating"
-                      :state="chapter.state"
-                      :error="chapter.job?.error?.message"
-                  >
-                  </TBaseCard>
-                </TBaseGrid>
-
-                <!--  start of pagination -->
-                <TBasePagination v-if="pagination" anchor="#chapters" :pagination="pagination"
-                                 @pageChange="pageChange"></TBasePagination>
-                <!--  end of pagination -->
+                <div v-if="chaptersViewMode === 'list'">
+                  <BaseTable id="chapters"
+                             :data="chaptersPaginated"
+                             :columns="columns">
+                    <template #cell-chapter="{ row }">
+                      <router-link :to="storeHelpers.getChapterRouterTo(row.data)">
+                        {{ `${Number(row.data.chapter)}` }}
+                      </router-link>
+                    </template>
+                    <template #cell-title="{ row }">
+                      <router-link :to="storeHelpers.getChapterRouterTo(row.data)">
+                        {{ `${row.data.titles.en || row.data.titles.fr || row.data.titles.ru}` }}
+                      </router-link>
+                    </template>
+                    <template #cell-readableAt="{ row }">
+                      {{ helpersUtils.convertDateToLocale(row.data.readableAt) }}
+                    </template>
+                    <template #cell-readProgress="{ row }">
+                      {{ row.data.readProgress }} %
+                    </template>
+                    <template #cell-state="{ row }">
+                      <div class="mx-auto self-center align-baseline">
+                        <component :is="iconoir['CheckCircle']" v-if="row.data.state === 3"
+                                   class="mx-auto h-5 w-5 text-accent-400"/>
+                        <component :is="iconoir['Circle']" v-if="row.data.state === 0"
+                                   class="mx-auto h-5 w-5 dark:text-light-700"/>
+                        <TBaseLoadingIcon v-if="(row.data.state === 1 || row.data.state === 2)"
+                                          :loading="Number(row.data.job?.progress?.value)" :contentLoading="true"
+                                          :error="row.data.job?.error?.message"/>
+                      </div>
+                    </template>
+                    <template #cell-autodl="{ row }">
+                      <TBaseActionIcon :icon="heroIcons['FolderArrowDownIcon']"
+                                       @click="userDownloadChapter(row.data, null)"
+                                       tooltip="Automatic Search"/>
+                    </template>
+                    <template #cell-manualdl="{ row }">
+                      <TBaseActionIcon :icon="heroIcons['DocumentMagnifyingGlassIcon']"
+                                       @click="showChapterModal(row.data, null)"
+                                       tooltip="Automatic Search"/>
+                    </template>
+                  </BaseTable>
+                </div>
+                <div v-if="chaptersViewMode === 'grid'">
+                  <TBaseGrid id="chapters">
+                    <TBaseCard
+                        v-for="chapter in chaptersPaginated(null).data"
+                        :isSelected=false
+                        :key="chapter.chapter"
+                        :to="storeHelpers.getChapterRouterTo(chapter)"
+                        :headerText="'c.' + chapter.chapter + (chapter.volume ? ' vol.' + chapter.volume: '')"
+                        :title="chapter.titles.en || chapter.titles.fr || chapter.titles.ru"
+                        :progressCaption="chapter.pages ? (chapter.readProgress * chapter.pages / 100).toFixed(0) + ' / ' + chapter.pages + ' pages' : ((chapter.job?.progress?.value > 0) && (chapter.job?.progress?.value < 100)) ? 'Downloading ... ' + chapter.job?.progress?.value + '%' : '&nbsp;'"
+                        :image="storeHelpers.getChapterCoverPage(chapter.id, chapter.state)"
+                        :contentLoading="(chapter.state === 1 || chapter.state === 2)"
+                        :loading="Number(chapter.job?.progress?.value)"
+                        :progression="chapter.readProgress"
+                        :iconContentLoading="chapter.state === 1 ? 'DocumentSearchIcon' : 'DownloadIcon'"
+                        :actions="[null, () => userDownloadChapter(chapter, null), () => showChapterModal(chapter)]"
+                        :score="chapter.userRating"
+                        :state="chapter.state"
+                        :error="chapter.job?.error?.message"
+                    >
+                    </TBaseCard>
+                  </TBaseGrid>
+                  <TBasePagination v-if="pagination" anchor="#chapters" :pagination="pagination"
+                                   @pageChange="pageChange"></TBasePagination>
+                </div>
               </div>
             </TBaseTab>
+
             <TBaseTab :title="t('manga.characters')" icon="UserGroupIcon" :index=1>
               <div v-show="storeIsLoading" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 <TBaseProfilCard v-for="index in 10" :key="index" :contentLoading="true">
@@ -490,10 +541,22 @@ import { pageTitle } from '@/global.js'
 import TBaseMenuItem from '@/components/base/TBaseMenuItem.vue'
 import TBaseDropDownMenu from '@/components/base/TBaseDropDownMenu.vue'
 import { useChapterDotStateClass } from '@/composables/useUXHelpers'
+import BaseTable from '@/components/base-table/BaseTable.vue'
+import helpersUtils from '@/utils/helpers.js'
+import TBaseActionIcon from '@/components/base/TBaseActionIcon.vue'
+import TBaseLoadingIcon from '@/components/base/TBaseLoadingIcon.vue'
 
 export default {
   name: 'Manga',
+  computed: {
+    helpersUtils () {
+      return helpersUtils
+    }
+  },
   components: {
+    TBaseLoadingIcon,
+    TBaseActionIcon,
+    BaseTable,
     TBaseDropDownMenu,
     TBaseMenuItem,
     TBaseButton,
@@ -514,10 +577,11 @@ export default {
     const mangaId = route.params.id
 
     const pagination = reactive({})
-    pagination.currentPage = route.params.page || 1
+    const chaptersViewMode = ref('grid')
+    pagination.page = Number(route.params.page) || 1
     pagination.perPageItems = 20
-    pagination.limit = 10
     pagination.searchTerm = ''
+    pagination.sort = { fieldName: 'chapter', order: 'asc' }
 
     const dialogStore = useDialogStore()
     const mangasStore = useMangaStore()
@@ -531,6 +595,44 @@ export default {
     const chaptersCount = computed(() => mangasStore.getMangaChapterCount)
     const lastChapters = computed(() => mangasStore.getMangaLastPublishedChapters)
     const ownedChapters = computed(() => mangasStore.getOwnedChapters)
+
+    const columns = computed(() => {
+      return [
+        { key: 'chapter', label: 'Chapter', thClass: 'text-center', tdClass: 'text-xs text-center' },
+        {
+          key: 'title',
+          label: 'title',
+          thClass: 'hidden md:table-cell text-center',
+          tdClass: 'text-xs hidden md:table-cell truncate max-w-10 lg:max-w-32'
+        },
+        {
+          key: 'volume',
+          label: 'Volume',
+          thClass: 'hidden lg:table-cell text-center',
+          tdClass: 'text-xs hidden lg:table-cell text-center'
+        },
+        {
+          key: 'readableAt',
+          label: 'Date',
+          thClass: 'hidden xl:table-cell text-center',
+          tdClass: 'text-xs hidden xl:table-cell text-center '
+        },
+        {
+          key: 'readProgress',
+          label: 'Progress',
+          thClass: 'hidden xl:table-cell text-center',
+          tdClass: 'text-xs hidden xl:table-cell text-center'
+        },
+        {
+          key: 'state',
+          label: 'Status',
+          tdClass: 'text-center text-xs',
+          thClass: 'text-center'
+        },
+        { key: 'autodl', label: '', tdClass: 'text-xs' },
+        { key: 'manualdl', label: '', tdClass: 'text-xs ' }
+      ]
+    })
 
     function imgPlaceholder (e) {
       e.target.src = 'https://via.placeholder.com/24x24'
@@ -579,33 +681,29 @@ export default {
     }
 
     const onChapterSearch = async () => {
-      pagination.currentPage = 1
-
-      await router.push({
-        name: 'Manga',
-        params: {
-          id: mangaId,
-          page: pagination.currentPage
-        }
-      })
+      pagination.page = 1
+      chaptersPaginated(pagination.sort)
     }
 
-    const chaptersPaginated = (page, perPageItems, term) => {
-      let chapters = mangaChapters.value.sort((a, b) => {
-        return Number(a.chapter) - Number(b.chapter)
-      })
+    const chaptersPaginated = (sort) => {
+      const lSort = {
+        fieldName: sort?.fieldName || sort?.sort?.fieldName || 'chapter',
+        order: sort?.order || sort?.sort?.order || 'asc',
+        page: sort?.page || pagination?.page || 1
+      }
 
-      // use fuse.js to search in chapters
-      if (term) {
-        const fuse = new Fuse(chapters, {
+      let chapters = mangaChapters.value
+      if (pagination.searchTerm) {
+        const fuse = new Fuse(mangaChapters.value, {
           keys: ['chapter', 'titles.en', 'titles.fr', 'titles.ru', 'titles.es'],
           threshold: 0.4
         })
-        chapters = fuse.search(term).map((result) => result.item)
+        chapters = fuse.search(pagination.searchTerm).map((result) => result.item)
       }
 
-      return helpers.Paginator(chapters, page, perPageItems)
+      return helpers.Paginator(chapters, lSort, lSort.page, pagination.perPageItems)
     }
+
     // #endregion
 
     const modalActive = ref(false)
@@ -629,7 +727,7 @@ export default {
     }
 
     function pageChange (page) {
-      pagination.currentPage = page
+      pagination.page = page
       // replace url params
 
       // store to history
@@ -777,7 +875,10 @@ export default {
     })
     // expose
     return {
+      chaptersViewMode,
+      chaptersPaginated,
       t,
+      columns,
       iconoir,
       imgPlaceholder,
       useChapterDotStateClass,
@@ -811,13 +912,13 @@ export default {
       removeManga,
       heroIcons,
       selected,
-      chaptersPaginated,
       mangaId,
       pageChange,
       isLoaded,
       pagination,
       chaptersCount,
-      showChapterModal
+      showChapterModal,
+      mangaChapters
     }
   }
 }

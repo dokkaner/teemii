@@ -133,7 +133,7 @@
               @click="pageClicked(pagination.currentPage - 1)"
           >
             <span class="sr-only">Previous</span>
-            <BaseIcon name="ChevronLeftIcon" />
+            <BaseIcon name="ChevronLeftIcon"/>
           </a>
           <a
               v-if="hasFirst"
@@ -271,7 +271,7 @@
               @click="pageClicked(pagination.currentPage + 1)"
           >
             <span class="sr-only">Next</span>
-            <BaseIcon name="ChevronRightIcon" />
+            <BaseIcon name="ChevronRightIcon"/>
           </a>
         </nav>
       </div>
@@ -290,30 +290,31 @@ export default {
     },
   },
   computed: {
-    pages() {
+    pages () {
       return this.pagination.totalPages === undefined ? [] : this.pageLinks()
     },
-    hasFirst() {
+    hasFirst () {
       return this.pagination.currentPage >= 4 || this.pagination.totalPages < 10
     },
-    hasLast() {
+    hasLast () {
       return (
           this.pagination.currentPage <= this.pagination.totalPages - 3 ||
           this.pagination.totalPages < 10
       )
     },
-    hasFirstEllipsis() {
+    hasFirstEllipsis () {
       return (
           this.pagination.currentPage >= 4 && this.pagination.totalPages >= 10
       )
     },
-    hasLastEllipsis() {
+    hasLastEllipsis () {
       return (
           this.pagination.currentPage <= this.pagination.totalPages - 3 &&
           this.pagination.totalPages >= 10
       )
     },
-    shouldShowPagination() {
+    shouldShowPagination () {
+      console.log(this.pagination.totalPages, this.pagination.count)
       if (this.pagination.totalPages === undefined) {
         return false
       }
@@ -324,11 +325,11 @@ export default {
     },
   },
   methods: {
-    isActive(page) {
+    isActive (page) {
       const currentPage = this.pagination.currentPage || 1
       return currentPage === page
     },
-    pageClicked(page) {
+    pageClicked (page) {
       if (
           page === '...' ||
           page === this.pagination.currentPage ||
@@ -340,7 +341,7 @@ export default {
 
       this.$emit('pageChange', page)
     },
-    pageLinks() {
+    pageLinks () {
       const pages = []
       let left = 2
       let right = this.pagination.totalPages - 1
