@@ -305,6 +305,7 @@ async function fetchExtraMangaData (manga, agentsList) {
       manga.externalIds.mangapill = extManga.externalIds?.mangapill ?? null
       manga.externalIds.nautiljon = extManga.externalIds?.nautiljon ?? null
       manga.externalIds.mangakakalot = extManga.externalIds?.mangakakalot ?? null
+      // manga.externalIds.h2read = extManga.externalIds?.h2read ?? null
       manga.externalIds.bato = extManga.externalIds?.bato ?? null
 
       // initialize altTitles if null

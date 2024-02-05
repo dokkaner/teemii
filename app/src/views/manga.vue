@@ -59,7 +59,7 @@
                      class="flex items-center space-x-1 rounded-xl bg-main-900/90 p-2">
                   <component :is="heroIcons['HeartIcon']" v-if="isLoaded" class="h-4 w-4"/>
                   <span class="text-xs text-light-200 shadow-main-900 text-shadow-sm">{{
-                      formatNumber(manga.favoritesCount)
+                      helpers.humanizeNumber(manga.favoritesCount)
                     }}</span>
 
                   <component :is="heroIcons['StarIcon']" v-if="isLoaded" class="h-4 w-4"/>
@@ -163,7 +163,7 @@
                 </dl>
                 <dl class="col-span-1">
                   <dt class="text-sm font-medium text-light-800 dark:text-light-500">{{ t('manga.space_used') }}</dt>
-                  <dd class="mt-1 text-sm text-main-500 dark:text-light-400">{{ formatDiskSize }}</dd>
+                  <dd class="mt-1 text-sm text-main-500 dark:text-light-400">{{ helpers.formatBytes(diskSize) }}</dd>
                 </dl>
               </div>
             </div>
@@ -200,7 +200,7 @@
                   </p>
 
                   <time :datetime="chapter.readableAt" class="flex-none text-xs text-gray-500">
-                    {{ formatDateTime(chapter.readableAt) }}
+                    {{ helpers.formatDateTime(chapter.readableAt) }}
                   </time>
                 </li>
               </ul>
@@ -328,7 +328,7 @@
                       </router-link>
                     </template>
                     <template #cell-readableAt="{ row }">
-                      {{ helpersUtils.convertDateToLocale(row.data.readableAt) }}
+                      {{ helpers.formatDateTime(row.data.readableAt) }}
                     </template>
                     <template #cell-readProgress="{ row }">
                       {{ row.data.readProgress }} %
@@ -494,7 +494,7 @@
                   <td class="hidden sm:table-cell">{{ data.pages }}</td>
                   <td>{{ data.title }}</td>
                   <td class="hidden sm:table-cell">{{ data.version }}</td>
-                  <td class="hidden sm:table-cell">{{ formatDateTime(data.lastUpdated) }}</td>
+                  <td class="hidden sm:table-cell">{{ helpers.formatDateTime(data.lastUpdated) }}</td>
                   <td>
                     <component v-if="data.id === selectedChapter.dlSource?.id" :is="heroIcons['CheckIcon']"
                                class="h-4 w-4 cursor-pointer text-main-500 dark:text-darkAccent-400"/>
@@ -598,12 +598,12 @@ export default {
 
     const columns = computed(() => {
       return [
-        { key: 'chapter', label: 'Chapter', thClass: 'text-center', tdClass: 'text-xs text-center' },
+        { key: 'chapter', label: '#', thClass: 'text-center max-w-2', tdClass: 'text-xs text-center max-w-2' },
         {
           key: 'title',
           label: 'title',
           thClass: 'hidden md:table-cell text-center',
-          tdClass: 'text-xs hidden md:table-cell truncate max-w-10 lg:max-w-32'
+          tdClass: 'text-xs hidden md:table-cell truncate max-w-8 lg:max-w-32'
         },
         {
           key: 'volume',
@@ -662,24 +662,6 @@ export default {
     }
 
     // computed
-    const formatDiskSize = computed(() => {
-      return helpers.formatBytes(diskSize.value)
-    })
-
-    const formatDateTime = (date) => {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' }
-      const locales = navigator.languages || navigator.language || 'en-US'
-      try {
-        return new Date(date).toLocaleDateString(locales, options) || '?'
-      } catch (e) {
-        return '?'
-      }
-    }
-
-    const formatNumber = (number) => {
-      return helpers.humanizeNumber(number)
-    }
-
     const onChapterSearch = async () => {
       pagination.page = 1
       chaptersPaginated(pagination.sort)
@@ -875,6 +857,8 @@ export default {
     })
     // expose
     return {
+      diskSize,
+      helpers,
       chaptersViewMode,
       chaptersPaginated,
       t,
@@ -891,13 +875,10 @@ export default {
       manga,
       characters,
       ownedChapters,
-      formatDateTime,
-      formatDiskSize,
       suggestions,
       storeIsLoading,
       onTabChange,
       storeHelpers,
-      formatNumber,
       //
       ambient,
       mangaUserScore,

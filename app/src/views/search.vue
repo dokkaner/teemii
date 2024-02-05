@@ -369,6 +369,7 @@ export default {
   },
   setup () {
     const { t } = useTranslation()
+
     const openTab = ref(0)
     const gridKey = ref(0)
     const uploadStatus = ref({ done: 0, total: 0, errors: 0, status: 'idle', data: [] })

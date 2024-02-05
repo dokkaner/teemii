@@ -503,7 +503,7 @@ class Agent {
    */
   async getMangaById (ids) {
     // Validate the ID input; log a warning and return null if the ID is not provided.
-    if (!ids?.id) {
+    if (!ids?.id && !ids?.url) {
       logger.warn(`${this.id}: Invalid ID provided for getMangaById`)
       return null
     }
@@ -654,6 +654,11 @@ class Agent {
 
       manga = year ? filterMangasByYear(mangas, name, year, 2) : manga
       manga = (!manga && authors) ? filterMangasByAuthors(mangas, name, authors) : manga
+
+      if (!manga) {
+        // strictly compare the name
+        manga = mangas.find(m => m.title === name)
+      }
 
       if (!manga) {
         logger.warn(`${this.id} getMangaByName - Not found: ${name}, ${year}`)

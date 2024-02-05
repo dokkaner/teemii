@@ -416,7 +416,7 @@ module.exports = class AgentsService {
       const finalResults = results.map(result => ({
         ...result,
         alreadyInLibrary: isInLibrary(result, libraryMangas),
-        cover: result.allowProxyImage && result.cover ? `https://wsrv.nl/?url=https://services.f-ck.me/v1/image/${Buffer.from(result.cover).toString('base64')}&w=240&h=360` : result.cover
+        cover: result.allowProxyImage && result.cover ? `https://wsrv.nl/?url=https://services.f-ck.me/v1/image/${Buffer.from(result.cover).toString('base64')}&w=240&h=360` : `https://services.f-ck.me/v1/image/${Buffer.from(result.cover).toString('base64')}`
       })).sort((a, b) => useTeemii ? parseInt(b.faved || '-1') - parseInt(a.faved || '-1') : parseInt(b.score) - parseInt(a.score))
 
       return {

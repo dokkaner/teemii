@@ -94,6 +94,16 @@ export default {
     return new Date(date).toLocaleString(lang, options)
   },
 
+  formatDateTime (date) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' }
+    const locales = navigator.languages || navigator.language || 'en-US'
+    try {
+      return new Date(date).toLocaleDateString(locales, options) || '?'
+    } catch (e) {
+      return '?'
+    }
+  },
+
   convertUptimeToHumanReadable (startTime) {
     // convert startTIme to date
     const startDate = new Date(startTime)

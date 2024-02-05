@@ -35,7 +35,7 @@ class Mangaupdates extends Agent {
     popularity: '',
     faved: '',
     url: 'record.url',
-    authors: [],
+    authors: '',
     cover: {
       path: 'record.image.url.original',
       fn: (propertyValue, source) => {
