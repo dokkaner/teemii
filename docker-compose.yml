@@ -22,6 +22,8 @@ services:
     environment:
       - EXPRESS_PORT=3000
       - SOCKET_IO_PORT=1555
+    #devices:
+      #- /dev/dri/renderD128:/dev/dri/renderD128 # intel gpu, unsure if works for others
 
 networks:
   teemii-network:
