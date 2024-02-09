@@ -73,7 +73,7 @@ RUN apt-get update && \
     xdg-utils \
     imagemagick \
     libvulkan1 \
-    mesa-vulkan drivers && \
+    mesa-vulkan-drivers && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     mkdir -p /root/db
 
