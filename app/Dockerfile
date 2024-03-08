@@ -28,9 +28,12 @@ RUN npm run build
 # Production stage
 FROM nginx:stable-alpine AS production-stage
 
+# Set default environment variables
+ENV BACKEND_HOST=teemii-backend
+
 # Copy built content from the build stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY default.conf /etc/nginx/conf.d/default.conf
+COPY default.conf.template /etc/nginx/templates/default.conf.template
 
 # Expose port 80
 EXPOSE 80
