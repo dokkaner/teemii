@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto overflow-hidden sm:overflow-visible">
     <div
-        class="sticky left-0 top-0 z-20 mx-auto mb-8 h-full w-full rounded-b-lg bg-white/80 px-8 backdrop-blur-xl transition-all duration-100 dark:bg-darkMain-800/80">
+        class="dark:bg-darkMain-800/80 sticky left-0 top-0 z-20 mx-auto mb-8 size-full rounded-b-lg bg-white/80 px-8 backdrop-blur-xl transition-all duration-100">
       <div class="w-full">
         <div>
           <nav class="navbar flex w-full justify-center align-middle" aria-label="tabs">
@@ -126,7 +126,7 @@
           <nav aria-labelledby="settings-nav" class="w-56">
             <ul role="list">
               <li class="relative mt-3 pl-2">
-                <div class="absolute inset-y-0 left-2 w-px bg-main-900/10"></div>
+                <div class="bg-main-900/10 absolute inset-y-0 left-2 w-px"></div>
                 <ul role="list" class="relative border-l border-transparent">
                   <li v-for="section in settingsConfig.sections" :key="section.id">
                     <a class="flex justify-between gap-2 py-1 pl-7 pr-3 text-sm text-main-600 transition
@@ -142,7 +142,7 @@
         </div>
       </div>
     </div>
-    <div v-if="tabs[1].current" class="block w-full divide-y divide-main-500/5">
+    <div v-if="tabs[1].current" class="divide-main-500/5 block w-full divide-y">
       <div class="grid grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
           <h2 class="text-base font-medium leading-7 text-main-500 dark:text-light-500">{{ t('general.system') }}</h2>
@@ -160,14 +160,14 @@
                       class="inline-flex items-center rounded-md bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
                      {{ latestRelease?.version }} {{ t('general.is_available') }}
                        <component :is="iconoir['OpenNewWindow']"
-                                  class="h-3 w-3 flex-none cursor-pointer text-green-500 hover:text-accent-500"
+                                  class="size-3 flex-none cursor-pointer text-green-500 hover:text-accent-500"
                                   aria-hidden="true"/>
                   </span>
                   </a>
                 </span>
             </div>
             <div v-if="latestRelease.isUpdateAvailable && latestRelease.body"
-                 class="max-h-[20rem] overflow-y-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500">
+                 class="max-h-80 overflow-y-auto scrollbar-thin scrollbar-track-light-300 scrollbar-thumb-main-500">
               <article class="pb-8 pr-8 text-sm text-main-500 dark:text-light-400">
                 <p class="hyphens-auto leading-relaxed"
                    v-html="markdownToHtml(latestRelease.body)"></p>
@@ -245,7 +245,7 @@
             <li v-for="schedule in settings.schedulers" :key="schedule.name"
                 class="relative flex space-x-6 xl:static">
               <p class="text-sm font-medium leading-6 text-main-900 dark:text-darkLight-300">
-                <span class="relative inline-flex h-2 w-2 rounded-full bg-accent-600"></span>
+                <span class="relative inline-flex size-2 rounded-full bg-accent-600"></span>
               </p>
               <div class="flex-auto">
                 <h3 class="pr-10 font-semibold text-main-900 dark:text-main-200 xl:pr-0">{{ schedule.name }}</h3>
@@ -254,7 +254,7 @@
                     <dt class="mt-0.5">
                       <span class="sr-only">{{ t('general.date') }}</span>
                       <TBaseIcon :solid="true" name="CalendarIcon" aria-hidden="true"
-                                 class="h-2 w-2 text-light-700 dark:text-main-400"/>
+                                 class="size-2 text-light-700 dark:text-main-400"/>
                     </dt>
                     <dd>
                       <p>{{ cronstrue.toString(schedule.cronPattern) }}</p>
@@ -276,7 +276,7 @@
                     <label for="drawer"
                            class="btn btn-square btn-ghost drawer-button text-xs hover:bg-accent-100 hover:text-accent-600
                            dark:text-darkAccent-400 dark:hover:bg-darkAccent-200 dark:hover:text-darkAccent-600">
-                      <TBaseIcon :solid="true" name="PlayIcon" aria-hidden="true" class="h-2 w-2 "/>
+                      <TBaseIcon :solid="true" name="PlayIcon" aria-hidden="true" class="size-2 "/>
                     </label>
                   </span>
               </div>
@@ -307,7 +307,7 @@
               <div class="ml-6 mr-3 hidden h-5 w-px bg-slate-900/10 sm:block"></div>
               <div class="relative block">
                 <component :is="iconoir['Xmark']" @click="modalBackupActive = false"
-                           class="h-6 w-6 cursor-pointer text-main-500 hover:text-accent-500 dark:text-darkAccent-500 dark:hover:text-darkAccent-400"/>
+                           class="size-6 cursor-pointer text-main-500 hover:text-accent-500 dark:text-darkAccent-500 dark:hover:text-darkAccent-400"/>
               </div>
             </div>
           </template>
@@ -334,11 +334,11 @@
                   {{ helpersUtils.convertDateToLocale(data.timestamp) }}
                 </td>
                 <td>
-                  <component :is="heroIcons['ArrowDownTrayIcon']" class="h-4 w-4 cursor-pointer text-main-500"
+                  <component :is="heroIcons['ArrowDownTrayIcon']" class="size-4 cursor-pointer text-main-500"
                              @click="downloadBackup(data)"/>
                 </td>
                 <td class="rounded-r-box">
-                  <component :is="heroIcons['PlayIcon']" class="h-4 w-4 cursor-pointer text-accent-500"
+                  <component :is="heroIcons['PlayIcon']" class="size-4 cursor-pointer text-accent-500"
                              @click="launchRestore(data)"/>
                 </td>
               </tr>

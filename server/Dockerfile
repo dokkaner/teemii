@@ -11,6 +11,8 @@ LABEL maintainer="dokkaner"
 # Set build-time environment variables
 ENV EXPRESS_PORT=3000
 ENV SOCKET_IO_PORT=1555
+ENV CORS_ORIGIN="*"
+ENV ALLOW_IFRAME="true"
 ENV NODE_VERSION=node_20.x
 ENV NODE_KEYRING=/usr/share/keyrings/nodesource.gpg
 ENV DISTRIBUTION=bookworm

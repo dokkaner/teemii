@@ -33,7 +33,7 @@
       <div v-if="step.isInvalid" class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
         <div class="flex">
           <div class="shrink-0">
-            <TBaseIcon name="ExclamationIcon" aria-hidden="true" class="h-5 w-5 text-yellow-700"/>
+            <TBaseIcon name="ExclamationIcon" aria-hidden="true" class="size-5 text-yellow-700"/>
           </div>
           <div class="ml-3">
             <div class="text-sm text-yellow-700">
@@ -48,7 +48,7 @@
       <div v-if="step.isSuccessful" class="border-l-4 border-green-400 bg-green-50 p-4">
         <div class="flex">
           <div class="shrink-0">
-            <TBaseIcon name="CheckCircleIcon" aria-hidden="true" class="h-5 w-5 text-accent-700"/>
+            <TBaseIcon name="CheckCircleIcon" aria-hidden="true" class="size-5 text-accent-700"/>
           </div>
           <div class="ml-3">
             <div class="text-sm text-green-700">

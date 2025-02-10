@@ -1,103 +1,85 @@
 <template>
-  <TBaseWizardStep
-      title="Say hello to Teemii!"
-      description="This wizard will guide you through the installation process. First, we need to create a database for your application.
-      check the path indicated below, these are automatically defined via the local .env file, or via dockerfile / docker-compose."
-  >
-    <div v-show="backendSys.value?.system?.isDocker" class="my-6 flex gap-2.5 rounded-md border border-emerald-500/20 bg-emerald-50/50 p-2 text-xs leading-6 text-emerald-900">
-      <svg viewBox="0 0 16 16" aria-hidden="true" class="mt-1 h-4 w-4 flex-none fill-emerald-500 stroke-white"><circle cx="8" cy="8" r="8" stroke-width="0"></circle><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 7.75h1.5v3.5"></path><circle cx="8" cy="4" r=".5" fill="none"></circle></svg>
-        <p>
-          It appears that Teemii is running in a container. Your path preferences are defined in the docker-compose or in the server's dockerfile.
-        </p>
-    </div>
-    <form action="" @submit.prevent="next">
-      <div class="mt-6 border-t border-b border-main-100">
-        <dl class="divide-y divide-main-100">
-          <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt class="text-sm font-medium leading-6 text-main-900">Storage / Database</dt>
-            <dd class="mt-1 text-sm text-right leading-6 text-main-700 sm:col-span-2 sm:mt-0">{{backendSys.value?.system.paths.sqlite}}</dd>
-          </div>
-        </dl>
-      </div>
-
-      <div v-if="step.isInvalid" class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
-        <div class="flex">
-          <div class="shrink-0">
-            <TBaseIcon name="ExclamationIcon" aria-hidden="true" class="h-5 w-5 text-yellow-700"/>
-          </div>
-          <div class="ml-3">
-            <div class="text-sm text-yellow-700">
-              An issue occurred while creating the database.
-              {{ ' ' }}
-              <span class="font-medium text-yellow-700 underline">{{ step.msg }}.</span>
+  <div class="flex flex-col gap-4">
+    <div class="rounded-lg border border-main-100 bg-white">
+      <div class="divide-y divide-main-100">
+        <div class="p-4">
+          <h2 class="text-lg font-medium text-main-900">Database Configuration</h2>
+          <p class="mt-1 text-sm text-main-700">Configure your database settings.</p>
+        </div>
+        <div class="px-4 py-5 sm:p-6">
+          <div class="grid grid-cols-6 gap-6">
+            <div class="col-span-6 sm:col-span-3">
+              <label for="dbPath" class="block text-sm font-medium text-gray-700">Database Path</label>
+              <div class="mt-1 flex rounded-md shadow-sm">
+                <input
+                  v-model="dbPath"
+                  type="text"
+                  name="dbPath"
+                  id="dbPath"
+                  class="block w-full min-w-0 flex-1 rounded-none rounded-l-md border-gray-300 px-3 py-2 focus:border-accent-500 focus:ring-accent-500 sm:text-sm"
+                  :class="{
+                    'border-green-400 bg-green-50': isValid && dbPath
+                  }"
+                />
+                <button
+                  type="button"
+                  class="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-3 py-2 text-sm font-medium text-accent-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2"
+                  @click="selectPath"
+                >
+                  <span class="text-green-700">Browse</span>
+                </button>
+              </div>
+              <p v-if="isValid && dbPath" class="mt-2 text-sm text-green-700">
+                Database path is valid.
+              </p>
             </div>
           </div>
         </div>
-      </div>
-
-      <div v-if="step.isSuccessful" class="border-l-4 border-green-400 bg-green-50 p-4">
-        <div class="flex">
-          <div class="shrink-0">
-            <TBaseIcon name="CheckCircleIcon" aria-hidden="true" class="h-5 w-5 text-accent-700"/>
-          </div>
-          <div class="ml-3">
-            <div class="text-sm text-green-700">
-              Database created successfully.
-              {{ ' ' }}
-              <p class="font-medium text-green-700 underline">{{ step.msg }}.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="flex-auto">
-        <div v-if="!step.isSuccessful" class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-          <button type="submit"
-                  class="inline-flex w-full justify-center rounded-md bg-accent-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600 sm:col-start-2">
+        <div class="px-4 py-3 text-right sm:px-6">
+          <button
+            type="button"
+            class="inline-flex justify-center rounded-md border border-transparent bg-accent-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus-visible:outline-accent-600"
+            @click="next"
+          >
             Next
           </button>
         </div>
       </div>
-    </form>
-
-  </TBaseWizardStep>
+    </div>
+  </div>
 </template>
-<script setup>
-import {  reactive } from 'vue'
-import { backendSys } from '@/global'
-import libraryAPI from '../../api/library.js'
-import * as heroIcons from '@heroicons/vue/24/solid/index.js'
 
-const step = reactive({
-  folder: '',
-  isInvalid: false,
-  isSuccessful: false,
-  msg: ''
-})
+<script>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from '../../../stores/store'
 
-async function finalizeStep (payload) {
-  let result = false
-  const res = await libraryAPI.postCreateDB()
+export default {
+  name: 'DatabaseSetup',
+  setup () {
+    const store = useStore()
+    const router = useRouter()
+    const dbPath = ref('')
+    const isValid = ref(false)
 
-  if (res.success) {
-    step.msg = res.body.path
-    result = true
-    step.isSuccessful = true
-  } else {
-    step.msg = res.message + '. ' + res.data.message
-    step.isInvalid = true
-  }
-  return result
-}
+    const selectPath = async () => {
+      // Implementation for selecting path
+      console.warn('Path selection not implemented')
+    }
 
-const emit = defineEmits(['next'])
+    const next = () => {
+      if (isValid.value) {
+        store.setDbPath(dbPath.value)
+        router.push('/setup/step2')
+      }
+    }
 
-async function next () {
-  const path = step.folder
-  if (await finalizeStep()) {
-    setTimeout(() => {
-      emit('next', 2)
-    }, 900)
+    return {
+      dbPath,
+      isValid,
+      selectPath,
+      next
+    }
   }
 }
-
 </script>

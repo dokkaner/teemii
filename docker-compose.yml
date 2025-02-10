@@ -22,6 +22,9 @@ services:
     environment:
       - EXPRESS_PORT=3000
       - SOCKET_IO_PORT=1555
+    ports:
+      - "3000:3000"
+      - "1555:1555"
 
 networks:
   teemii-network:

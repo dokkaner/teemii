@@ -1,40 +1,29 @@
-import { useDark, useMediaQuery, useStorage, useToggle } from '@vueuse/core'
 import { defineStore } from 'pinia'
-import { watch } from 'vue'
-import { locales, localesNames } from '@/scripts/i18n.js'
+import { ref } from 'vue'
 
-/**
- * @typedef UserInterfaceStore
- * @type { actions | getters | state | import('pinia').Store }
- */
-/**
- * @typedef useUserInterfaceStore
- * @type function
- * @param {import('pinia').Pinia | null | undefined} [pinia] - Pinia instance to retrieve the store
- * @param {import('pinia').StoreGeneric} [hot] - dev only hot module replacement
- * @returns UserInterfaceStore
- */
-/**
- * @type useUserInterfaceStore
- */
-export const useUserInterfaceStore = defineStore('theme', {
-  state: () => {
-    const isDarkTheme = useDark()
-    const toggleDark = useToggle(isDarkTheme)
-    const isSmallScreen = useMediaQuery('(max-width: 700px)')
-    const userLanguage = useStorage('language', 'en')
-    // map locales with localesNames
-    const languages = locales.map((locale, index) => ({
-      code: locale,
-      name: localesNames[index]
-    }))
-    return {
-      languages,
-      userLanguage,
-      isDarkTheme,
-      toggleDark,
-      isSmallScreen,
-      localesNames
-    }
+export const useUIStore = defineStore('ui', () => {
+  const theme = ref('light')
+  const sidebarOpen = ref(true)
+  const modalOpen = ref(false)
+
+  const toggleTheme = () => {
+    theme.value = theme.value === 'light' ? 'dark' : 'light'
+  }
+
+  const toggleSidebar = () => {
+    sidebarOpen.value = !sidebarOpen.value
+  }
+
+  const toggleModal = () => {
+    modalOpen.value = !modalOpen.value
+  }
+
+  return {
+    theme,
+    sidebarOpen,
+    modalOpen,
+    toggleTheme,
+    toggleSidebar,
+    toggleModal
   }
 })
