@@ -10,6 +10,8 @@ LABEL maintainer="dokkaner"
 # Set build-time environment variables
 ENV VITE_APP_TITLE=Teemii
 ENV VITE_APP_PORT=80
+ENV VITE_CORS_ORIGIN="*"
+ENV VITE_ALLOW_IFRAME="true"
 
 WORKDIR /app
 

@@ -25,7 +25,7 @@
 
     <dl class="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4 lg:px-2 xl:px-0">
       <div
-          class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 dark:border-darkMain-500/10 sm:px-6 lg:border-t-0 xl:px-8">
+          class="dark:border-darkMain-500/10 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 sm:px-6 lg:border-t-0 xl:px-8">
         <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">{{ t('integration.push') }}</dt>
         <dd class="text-xs font-medium text-gray-700 dark:text-light-300"></dd>
         <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 dark:text-light-300">
@@ -33,7 +33,7 @@
         </dd>
       </div>
       <div
-          class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 dark:border-darkMain-500/10 sm:border-l sm:px-6 lg:border-t-0 xl:px-8">
+          class="dark:border-darkMain-500/10 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 sm:border-l sm:px-6 lg:border-t-0 xl:px-8">
         <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">
           {{ t('integration.push_errors') }}
         </dt>
@@ -43,7 +43,7 @@
         </dd>
       </div>
       <div
-          class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 dark:border-darkMain-500/10 sm:px-6 lg:border-l lg:border-t-0 xl:px-8">
+          class="dark:border-darkMain-500/10 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 sm:px-6 lg:border-l lg:border-t-0 xl:px-8">
         <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">{{ t('integration.pull') }}</dt>
         <dd class="text-xs font-medium text-gray-700 dark:text-light-300"></dd>
         <dd class="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 dark:text-light-300">
@@ -51,7 +51,7 @@
         </dd>
       </div>
       <div
-          class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 dark:border-darkMain-500/10 sm:border-l sm:px-6 lg:border-t-0 xl:px-8">
+          class="dark:border-darkMain-500/10 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-2 sm:border-l sm:px-6 lg:border-t-0 xl:px-8">
         <dt class="text-sm font-medium leading-6 text-gray-500 dark:text-light-600">
           {{ t('integration.pull_errors') }}
         </dt>
@@ -64,7 +64,7 @@
 
     <div class="py-4">
       <ul role="list"
-          class="ml-3 mr-4 divide-y divide-main-100 overflow-hidden rounded-md bg-white shadow-sm ring-1 ring-main-900/5 dark:divide-darkMain-500
+          class="ring-main-900/5 ml-3 mr-4 divide-y divide-main-100 overflow-hidden rounded-md bg-white shadow-sm ring-1 dark:divide-darkMain-500
                 dark:bg-darkMain-500 dark:ring-dark-600 sm:rounded-xl">
         <li v-for="(service, index) in services" :key="service.name"
             class="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-light-300 dark:hover:bg-darkMain-400 sm:px-6">
@@ -74,7 +74,7 @@
 
             <div
                 :class="[service.enabled ? 'grayscale-0' : 'grayscale', 'flex w-12 min-w-0 gap-x-4 transition duration-300 ease-out sm:w-full']">
-              <img class="h-12 w-12 flex-none rounded-full bg-main-50" :src="service.imageUrl" alt=""/>
+              <img class="size-12 flex-none rounded-full bg-main-50" :src="service.imageUrl" alt=""/>
               <div class="invisible min-w-0 flex-auto sm:visible">
                 <p class="text-sm font-semibold leading-6 text-main-900 dark:text-light-500">
                   <a :href="service.href">
@@ -98,17 +98,17 @@
           <div class="flex shrink-0 items-center gap-x-4">
             <div v-if="service.status === 0"
                  class="inline-flex flex-none items-center rounded-full bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/30">
-              <component :is="iconoir['LinkXmark']" class="mr-1 h-4 w-4 text-main-300 dark:text-light-400"/>
+              <component :is="iconoir['LinkXmark']" class="mr-1 size-4 text-main-300 dark:text-light-400"/>
               {{ t('general.disabled') }}
             </div>
             <div v-else-if="service.status === 1"
-                 class="inline-flex flex-none items-center rounded-full bg-green-400/10 px-2 py-1 text-xs font-medium text-green-500 ring-1 ring-inset ring-green-400/30">
-              <div class="mr-1 h-2 w-2 rounded-full bg-current p-1"></div>
+                 class="bg-green-400/10 ring-green-400/30 inline-flex flex-none items-center rounded-full px-2 py-1 text-xs font-medium text-green-500 ring-1 ring-inset">
+              <div class="mr-1 size-2 rounded-full bg-current p-1"></div>
               {{ t('general.connected') }}
             </div>
             <span v-else-if="service.status === 2"
                   class="inline-flex flex-none items-center rounded-full bg-indigo-400/10 px-2 py-1 text-xs font-medium text-indigo-400 ring-1 ring-inset ring-indigo-400/30">
-              <svg class="text-green -ml-1 mr-3 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
+              <svg class="-ml-1 mr-3 size-4 animate-spin text-green" xmlns="http://www.w3.org/2000/svg" fill="none"
                    viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor"
@@ -118,11 +118,11 @@
             </span>
             <div v-else
                  class="inline-flex flex-none items-center rounded-full bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-inset ring-red-400/30">
-              <component :is="iconoir['WarningTriangle']" class="mr-1 h-4 w-4 text-red-300 "/>
+              <component :is="iconoir['WarningTriangle']" class="mr-1 size-4 text-red-300 "/>
               {{ t('general.need_attention') }}
             </div>
             <component :is="iconoir['OpenInBrowser']" @click="openSettings(index)"
-                       class="h-5 w-5 flex-none cursor-pointer text-main-500 hover:text-accent-500 dark:text-light-600 dark:hover:text-darkAccent-500"
+                       class="size-5 flex-none cursor-pointer text-main-500 hover:text-accent-500 dark:text-light-600 dark:hover:text-darkAccent-500"
                        aria-hidden="true"/>
           </div>
 
@@ -135,7 +135,7 @@
     <TBaseModal :show="modalSettingsActive" size="lg">
       <template #header>
         <div class="flex items-center p-2">
-          <img class="h-12 w-12 rounded-full" :src="services[currentService].imageUrl" alt=""/>
+          <img class="size-12 rounded-full" :src="services[currentService].imageUrl" alt=""/>
           <div class="px-4">
             <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-light-300">
               {{ t('integration.scrobblers_settings') }}
@@ -147,7 +147,7 @@
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <component :is="iconoir['Xmark']" @click="modalSettingsActive = false"
-                     class="h-6 w-6 cursor-pointer text-main-500 hover:text-accent-500 dark:text-darkAccent-500 dark:hover:text-darkAccent-400"/>
+                     class="size-6 cursor-pointer text-main-500 hover:text-accent-500 dark:text-darkAccent-500 dark:hover:text-darkAccent-400"/>
         </div>
       </template>
       <div class="grow  border-t border-gray-200 px-4 dark:border-dark-800 sm:px-6">
@@ -168,7 +168,7 @@
                 <div class="mt-4 align-middle">
                   <a :href="services[currentService].loginRedirectURL" target="_blank" rel="noopener noreferrer">
                     <div class="flex items-center gap-x-2">
-                      <component :is="iconoir['Link']" class="h-5 w-5 text-main-500"/>
+                      <component :is="iconoir['Link']" class="size-5 text-main-500"/>
                       <span class="text-accent-500">{{ t('integration.scrobblers_authorize') }}</span>
                     </div>
                   </a>

@@ -69,11 +69,11 @@ export default {
       minute: '2-digit',
       second: '2-digit',
       ...(withMilliseconds && { fractionalSecondDigits: 3 }) // Include milliseconds if requested
-    };
+    }
 
     // Convert the date to a locale string with the specified options
-    const lang = navigator.language;
-    return new Date(date).toLocaleString(lang, options);
+    const lang = navigator.language
+    return new Date(date).toLocaleString(lang, options)
   },
 
   convertUptimeToHumanReadable (startTime) {

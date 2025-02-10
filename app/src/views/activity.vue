@@ -1,7 +1,7 @@
 <template>
   <div v-if="!storeIsLoading" class="container mx-auto overflow-y-visible">
     <div
-        class="sticky left-0 top-0 z-20 mx-auto mb-8 rounded-b-lg bg-white/80 px-8 pb-4 backdrop-blur-xl transition-all duration-100 dark:bg-darkMain-800/80">
+        class="dark:bg-darkMain-800/80 sticky left-0 top-0 z-20 mx-auto mb-8 rounded-b-lg bg-white/80 px-8 pb-4 backdrop-blur-xl transition-all duration-100">
       <div class="grid w-full pt-4 sm:grid-cols-3 ">
         <div class="hidden sm:flex">
           <div class="flex items-center">
@@ -15,8 +15,8 @@
       </div>
     </div>
     <div class="px-4 sm:px-0">
-      <table class="h-full w-full table-auto" aria-describedby="jobs list">
-        <thead class="border-main/10 text-main border-b text-sm dark:border-darkMain-500/10 dark:text-light-300">
+      <table class="size-full table-auto" aria-describedby="jobs list">
+        <thead class="dark:border-darkMain-500/10 border-b text-sm border-main/10 text-main dark:text-light-300">
         <tr>
           <th scope="col" class=""></th>
           <th scope="col" class="hidden md:table-cell">{{ t('activity.job') }}</th>
@@ -26,7 +26,7 @@
           <th scope="col" class=""></th>
         </tr>
         </thead>
-        <tbody class="divide-y divide-light-600/20 dark:divide-darkMain-700/20">
+        <tbody class="divide-light-600/20 dark:divide-darkMain-700/20 divide-y">
         <tr v-for="job in activities" :key="job.id">
           <td class="max-w-sm py-4 pl-0">
             <div class="flex items-center gap-x-4">
@@ -47,7 +47,7 @@
           <td class="hidden py-4 pl-0 sm:table-cell">
             <div class="flex justify-center">
               <div
-                  class="line-clamp-1 rounded-md bg-main-50 px-2 py-1 text-xs tracking-tight text-main-400 ring-1 ring-inset ring-main-500/10">
+                  class="ring-main-500/10 line-clamp-1 rounded-md bg-main-50 px-2 py-1 text-xs tracking-tight text-main-400 ring-1 ring-inset">
                 {{ getJobType(job) }}
               </div>
             </div>
@@ -57,9 +57,9 @@
               <time class="text-main-400 sm:hidden" :datetime="job.updatedAt">{{ job.updatedAt }}</time>
               <div v-show="(job.status !== 'processing')"
                    :class="[statuses[job.status], 'flex-none rounded-full p-1']">
-                <div class="h-1.5 w-1.5 rounded-full bg-current"/>
+                <div class="size-1.5 rounded-full bg-current"/>
               </div>
-              <svg v-show="(job.status === 'processing')" class="h-5 w-5 animate-spin text-blue-400"
+              <svg v-show="(job.status === 'processing')" class="size-5 animate-spin text-blue-400"
                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor"

@@ -1,36 +1,26 @@
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'node:path'
-import dotenv from 'dotenv'
-dotenv.config()
+import { fileURLToPath } from 'url'
+import { dirname, resolve } from 'path'
 
-export default {
-  preview: {
-    port: process.env.VITE_APP_PORT
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+export default defineConfig({
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src')
+    }
   },
   server: {
-    port: process.env.VITE_APP_PORT,
-    proxy: {
-      '/api': {
-        target: process.env.VITE_API_HOST,
-        changeOrigin: true
-      },
-      '/socket.io': {
-        target: process.env.VITE_SOCKET_IO_URL,
-        ws: true,
-        changeOrigin: true
-      }
+    port: 80,
+    host: '0.0.0.0',
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
     }
-  },
-  resolve: {
-    // eslint-disable-next-line no-undef
-    alias: [{ find: '@', replacement: resolve(__dirname, './src') }]
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        format: 'es'
-      }
-    }
-  },
-  plugins: [vue()]
-}
+  }
+})

@@ -1,0 +1,75 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:vue/vue3-recommended",
+    "plugin:tailwindcss/recommended",
+    "standard",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "vue",
+    "tailwindcss",
+    "prettier"
+  ],
+  "globals": {
+    "process": "readonly",
+    "require": "readonly",
+    "module": "readonly",
+    "Vue": "readonly",
+    "loggingConfig": "readonly",
+    "i18n": "readonly"
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "vue/multi-word-component-names": ["error", {
+      "ignoreProperties": ["Dialog", "Teemii", "Home", "Manga", "Mangas", "Search", "Wizard", "Chapter"]
+    }],
+    "vue/no-reserved-component-names": "off",
+    "vue/no-v-html": "off",
+    "vue/require-default-prop": "off",
+    "vue/max-attributes-per-line": ["error", {
+      "singleline": 3,
+      "multiline": 1
+    }],
+    "vue/html-self-closing": ["error", {
+      "html": {
+        "void": "always",
+        "normal": "always",
+        "component": "always"
+      }
+    }],
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-debugger": "warn",
+    "no-unused-vars": ["error", { 
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_"
+    }],
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "never",
+      "asyncArrow": "always"
+    }],
+    "tailwindcss/no-custom-classname": ["warn", {
+      "whitelist": [
+        "toolbar-button",
+        "scrollbar-custom",
+        "-px-1",
+        "scrollbar-track-.*",
+        "scrollbar-thumb-.*",
+        "text-shadow.*",
+        "blur-0"
+      ]
+    }],
+    "tailwindcss/enforces-negative-arbitrary-values": "off"
+  }
+}

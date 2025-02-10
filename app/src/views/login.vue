@@ -52,7 +52,7 @@
         <div v-show="!valid" class="rounded-md bg-red-50 p-4">
           <div class="flex">
             <div class="shrink-0">
-              <XCircleIcon class="h-5 w-5 text-red-400" aria-hidden="true"/>
+              <XCircleIcon class="size-5 text-red-400" aria-hidden="true"/>
             </div>
             <div class="ml-3">
               <p class="text-sm font-medium text-red-800">{{ errMsg }}</p>
@@ -63,7 +63,7 @@
                         @click="valid = true"
                         class="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50">
                   <span class="sr-only">Dismiss</span>
-                  <XMarkIcon class="h-5 w-5" aria-hidden="true"/>
+                  <XMarkIcon class="size-5" aria-hidden="true"/>
                 </button>
               </div>
             </div>
@@ -76,7 +76,7 @@
             focus:ring-main-500 focus:ring-offset-2 dark:bg-darkAccent-600 dark:hover:bg-darkAccent-700
             dark:focus:ring-darkAccent-400">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-              <LockClosedIcon class="h-5 w-5 text-main-500 group-hover:text-main-400 dark:text-light-500"
+              <LockClosedIcon class="size-5 text-main-500 group-hover:text-main-400 dark:text-light-500"
                               aria-hidden="true"/>
             </span>
             {{ t('login.sign_in') }}
